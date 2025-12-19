@@ -1,0 +1,19 @@
+# 1. ปิดการรันสคริปต์ PHP ในโฟลเดอร์นี้
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# 2. ปฏิเสธการเข้าถึงไฟล์ที่มีนามสกุลอันตรายโดยตรง
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 3. บังคับให้ Browser มองไฟล์เป็นดาวน์โหลด (ป้องกัน XSS)
+ForceType application/octet-stream
+<FilesMatch "\.(pdf|docx|doc|pptx|ppt)$">
+    ForceType none
+</FilesMatch>

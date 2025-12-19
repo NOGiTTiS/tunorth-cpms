@@ -1,0 +1,44 @@
+services:
+  # PHP & Apache
+  web:
+    image: php:8.2-apache
+    container_name: cpms-web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - cpms-network
+    depends_on:
+      - db
+    # ติดตั้ง PHP Extensions ที่จำเป็น
+    command: >
+      sh -c "docker-php-ext-install pdo pdo_mysql && a2enmod rewrite && apache2-foreground"
+
+  # Database MySQL
+  db:
+    image: mysql:8.0
+    container_name: cpms-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: cpms_db
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    networks:
+      - cpms-network
+
+  # phpMyAdmin (สำหรับดูฐานข้อมูลผ่านเว็บ)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: cpms-pma
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    networks:
+      - cpms-network
+
+networks:
+  cpms-network:
+    driver: bridge
