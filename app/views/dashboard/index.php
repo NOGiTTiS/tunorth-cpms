@@ -53,7 +53,7 @@
                                 <select onchange="window.location.href='?room='+this.value" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-slate-800 focus:ring-0 outline-none cursor-pointer">
                                     <option value="">ชั้น ม.6 ทุกห้อง (6.1 - 6.15)</option>
                                     <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
-                                        <option value="<?php echo $r; ?>" <?php echo ($data['current_room'] == $r) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo $r; ?>" <?php echo ($data['current_room'] === $r) ? 'selected' : ''; ?>>
                                             ชั้น ม.<?php echo $r; ?>
                                         </option>
                                     <?php endfor; ?>
