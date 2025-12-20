@@ -44,6 +44,44 @@
     <script>
         // ส่งค่า BASE_URL จาก PHP ไปให้ JavaScript ใช้
         window.BASE_URL = "<?php echo defined('BASE_URL') ? BASE_URL : ''; ?>";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            let activeFetches = 0;
+            const loader = document.getElementById('global-loader');
+
+            const showLoader = () => {
+                activeFetches++;
+                if (activeFetches > 0 && loader) loader.classList.remove('hidden');
+            };
+
+            const hideLoader = () => {
+                activeFetches--;
+                if (activeFetches <= 0) {
+                    activeFetches = 0;
+                    if (loader) loader.classList.add('hidden');
+                }
+            };
+
+            const originalFetch = window.fetch;
+            window.fetch = async (...args) => {
+                showLoader();
+                try {
+                    const response = await originalFetch(...args);
+                    return response;
+                } catch (error) {
+                    throw error;
+                } finally {
+                    hideLoader();
+                }
+            };
+        });
     </script>
 </head>
 <body class="bg-gray-50">
+    <!-- Global Unified Loader -->
+    <div id="global-loader" class="fixed inset-0 z-[9999] bg-white/50 backdrop-blur-[2px] flex items-center justify-center hidden transition-all duration-300">
+        <div class="relative flex flex-col items-center">
+            <div class="w-16 h-16 border-4 border-pink-100 border-t-pink-600 rounded-full animate-spin shadow-lg"></div>
+            <p class="mt-4 text-pink-600 font-bold text-sm animate-pulse tracking-widest">LOADING...</p>
+        </div>
+    </div>
