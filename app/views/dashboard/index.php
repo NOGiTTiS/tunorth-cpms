@@ -81,94 +81,16 @@
                         <?php endforeach; ?>
                     </div>
 
-                    <!-- Admin Graphs & Lists -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Chart: Progress Summary -->
-                        <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
-                            <div class="flex items-center justify-between mb-8">
-                                <h3 class="font-bold text-gray-800 text-lg flex items-center">
-                                    <span class="mr-2 text-pink-500">📊</span> ความก้าวหน้าห้อง <?php echo htmlspecialchars($data['current_room'] ?: 'ม.6 (รวม)'); ?>
-                                </h3>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">อนุมัติแล้ว</span>
-                            </div>
-                            <div class="h-80 w-full">
-                                <canvas id="adminProgressChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- List: Teacher Workload -->
-                        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col">
-                            <h3 class="font-bold text-gray-800 mb-6 flex items-center">
-                                <span class="mr-2 text-pink-500">👨‍🏫</span> ภาระงานที่ปรึกษา (ห้อง <?php echo htmlspecialchars($data['current_room'] ?: 'รวม'); ?>)
+                    <!-- Admin Graphs -->
+                    <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="font-bold text-gray-800 text-lg flex items-center">
+                                <span class="mr-2 text-pink-500">📊</span> ความก้าวหน้าห้อง <?php echo htmlspecialchars($data['current_room'] ?: 'ม.6 (รวม)'); ?>
                             </h3>
-                            <div class="space-y-3 flex-1 overflow-y-auto pr-2 custom-scrollbar max-h-[400px]">
-                                <?php foreach($data['summary']['advisor_load'] as $load): ?>
-                                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-gray-100 hover:border-pink-200 transition-colors">
-                                    <div class="flex items-center min-w-0">
-                                        <div class="w-8 h-8 bg-white text-pink-600 rounded-lg flex items-center justify-center font-bold text-xs shadow-sm mr-3 shrink-0 uppercase">
-                                            <?php echo htmlspecialchars(mb_substr($load['full_name'], 0, 1, 'UTF-8')); ?>
-                                        </div>
-                                        <span class="text-sm font-bold text-slate-700 truncate"><?php echo htmlspecialchars($load['full_name']); ?></span>
-                                    </div>
-                                    <span class="bg-slate-800 text-white px-3 py-1 rounded-full text-[10px] font-black shrink-0">
-                                        <?php echo $load['group_count']; ?> กลุ่ม
-                                    </span>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">อนุมัติแล้ว</span>
                         </div>
-                    </div>
-
-                    <!-- Row 3: Recent Activity Logs -->
-                    <div class="mt-8 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-gray-800 flex items-center">
-                                <span class="mr-2 text-pink-500">📜</span> กิจกรรมล่าสุดในระบบ (Recent Activity)
-                            </h3>
-                            <a href="<?php echo BASE_URL; ?>/admin/logs" class="text-xs font-bold text-pink-600 hover:text-pink-800 transition-colors">ดูทั้งหมด &rarr;</a>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-50 border-b border-gray-100 text-[10px] uppercase text-gray-400 font-black tracking-widest">
-                                    <tr>
-                                        <th class="px-4 py-3 rounded-tl-xl">เวลา</th>
-                                        <th class="px-4 py-3">ผู้ใช้งาน</th>
-                                        <th class="px-4 py-3">กิจกรรม</th>
-                                        <th class="px-4 py-3 rounded-tr-xl">รายละเอียด</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50 text-xs">
-                                    <?php if(!empty($data['recent_activities'])): ?>
-                                        <?php foreach($data['recent_activities'] as $log): ?>
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-4 py-3 text-gray-500 font-mono whitespace-nowrap">
-                                                <?php echo date('d M H:i', strtotime($log['created_at'])); ?>
-                                            </td>
-                                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-nowrap">
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[8px]"><?php echo mb_substr($log['full_name'] ?? '?',0,1); ?></div>
-                                                    <?php echo htmlspecialchars($log['full_name'] ?? 'Guest'); ?>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-3 whitespace-nowrap">
-                                                <?php
-                                                    $actionColor = 'text-slate-500';
-                                                    if(strpos($log['action'], 'LOGIN') !== false) $actionColor = 'text-green-600';
-                                                    if(strpos($log['action'], 'DELETE') !== false) $actionColor = 'text-red-500';
-                                                    if(strpos($log['action'], 'UPLOAD') !== false) $actionColor = 'text-blue-500';
-                                                    echo '<span class="'.$actionColor.' font-bold">'.$log['action'].'</span>';
-                                                ?>
-                                            </td>
-                                            <td class="px-4 py-3 text-gray-500 truncate max-w-xs">
-                                                <?php echo htmlspecialchars($log['description']); ?>
-                                            </td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">ยังไม่มีกิจกรรมเร็วๆ นี้</td></tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                        <div class="h-80 w-full">
+                            <canvas id="adminProgressChart"></canvas>
                         </div>
                     </div>
 

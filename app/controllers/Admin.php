@@ -274,4 +274,14 @@ class Admin extends Controller {
         $data['logs'] = $logModel->getLogs(100); // 100 รายการล่าสุด
         $this->view('admin/logs', $data);
     }
+
+    public function progress() {
+        $adminModel = $this->model('Admin_model');
+        $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        
+        $data = $adminModel->getProgressMatrix($room);
+        $data['selected_room'] = $room;
+        
+        $this->view('admin/progress', $data);
+    }
 }

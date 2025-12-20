@@ -264,4 +264,45 @@ class Admin_model {
             ':id'   => $id
         ]);
     }
+    public function getProgressMatrix($room = null) {
+        // 1. Get Groups (and filtering)
+        // Group by project to avoid duplicates, use MIN(room) as representative room
+        $sql = "SELECT g.id, g.project_name_th, g.advisor_name, MIN(u.room) as room
+                FROM project_groups g
+                JOIN group_members gm ON g.id = gm.group_id
+                JOIN users u ON gm.user_id = u.id
+                WHERE u.role = 'STUDENT'";
+        
+        if ($room) {
+            $sql .= " AND u.room = :room";
+        }
+        
+        $sql .= " GROUP BY g.id ORDER BY room ASC, g.id ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        if ($room) $stmt->bindValue(':room', $room);
+        $stmt->execute();
+        $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 2. Get All Steps
+        $stmtSteps = $this->db->query("SELECT id, step_name FROM project_steps ORDER BY step_order ASC");
+        $steps = $stmtSteps->fetchAll(PDO::FETCH_ASSOC);
+
+        // 3. Get Submission Statuses
+        $sqlSub = "SELECT group_id, step_id, status FROM submissions"; 
+        $stmtSub = $this->db->query($sqlSub);
+        $rawSubs = $stmtSub->fetchAll(PDO::FETCH_ASSOC);
+
+        // Map submissions: [group_id][step_id] = status
+        $matrix = [];
+        foreach($rawSubs as $s) {
+            $matrix[$s['group_id']][$s['step_id']] = $s['status'];
+        }
+
+        return [
+            'groups' => $groups, 
+            'steps' => $steps, 
+            'matrix' => $matrix
+        ];
+    }
 }
