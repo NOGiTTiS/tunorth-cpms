@@ -10,15 +10,23 @@
 
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
+                    <div class="mb-2 xl:mb-0">
                         <h2 class="text-3xl font-bold text-gray-800 font-prompt">จัดการผู้ใช้งาน</h2>
                         <p class="text-gray-500 text-sm">ดูแลสิทธิ์การเข้าถึงของครูและนักเรียน</p>
                     </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="downloadCSVTemplate()" class="w-full md:w-auto bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 โหลดตัวอย่าง CSV</button>
-                        <button onclick="importCSV()" class="w-full md:w-auto bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg">🚀 Import CSV</button>
-                        <button onclick="openUserModal()" class="w-full md:w-auto bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100">+ เพิ่มรายคน</button>
+
+                    <!-- Search Bar -->
+                    <form method="GET" class="flex-grow max-w-md w-full relative group">
+                        <input type="hidden" name="limit" value="<?php echo $data['pagination']['limit']; ?>">
+                        <span class="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-pink-500 transition-colors">🔍</span>
+                        <input type="text" name="q" value="<?php echo htmlspecialchars($data['pagination']['search']); ?>" placeholder="ค้นหาชื่อ, อีเมล หรือรหัสนักเรียน..." class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all shadow-sm text-sm">
+                    </form>
+
+                    <div class="flex flex-wrap gap-2 w-full xl:w-auto">
+                        <button onclick="downloadCSVTemplate()" class="flex-1 xl:flex-none bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 ตัวอย่าง</button>
+                        <button onclick="importCSV()" class="flex-1 xl:flex-none bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg text-sm">🚀 Import</button>
+                        <button onclick="openUserModal()" class="flex-1 xl:flex-none bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100 text-sm">+ เพิ่ม</button>
                     </div>
                 </div>
 
@@ -61,6 +69,50 @@
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination & Filter -->
+                    <div class="px-6 py-4 bg-slate-50 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-slate-500">
+                        <div class="flex items-center gap-3">
+                            <span>แสดงหน้าละ</span>
+                            <?php $searchParam = !empty($data['pagination']['search']) ? '&q=' . urlencode($data['pagination']['search']) : ''; ?>
+                            <select onchange="window.location.href='?page=1&limit='+this.value+'<?php echo $searchParam; ?>'" class="bg-white border border-gray-200 rounded-lg py-1 px-2 outline-none focus:ring-2 focus:ring-pink-500 shadow-sm text-slate-700">
+                                <?php foreach([10, 20, 50, 100] as $l): ?>
+                                    <option value="<?php echo $l; ?>" <?php echo $data['pagination']['limit'] == $l ? 'selected' : ''; ?>><?php echo $l; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <span>รายการ (ทั้งหมด <?php echo $data['pagination']['total_users']; ?> รายการ)</span>
+                        </div>
+
+                        <div class="flex items-center gap-1">
+                            <?php 
+                                $p = $data['pagination'];
+                                $limitParam = '&limit=' . $p['limit'] . $searchParam;
+                            ?>
+                            <!-- Prev -->
+                            <a href="?page=<?php echo max(1, $p['current_page']-1) . $limitParam; ?>" class="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition <?php echo $p['current_page'] <= 1 ? 'pointer-events-none opacity-40' : ''; ?>">
+                                &larr;
+                            </a>
+
+                            <!-- Page Numbers -->
+                            <?php for($i=1; $i<=$p['total_pages']; $i++): ?>
+                                <?php if ($p['total_pages'] > 7 && abs($p['current_page'] - $i) > 2 && $i != 1 && $i != $p['total_pages']): ?>
+                                    <?php if (abs($p['current_page'] - $i) == 3): ?>
+                                        <span class="w-8 h-8 flex items-center justify-center text-gray-300">...</span>
+                                    <?php endif; ?>
+                                    <?php continue; ?>
+                                <?php endif; ?>
+                                
+                                <a href="?page=<?php echo $i . $limitParam; ?>" class="w-8 h-8 flex items-center justify-center border rounded-lg transition <?php echo $i == $p['current_page'] ? 'bg-pink-600 text-white border-pink-600 shadow-lg shadow-pink-200' : 'bg-white border-gray-200 text-gray-500 hover:bg-pink-50 hover:text-pink-600'; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+
+                            <!-- Next -->
+                            <a href="?page=<?php echo min($p['total_pages'], $p['current_page']+1) . $limitParam; ?>" class="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 rounded-lg hover:bg-pink-50 hover:text-pink-600 transition <?php echo $p['current_page'] >= $p['total_pages'] ? 'pointer-events-none opacity-40' : ''; ?>">
+                                &rarr;
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

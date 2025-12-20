@@ -26,7 +26,24 @@ class Admin extends Controller {
     // หน้าจัดการผู้ใช้งาน
     public function users() {
         $adminModel = $this->model('Admin_model');
-        $data['users'] = $adminModel->getAllUsers();
+        
+        // Pagination logic
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
+        $search = isset($_GET['q']) ? trim($_GET['q']) : ''; // Search Query
+        $offset = ($page - 1) * $limit;
+
+        $data['users'] = $adminModel->getAllUsers($limit, $offset, $search);
+        $totalUsers = $adminModel->countAllUsers($search);
+        
+        $data['pagination'] = [
+            'current_page' => $page,
+            'limit' => $limit,
+            'total_users' => $totalUsers,
+            'total_pages' => ceil($totalUsers / $limit),
+            'search' => $search
+        ];
+
         $this->view('admin/users', $data);
     }
 

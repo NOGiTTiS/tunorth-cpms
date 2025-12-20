@@ -6,9 +6,47 @@ class Admin_model {
         $this->db = (new Database())->getConnection();
     }
 
-    public function getAllUsers() {
-        $stmt = $this->db->query("SELECT * FROM users ORDER BY role ASC, full_name ASC");
+    public function getAllUsers($limit = null, $offset = 0, $search = '') {
+        $sql = "SELECT * FROM users WHERE 1=1";
+        
+        if (!empty($search)) {
+            $sql .= " AND (full_name LIKE :search OR student_id LIKE :search OR email LIKE :search)";
+        }
+        
+        $sql .= " ORDER BY role ASC, full_name ASC";
+
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        
+        if (!empty($search)) {
+            $stmt->bindValue(':search', "%$search%");
+        }
+
+        if ($limit !== null) {
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countAllUsers($search = '') {
+        $sql = "SELECT COUNT(*) FROM users WHERE 1=1";
+        if (!empty($search)) {
+            $sql .= " AND (full_name LIKE :search OR student_id LIKE :search OR email LIKE :search)";
+        }
+        $stmt = $this->db->prepare($sql);
+        
+        if (!empty($search)) {
+            $stmt->bindValue(':search', "%$search%");
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
 
     public function getUserById($id) {
