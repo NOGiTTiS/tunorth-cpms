@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <?php if($data['current_room']): ?>
-                            <a href="/dashboard" class="px-4 py-2 bg-pink-50 text-pink-600 rounded-xl text-xs font-bold hover:bg-pink-100 transition-colors">
+                            <a href="<?php echo BASE_URL; ?>/dashboard" class="px-4 py-2 bg-pink-50 text-pink-600 rounded-xl text-xs font-bold hover:bg-pink-100 transition-colors">
                                 ❌ ล้างตัวกรอง (แสดงทั้งหมด)
                             </a>
                         <?php endif; ?>

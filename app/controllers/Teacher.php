@@ -4,7 +4,7 @@ class Teacher extends Controller {
         $this->middleware();
         // ตรวจสอบว่าเป็นครูจริงไหม
         if ($_SESSION['user_role'] !== 'TEACHER') {
-            header('Location: /dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
     }

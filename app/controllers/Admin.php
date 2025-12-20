@@ -3,7 +3,7 @@ class Admin extends Controller {
     public function __construct() {
         $this->middleware();
         if ($_SESSION['user_role'] !== 'ADMIN') {
-            header('Location: /dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
     }
