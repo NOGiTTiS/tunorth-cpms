@@ -32,6 +32,9 @@ class Auth extends Controller {
                 $_SESSION['user_name'] = $user['full_name'];
                 $_SESSION['user_role'] = $user['role'];
 
+                // Log Activity
+                $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'LOGIN', 'เข้าสู่ระบบสำเร็จ');
+
                 echo json_encode(['status' => 'success', 'message' => 'เข้าสู่ระบบสำเร็จ']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง']);

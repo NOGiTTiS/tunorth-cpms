@@ -50,6 +50,9 @@
             <a href="<?php echo BASE_URL; ?>/admin/settings" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/settings') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">🔧</span> ตั้งค่าระบบ
             </a>
+            <a href="<?php echo BASE_URL; ?>/admin/logs" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/logs') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">📜</span> บันทึกกิจกรรม
+            </a>
         <?php endif; ?>
 
         <div class="pt-10">

@@ -90,6 +90,9 @@ class Submission extends Controller {
                 // ส่ง $user_id ไปด้วย
                 $subModel->submitWork($group_id, $step_id, $dbPath, $user_id);
                 
+                // Log Activity
+                $this->model('Log_model')->log($user_id, $_SESSION['user_role'], 'UPLOAD', "ส่งงานเอกสาร Step ID: $step_id");
+                
                 require_once __DIR__ . '/../core/Notification.php';
                 Notification::sendTelegram("📁 <b>มีการส่งงานใหม่!</b>\nกลุ่ม: " . $_POST['group_name'] . "\nงาน: " . $_POST['step_name']);
                 

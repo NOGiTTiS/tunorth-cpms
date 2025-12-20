@@ -28,6 +28,9 @@ class Project extends Controller {
 
             if ($result) {
                 // ส่งแจ้งเตือน Telegram
+                // Log Activity
+                $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'CREATE_GROUP', "สร้างกลุ่ม: " . $_POST['project_name_th']);
+
                 require_once __DIR__ . '/../core/Notification.php';
                 Notification::sendTelegram("🚀 <b>กลุ่มใหม่ถูกสร้าง:</b>\n" . $_POST['project_name_th']);
                 
@@ -48,6 +51,7 @@ class Project extends Controller {
             if ($myGroup) {
                 $result = $groupModel->updateGroup($myGroup['id'], $_POST);
                 if ($result) {
+                    $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'UPDATE_GROUP', "แก้ไขข้อมูลกลุ่ม ID: " . $myGroup['id']);
                     echo json_encode(['status' => 'success', 'message' => 'แก้ไขข้อมูลโครงงานเรียบร้อยแล้ว']);
                 } else {
                     echo json_encode(['status' => 'error', 'message' => 'ไม่สามารถบันทึกข้อมูลได้']);
@@ -79,6 +83,7 @@ class Project extends Controller {
                             unlink($fullPath);
                         }
                     }
+                    $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'DELETE_GROUP', "ยุบกลุ่ม ID: " . $myGroup['id']);
                     echo json_encode(['status' => 'success', 'message' => 'ยุบกลุ่มโครงงานเรียบร้อยแล้ว']);
                 } else {
                     echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการลบข้อมูล']);
@@ -105,6 +110,7 @@ class Project extends Controller {
             $myGroup = $groupModel->getGroupByUser($_SESSION['user_id']);
             
             if ($myGroup && $groupModel->addMember($myGroup['id'], $_POST['user_id'])) {
+                $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'ADD_MEMBER', "เพิ่มสมาชิก UserID: " . $_POST['user_id']);
                 echo json_encode(['status' => 'success']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'ไม่สามารถเพิ่มสมาชิกได้ (เพื่อนอาจมีกลุ่มแล้ว)']);
@@ -126,6 +132,7 @@ class Project extends Controller {
             }
 
             if ($myGroup && $groupModel->removeMember($myGroup['id'], $_POST['user_id'])) {
+                $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'REMOVE_MEMBER', "ลบสมาชิก UserID: " . $_POST['user_id']);
                 echo json_encode(['status' => 'success']);
             }
         }

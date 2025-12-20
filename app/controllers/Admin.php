@@ -248,4 +248,9 @@ class Admin extends Controller {
             echo json_encode(['status' => 'success', 'message' => 'บันทึกการตั้งค่าเรียบร้อยแล้ว']);
         }
     }
+    public function logs() {
+        $logModel = $this->model('Log_model');
+        $data['logs'] = $logModel->getLogs(100); // 100 รายการล่าสุด
+        $this->view('admin/logs', $data);
+    }
 }

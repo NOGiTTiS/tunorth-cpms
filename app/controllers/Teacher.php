@@ -37,6 +37,9 @@ class Teacher extends Controller {
             $success = $teacherModel->updateReview($_POST['id'], $_POST['status'], $_POST['comment']);
 
             if ($success) {
+                // Log Activity
+                $this->model('Log_model')->log($_SESSION['user_id'], $_SESSION['user_role'], 'GRADE', "ตรวจงาน: " . $_POST['project_name'] . " (" . $_POST['status'] . ")");
+
                 // ส่ง Telegram แจ้งเตือนนักเรียน (Optional)
                 require_once __DIR__ . '/../core/Notification.php';
                 Notification::sendTelegram("🔔 <b>ครูตรวจงานแล้ว!</b>\nโครงงาน: " . $_POST['project_name'] . "\nผลการตรวจ: " . $_POST['status']);
