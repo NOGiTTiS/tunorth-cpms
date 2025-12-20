@@ -28,12 +28,19 @@
                     </div>
 
                     <!-- 🔘 แท็บสลับโหมดการดูงาน -->
-                    <div class="bg-white p-1 rounded-2xl shadow-sm border border-gray-100 flex self-start md:self-auto">
-                        <a href="?mode=mine" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
-                            📁 งานในที่ปรึกษา
-                        </a>
-                        <a href="?mode=all" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
-                            🌍 งานทั้งหมดในระบบ
+                    <div class="flex items-center gap-2 self-start md:self-auto">
+                         <div class="bg-white p-1 rounded-2xl shadow-sm border border-gray-100 flex">
+                            <a href="?mode=mine" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
+                                📁 งานในที่ปรึกษา
+                            </a>
+                            <a href="?mode=all" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
+                                🌍 งานทั้งหมดในระบบ
+                            </a>
+                        </div>
+                        
+                        <!-- Export Button -->
+                        <a href="<?php echo BASE_URL; ?>/teacher/export_grades?mode=<?php echo $data['current_mode']; ?>" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-green-100 flex items-center transition-all">
+                            <span class="mr-2">📥</span> Excel/CSV
                         </a>
                     </div>
                 </div>

@@ -48,4 +48,72 @@ class Teacher extends Controller {
             }
         }
     }
+
+    public function export_grades() {
+        $teacherModel = $this->model('Teacher_model');
+        
+        $mode = $_GET['mode'] ?? 'mine';
+        $advisor_id = ($mode === 'mine') ? $_SESSION['user_id'] : null;
+
+        $data = $teacherModel->getGradeSheetData($advisor_id);
+        $raw = $data['students'];
+        $steps = $data['steps'];
+
+        // Pivot Data
+        $students = [];
+        foreach ($raw as $row) {
+            $sid = $row['student_id'];
+            if (!isset($students[$sid])) {
+                $students[$sid] = [
+                    'student_id' => $row['student_id'],
+                    'full_name' => $row['full_name'],
+                    'room' => $row['room'],
+                    'project_name' => $row['project_name_th'],
+                    'steps' => []
+                ];
+            }
+            if ($row['step_id']) {
+                $students[$sid]['steps'][$row['step_id']] = $row['status'];
+            }
+        }
+
+        // Export as CSV
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=grade_sheet_' . date('Y-m-d') . '.csv');
+        
+        $output = fopen('php://output', 'w');
+        
+        // Add BOM for Excel UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        // Header Row
+        $header = ['รหัสนักเรียน', 'ชื่อ-นามสกุล', 'ห้อง', 'ชื่อโครงงาน'];
+        foreach ($steps as $step) {
+            $header[] = $step['step_name'];
+        }
+        fputcsv($output, $header);
+
+        // Data Rows
+        foreach ($students as $student) {
+            $row = [
+                $student['student_id'],
+                $student['full_name'],
+                $student['room'],
+                $student['project_name']
+            ];
+            foreach ($steps as $step) {
+                $status = $student['steps'][$step['id']] ?? '-';
+                // Translate Status
+                if ($status == 'APPROVED') $status = 'ผ่าน';
+                elseif ($status == 'REJECTED') $status = 'ไม่ผ่าน';
+                elseif ($status == 'PENDING') $status = 'รอตรวจ';
+                
+                $row[] = $status;
+            }
+            fputcsv($output, $row);
+        }
+        
+        fclose($output);
+        exit;
+    }
 }

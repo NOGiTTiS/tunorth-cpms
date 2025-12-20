@@ -51,4 +51,37 @@ class Teacher_model {
             ':id' => $submission_id
         ]);
     }
+
+    public function getGradeSheetData($advisor_id = null) {
+        // 1. ดึงข้อมูลนักเรียนและกลุ่มทั้งหมด
+        $sql = "SELECT 
+                    u.student_id, u.full_name, u.room, 
+                    g.project_name_th, g.advisor_name,
+                    s.step_id, s.status, ps.step_name
+                FROM users u
+                JOIN group_members gm ON u.id = gm.user_id
+                JOIN project_groups g ON gm.group_id = g.id
+                LEFT JOIN submissions s ON g.id = s.group_id
+                LEFT JOIN project_steps ps ON s.step_id = ps.id
+                WHERE u.role = 'STUDENT'";
+        
+        if ($advisor_id) {
+            $sql .= " AND g.advisor_id = :aid";
+        }
+        
+        $sql .= " ORDER BY u.room ASC, u.student_id ASC, ps.step_order ASC";
+
+        $stmt = $this->db->prepare($sql);
+        if ($advisor_id) {
+            $stmt->bindValue(':aid', $advisor_id);
+        }
+        $stmt->execute();
+        $raw_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 2. ดึงขั้นตอนทั้งหมดมาเป็น Header
+        $stmtSteps = $this->db->query("SELECT id, step_name FROM project_steps ORDER BY step_order ASC");
+        $steps = $stmtSteps->fetchAll(PDO::FETCH_ASSOC);
+
+        return ['students' => $raw_data, 'steps' => $steps];
+    }
 }
