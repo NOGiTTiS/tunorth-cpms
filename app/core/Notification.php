@@ -31,6 +31,8 @@ class Notification {
                 'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
                 'method'  => 'POST',
                 'content' => http_build_query($data),
+                'timeout' => 3, // รอแค่ 3 วินาที ถ้าเกินให้ข้ามไปเลย
+                'ignore_errors' => true 
             ],
         ];
         $context  = stream_context_create($options);
