@@ -28,18 +28,26 @@
                     </div>
 
                     <!-- 🔘 แท็บสลับโหมดการดูงาน -->
-                    <div class="flex items-center gap-2 self-start md:self-auto">
+                    <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
                          <div class="bg-white p-1 rounded-2xl shadow-sm border border-gray-100 flex">
-                            <a href="?mode=mine" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
+                            <a href="?mode=mine&room=<?php echo $data['selected_room']; ?>" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
                                 📁 งานในที่ปรึกษา
                             </a>
-                            <a href="?mode=all" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
+                            <a href="?mode=all&room=<?php echo $data['selected_room']; ?>" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
                                 🌍 งานทั้งหมดในระบบ
                             </a>
                         </div>
                         
+                        <!-- Room Filter -->
+                        <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&room='+this.value" class="px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-slate-700 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
+                            <option value="">📚 ทุกห้องเรียน</option>
+                            <?php for($i=1; $i<=15; $i++): ?>
+                                <option value="6.<?php echo $i; ?>" <?php echo $data['selected_room'] === "6.$i" ? 'selected' : ''; ?>>ม.6.<?php echo $i; ?></option>
+                            <?php endfor; ?>
+                        </select>
+
                         <!-- Export Button -->
-                        <a href="<?php echo BASE_URL; ?>/teacher/export_grades?mode=<?php echo $data['current_mode']; ?>" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-green-100 flex items-center transition-all">
+                        <a href="<?php echo BASE_URL; ?>/teacher/export_grades?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-green-100 flex items-center transition-all">
                             <span class="mr-2">📥</span> Excel/CSV
                         </a>
                     </div>

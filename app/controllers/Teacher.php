@@ -14,18 +14,20 @@ class Teacher extends Controller {
         
         // เปลี่ยนจาก 'mine' เป็น 'all' เพื่อให้เป็นค่าเริ่มต้น
         $mode = $_GET['mode'] ?? 'all'; 
+        $room = $_GET['room'] ?? ''; // Filter by room
         
         if ($mode === 'mine') {
             // ดึงเฉพาะงานที่ครูคนนี้ดูแล
-            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id']);
+            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room);
         } else {
             // ดึงงานทั้งหมด (default)
-            $submissions = $teacherModel->getPendingSubmissions(null);
+            $submissions = $teacherModel->getPendingSubmissions(null, null, $room);
         }
 
         $data = [
             'submissions' => $submissions,
-            'current_mode' => $mode
+            'current_mode' => $mode,
+            'selected_room' => $room
         ];
         $this->view('teacher/review', $data);
     }
