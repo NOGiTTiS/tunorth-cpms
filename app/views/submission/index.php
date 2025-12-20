@@ -103,7 +103,7 @@
                         <span class="mr-2">💡</span> คำแนะนำการส่งงาน
                     </h4>
                     <ul class="text-xs text-blue-600 space-y-1 opacity-80">
-                        <li>• รองรับไฟล์ PDF, DOC, DOCX เท่านั้น</li>
+                        <li>• รองรับไฟล์ PDF, DOC, DOCX, PPT หรือลิงก์ (Google Drive/Canva)</li>
                         <li>• ขนาดไฟล์ไม่ควรเกิน 20MB ต่อการอัปโหลด</li>
                         <li>• หากครูให้แก้ไข สถานะจะเปลี่ยนเป็น "แก้ไข" และคุณสามารถส่งใหม่ได้ทันที</li>
                     </ul>
@@ -116,45 +116,110 @@
 
 <script>
 // ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
+// ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
 async function openUploadModal(stepId, stepName) {
-    const { value: file } = await Swal.fire({
-        title: 'อัปโหลด: ' + stepName,
-        text: 'กรุณาเลือกไฟล์เอกสารของคุณ',
-        input: 'file',
-        inputAttributes: { 'accept': '.pdf,.doc,.docx', 'aria-label': 'Upload project file' },
+    const { value: formValues } = await Swal.fire({
+        title: 'ส่งงาน: ' + stepName,
+        html: `
+            <div class="mb-4 text-left font-prompt">
+                <div class="flex justify-center space-x-6 mb-6">
+                    <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
+                        <input type="radio" name="sub_type" value="file" checked class="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300" 
+                               onchange="document.getElementById('input-file-container').style.display='block';document.getElementById('input-link-container').style.display='none';">
+                        <span class="text-sm font-bold text-gray-700">📄 อัปโหลดไฟล์</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
+                        <input type="radio" name="sub_type" value="link" class="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                               onchange="document.getElementById('input-file-container').style.display='none';document.getElementById('input-link-container').style.display='block';">
+                        <span class="text-sm font-bold text-gray-700">🔗 แนบลิงก์ (Drive/Canva)</span>
+                    </label>
+                </div>
+
+                <div id="input-file-container" class="animate-fade-in">
+                    <input type="file" id="swal-input-file" class="swal2-file block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100" accept=".pdf,.doc,.docx,.ppt,.pptx">
+                    <p class="text-xs text-gray-400 mt-2 text-center">รองรับ PDF, Word, PowerPoint (ไม่เกิน 20MB)</p>
+                </div>
+
+                <div id="input-link-container" style="display:none;" class="animate-fade-in">
+                    <input type="url" id="swal-input-link" class="swal2-input" placeholder="https://docs.google.com/..." style="display:block; width:100%; margin: 0 auto;">
+                    <p class="text-xs text-gray-400 mt-2 text-center">วางลิงก์งานของคุณที่นี่ (อย่าลืมเปิดสิทธิ์ให้ครูดูได้ด้วยนะครับ)</p>
+                </div>
+            </div>
+        `,
         showCancelButton: true,
-        confirmButtonText: 'ส่งงานทันที',
+        confirmButtonText: '🚀 ส่งงานทันที',
         confirmButtonColor: '#ec4899',
         cancelButtonText: 'ยกเลิก',
-        customClass: { popup: 'rounded-3xl' }
+        focusConfirm: false,
+        customClass: { popup: 'rounded-3xl' },
+        preConfirm: () => {
+            const type = document.querySelector('input[name="sub_type"]:checked').value;
+            if (type === 'file') {
+                const fileInput = document.getElementById('swal-input-file');
+                if (!fileInput.files.length) {
+                    Swal.showValidationMessage('กรุณาเลือกไฟล์ก่อนส่ง');
+                    return false;
+                }
+                return { type: 'file', file: fileInput.files[0] };
+            } else {
+                const linkInput = document.getElementById('swal-input-link').value;
+                if (!linkInput) {
+                    Swal.showValidationMessage('กรุณาระบุลิงก์งาน');
+                    return false;
+                }
+                if (!linkInput.startsWith('http')) {
+                    Swal.showValidationMessage('ลิงก์ต้องขึ้นต้นด้วย http:// หรือ https://');
+                    return false;
+                }
+                return { type: 'link', link: linkInput };
+            }
+        }
     });
 
-    if (file) {
+    if (formValues) {
         const formData = new FormData();
         formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-        formData.append('project_file', file);
         formData.append('step_id', stepId);
         formData.append('step_name', stepName);
         formData.append('group_id', '<?php echo $data['group']['id']; ?>');
         formData.append('group_name', '<?php echo $data['group']['project_name_th']; ?>');
+        formData.append('submission_type', formValues.type);
+
+        if (formValues.type === 'file') {
+            formData.append('project_file', formValues.file);
+        } else {
+            formData.append('project_link', formValues.link);
+        }
 
         Swal.fire({
-            title: 'กำลังอัปโหลด...',
+            title: 'กำลังส่งงาน...',
+            html: 'กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูล',
             allowOutsideClick: false,
             didOpen: () => { Swal.showLoading(); }
         });
 
         try {
             const res = await fetch(BASE_URL + '/submission/upload', { method: 'POST', body: formData });
-            const result = await res.json();
+            
+            // Safe parse
+            const text = await res.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                console.error(text);
+                throw new Error('Invalid JSON Response');
+            }
+
             if (result.status === 'success') {
                 Swal.fire({ icon: 'success', title: 'ส่งงานสำเร็จ!', showConfirmButton: false, timer: 1500 })
                     .then(() => location.reload());
             } else {
-                Swal.fire('ผิดพลาด', result.message, 'error');
+                Swal.fire('เกิดข้อผิดพลาด', result.message, 'error');
             }
         } catch (e) {
-            Swal.fire('ผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
+            console.error(e);
+            Swal.fire('เชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ โปรดลองใหม่', 'error');
         }
     }
 }

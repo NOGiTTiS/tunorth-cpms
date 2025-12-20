@@ -30,76 +30,89 @@ class Submission extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $step_id = $_POST['step_id'];
             $group_id = $_POST['group_id'];
-            $user_id = $_SESSION['user_id']; // ดึงจาก Session
+            $user_id = $_SESSION['user_id'];
+            $submission_type = $_POST['submission_type'] ?? 'file'; // work_type: 'file' or 'link'
 
-            $file = $_FILES['project_file'];
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $fileName = "group_" . $group_id . "_step_" . $step_id . "_" . time() . "." . $ext;
-            $targetPath = "uploads/" . $fileName;
+            $dbPath = '';
 
-            // --- ส่วนที่เพิ่มใหม่: SECURITY CHECK ---
-        
-            // 1. ตรวจสอบ Error ของการอัปโหลด
-            if ($file['error'] !== UPLOAD_ERR_OK) {
-                echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์']);
-                return;
-            }
-
-            // 2. ตรวจสอบขนาดไฟล์ (จำกัดที่ 20MB)
-            if ($file['size'] > 20 * 1024 * 1024) {
-                echo json_encode(['status' => 'error', 'message' => 'ไฟล์ต้องมีขนาดไม่เกิน 20MB']);
-                return;
-            }
-
-            // 3. ตรวจสอบ MIME Type ด้วย finfo (อ่านเนื้อไฟล์จริง)
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
-
-            $allowedMimeTypes = [
-                'application/pdf',                                                        // .pdf
-                'application/msword',                                                     // .doc
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-                'application/vnd.ms-powerpoint',                                          // .ppt
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'// .pptx
-            ];
-
-            if (!in_array($mime, $allowedMimeTypes)) {
-                echo json_encode(['status' => 'error', 'message' => 'อนุญาตเฉพาะไฟล์ PDF, Word และ PowerPoint เท่านั้น']);
-                return;
-            }
-
-            // 4. ตั้งชื่อไฟล์ใหม่แบบสุ่ม (Sanitize Filename)
-            // ป้องกันแฮกเกอร์ตั้งชื่อไฟล์เป็น ../../index.php เพื่อเขียนทับไฟล์ระบบ
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $safeFileName = "group_" . $group_id . "_step_" . $step_id . "_" . bin2hex(random_bytes(8)) . "." . $ext;
-            
-            // ใช้ Absolute Path สำหรับย้ายไฟล์ (Disk Operation)
-            $uploadDir = __DIR__ . '/../../public/uploads/';
-            if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
-            $targetPath = $uploadDir . $safeFileName;
-            
-            // ใช้ Relative Path สำหรับเก็บลง DB และเรียกใช้ผ่าน Web (Web URL)
-            // เก็บเป็น public/uploads/... เพื่อให้ BASE_URL + /public/uploads/... ทำงานได้ถูกต้อง
-            $dbPath = 'public/uploads/' . $safeFileName;
-
-            // --- จบส่วนความปลอดภัย ---
-
-            if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-                $subModel = $this->model('Submission_model');
-                // ส่ง $user_id ไปด้วย
-                $subModel->submitWork($group_id, $step_id, $dbPath, $user_id);
+            if ($submission_type === 'link') {
+                // --- กรณีส่งเป็นลิงก์ ---
+                $link = trim($_POST['project_link']);
                 
-                // Log Activity
-                $this->model('Log_model')->log($user_id, $_SESSION['user_role'], 'UPLOAD', "ส่งงานเอกสาร Step ID: $step_id");
-                
-                require_once __DIR__ . '/../core/Notification.php';
-                Notification::sendTelegram("📁 <b>มีการส่งงานใหม่!</b>\nกลุ่ม: " . $_POST['group_name'] . "\nงาน: " . $_POST['step_name']);
-                
-                echo json_encode(['status' => 'success']);
+                // Validate URL
+                if (!filter_var($link, FILTER_VALIDATE_URL)) {
+                    echo json_encode(['status' => 'error', 'message' => 'รูปแบบลิงก์ไม่ถูกต้อง (ต้องขึ้นต้นด้วย http:// หรือ https://)']);
+                    return;
+                }
+
+                $dbPath = $link;
+
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Upload failed']);
+                // --- กรณีส่งเป็นไฟล์ (Logic เดิม) ---
+                if (!isset($_FILES['project_file']) || $_FILES['project_file']['error'] == UPLOAD_ERR_NO_FILE) {
+                     echo json_encode(['status' => 'error', 'message' => 'กรุณาเลือกไฟล์หรือระบุลิงก์งาน']);
+                     return;
+                }
+
+                $file = $_FILES['project_file'];
+
+                // 1. ตรวจสอบ Error ของการอัปโหลด
+                if ($file['error'] !== UPLOAD_ERR_OK) {
+                    echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์']);
+                    return;
+                }
+
+                // 2. ตรวจสอบขนาดไฟล์ (จำกัดที่ 20MB)
+                if ($file['size'] > 20 * 1024 * 1024) {
+                    echo json_encode(['status' => 'error', 'message' => 'ไฟล์ต้องมีขนาดไม่เกิน 20MB']);
+                    return;
+                }
+
+                // 3. ตรวจสอบ MIME Type
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+
+                $allowedMimeTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-powerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                ];
+
+                if (!in_array($mime, $allowedMimeTypes)) {
+                    echo json_encode(['status' => 'error', 'message' => 'อนุญาตเฉพาะไฟล์ PDF, Word และ PowerPoint เท่านั้น']);
+                    return;
+                }
+
+                // 4. ตั้งชื่อไฟล์ใหม่
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $safeFileName = "group_" . $group_id . "_step_" . $step_id . "_" . bin2hex(random_bytes(8)) . "." . $ext;
+                
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+                if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+                $targetPath = $uploadDir . $safeFileName;
+                
+                $dbPath = 'public/uploads/' . $safeFileName;
+
+                if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    echo json_encode(['status' => 'error', 'message' => 'Upload failed']);
+                    return;
+                }
             }
+
+            // บันทึกลงฐานข้อมูล (ใช้ทั้ง File Path และ Link Path)
+            $subModel = $this->model('Submission_model');
+            $subModel->submitWork($group_id, $step_id, $dbPath, $user_id);
+            
+            // Log & Notification
+            $this->model('Log_model')->log($user_id, $_SESSION['user_role'], 'UPLOAD', "ส่งงาน ($submission_type) Step ID: $step_id");
+            
+            require_once __DIR__ . '/../core/Notification.php';
+            Notification::sendTelegram("📁 <b>มีการส่งงานใหม่! (" . strtoupper($submission_type) . ")</b>\nกลุ่ม: " . $_POST['group_name'] . "\nงาน: " . $_POST['step_name']);
+            
+            echo json_encode(['status' => 'success']);
         }
     }
 }

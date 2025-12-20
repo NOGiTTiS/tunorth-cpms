@@ -119,9 +119,16 @@
                                     <!-- จัดการ (ดู/ตรวจ) -->
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center items-center space-x-2">
-                                            <a href="<?php echo BASE_URL . '/' . htmlspecialchars($row['file_path']); ?>" target="_blank" 
-                                               class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm" title="เปิดดูเอกสาร PDF">
-                                                👁️
+                                            <?php 
+                                                $path = $row['file_path'];
+                                                $isLink = preg_match('/^https?:\/\//', $path);
+                                                $targetUrl = $isLink ? $path : BASE_URL . '/' . $path;
+                                                $icon = $isLink ? '🔗' : '👁️';
+                                                $tooltip = $isLink ? 'เปิดลิงก์งาน' : 'เปิดดูเอกสาร PDF';
+                                            ?>
+                                            <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank" 
+                                               class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm" title="<?php echo $tooltip; ?>">
+                                                <?php echo $icon; ?>
                                             </a>
                                             <button onclick='gradeModal(<?php echo htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>)' 
                                                     class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all shadow-sm" title="ลงคะแนนและคอมเมนต์">
