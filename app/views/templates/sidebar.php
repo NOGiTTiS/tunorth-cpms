@@ -15,21 +15,21 @@
     </div>
 
     <nav class="p-4 space-y-2">
-        <a href="/dashboard" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'dashboard') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+        <a href="<?php echo BASE_URL; ?>/dashboard" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'dashboard') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
             <span class="mr-3">📊</span> Dashboard
         </a>
         
         <?php if($_SESSION['user_role'] == 'STUDENT'): ?>
-            <a href="/project/mygroup" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'project') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/project/mygroup" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'project') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">👥</span> จัดการกลุ่ม/สมาชิก
             </a>
-            <a href="/submission" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'submission') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/submission" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'submission') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📁</span> ส่งงานเอกสาร
             </a>
         <?php endif; ?>
         
         <?php if($_SESSION['user_role'] == 'TEACHER'): ?>
-            <a href="/teacher/review" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/teacher/review" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📝</span> ตรวจงานนักเรียน
             </a>
         <?php endif; ?>
@@ -38,19 +38,22 @@
             <div class="pt-4 pb-2 px-4">
                 <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Admin Menu</p>
             </div>
-            <a href="/admin/users" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/users') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/admin/users" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/users') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">👤</span> จัดการผู้ใช้งาน
             </a>
-            <a href="/admin/steps" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/steps') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/admin/steps" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/steps') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">⚙️</span> ตั้งค่าขั้นตอนงาน
             </a>
-            <a href="/admin/announcements" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/announcements') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/admin/announcements" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/announcements') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📢</span> จัดการประกาศ
+            </a>
+            <a href="<?php echo BASE_URL; ?>/admin/settings" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/settings') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">🔧</span> ตั้งค่าระบบ
             </a>
         <?php endif; ?>
 
         <div class="pt-10">
-            <a href="/auth/logout" class="flex items-center p-3 hover:bg-red-900/50 text-red-400 rounded-lg transition-all">
+            <a href="<?php echo BASE_URL; ?>/auth/logout" class="flex items-center p-3 hover:bg-red-900/50 text-red-400 rounded-lg transition-all">
                 <span class="mr-3">🚪</span> ออกจากระบบ
             </a>
         </div>

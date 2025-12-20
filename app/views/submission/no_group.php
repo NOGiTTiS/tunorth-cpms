@@ -1,8 +1,8 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="flex min-h-screen bg-gray-50 font-prompt">
     <!-- ยังคงมี Sidebar เพื่อให้เปลี่ยนเมนูได้ -->
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0">
         <!-- Mobile Header -->
@@ -22,10 +22,10 @@
                 </p>
                 
                 <div class="space-y-3">
-                    <a href="/project/mygroup" class="block w-full py-4 bg-pink-600 text-white rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100">
+                    <a href="<?php echo BASE_URL; ?>/project/mygroup" class="block w-full py-4 bg-pink-600 text-white rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100">
                         ไปที่หน้าจัดการกลุ่ม
                     </a>
-                    <a href="/dashboard" class="block w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition">
+                    <a href="<?php echo BASE_URL; ?>/dashboard" class="block w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition">
                         กลับหน้าหลัก
                     </a>
                 </div>
@@ -38,4 +38,4 @@
     </div>
 </div>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

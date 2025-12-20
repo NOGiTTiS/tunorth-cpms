@@ -1,6 +1,6 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 <div class="flex min-h-screen bg-gray-50 font-prompt">
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md">
@@ -15,7 +15,7 @@
                         <h2 class="text-3xl font-bold text-gray-800">จัดการขั้นตอนงาน</h2>
                         <p class="text-gray-500 text-sm">กำหนดรายการเอกสารที่นักเรียนต้องส่งตามลำดับ</p>
                     </div>
-                    <button onclick="openStepModal()" class="bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg">+ เพิ่มขั้นตอน</button>
+                    <button onclick="openStepModal()" class="w-full md:w-auto bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg">+ เพิ่มขั้นตอน</button>
                 </div>
 
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -95,7 +95,8 @@ async function openStepModal(stepData = null) {
         formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         Object.keys(formValues).forEach(key => formData.append(key, formValues[key]));
         const endpoint = isEdit ? '/admin/step_update' : '/admin/step_store';
-        const res = await fetch(endpoint, { method: 'POST', body: formData });
+        const baseUrl = window.BASE_URL || '';
+        const res = await fetch(`${baseUrl}${endpoint}`, { method: 'POST', body: formData });
         const result = await res.json();
         if(result.status === 'success') location.reload();
     }
@@ -112,7 +113,8 @@ function deleteStep(id, name) {
         cancelButtonText: 'ยกเลิก'
     }).then(async (result) => {
         if (result.isConfirmed) {
-            const res = await fetch('/admin/step_delete/' + id);
+            const baseUrl = window.BASE_URL || '';
+            const res = await fetch(`${baseUrl}/admin/step_delete/` + id);
             const data = await res.json();
             if(data.status === 'success') {
                 location.reload();
@@ -123,4 +125,4 @@ function deleteStep(id, name) {
     });
 }
 </script>
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

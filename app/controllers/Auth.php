@@ -5,10 +5,15 @@ class Auth extends Controller {
     public function index() {
         // ถ้า Login อยู่แล้วให้ไปหน้า Dashboard (จะสร้างใน step ถัดไป)
         if(isset($_SESSION['user_id'])) {
-            header('Location: ' . '/dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
-        $this->view('auth/login');
+
+        // Load Settings
+        $settingsModel = $this->model('Settings_model');
+        $data['site_logo'] = $settingsModel->get('site_logo');
+
+        $this->view('auth/login', $data);
     }
 
     // ประมวลผลการ Login
@@ -37,6 +42,6 @@ class Auth extends Controller {
     // ออกจากระบบ
     public function logout() {
         session_destroy();
-        header('Location: /auth');
+        header('Location: ' . BASE_URL . '/auth');
     }
 }

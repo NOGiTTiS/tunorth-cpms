@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    Options -MultiViews
+    RewriteEngine On
+    
+    # กำหนด Base Path ให้ตรงกับโฟลเดอร์ย่อย
+    # ถ้าอนาคตย้ายไป Domain หลัก (เช่น tunorth.com) ให้แก้เป็น RewriteBase /
+    RewriteBase /tunorth-cpms/
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+</IfModule>

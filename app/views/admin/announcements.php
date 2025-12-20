@@ -1,13 +1,19 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 <div class="flex min-h-screen bg-gray-50 font-prompt">
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md">
+            <span class="font-bold text-pink-500 text-lg">Announcements</span>
+            <button onclick="toggleSidebar()" class="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition">☰</button>
+        </header>
+
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h2 class="text-3xl font-bold text-gray-800">จัดการประกาศ</h2>
-                    <button onclick="openAnnounceModal()" class="bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold">+ สร้างประกาศใหม่</button>
+                    <button onclick="openAnnounceModal()" class="w-full md:w-auto bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg">+ สร้างประกาศใหม่</button>
                 </div>
 
                 <div class="space-y-4">
@@ -20,7 +26,7 @@
                             <h4 class="font-bold text-gray-800"><?php echo htmlspecialchars($row['title']); ?></h4>
                             <p class="text-sm text-gray-500"><?php echo htmlspecialchars($row['content']); ?></p>
                         </div>
-                        <button onclick="deleteAnnounce(<?php echo $row['id']; ?>)" class="text-red-400 hover:text-red-600">🗑️</button>
+                        <button onclick="deleteAnnounce(<?php echo $row['id']; ?>)" class="text-red-400 hover:text-red-600 ml-4 flex-shrink-0">🗑️</button>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -58,14 +64,16 @@ async function openAnnounceModal() {
         const fd = new FormData();
         fd.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         Object.keys(formValues).forEach(key => fd.append(key, formValues[key]));
-        const res = await fetch('/admin/announcement_store', { method: 'POST', body: fd });
+        const baseUrl = window.BASE_URL || '';
+        const res = await fetch(`${baseUrl}/admin/announcement_store`, { method: 'POST', body: fd });
         if((await res.json()).status === 'success') location.reload();
     }
 }
 
 async function deleteAnnounce(id) {
     if ((await Swal.fire({ title: 'ลบประกาศ?', showCancelButton: true })).isConfirmed) {
-        const res = await fetch('/admin/announcement_delete/' + id);
+        const baseUrl = window.BASE_URL || '';
+        const res = await fetch(`${baseUrl}/admin/announcement_delete/` + id);
         if((await res.json()).status === 'success') location.reload();
     }
 }

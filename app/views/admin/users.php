@@ -1,6 +1,6 @@
-<?php require_once '../app/views/templates/header.php'; ?>
-<div class="flex min-h-screen bg-gray-50">
-    <?php include '../app/views/templates/sidebar.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
+<div class="flex min-h-screen bg-gray-50 font-prompt">
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md">
@@ -16,9 +16,9 @@
                         <p class="text-gray-500 text-sm">ดูแลสิทธิ์การเข้าถึงของครูและนักเรียน</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="downloadCSVTemplate()" class="bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 โหลดตัวอย่าง CSV</button>
-                        <button onclick="importCSV()" class="bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg">🚀 Import CSV</button>
-                        <button onclick="openUserModal()" class="bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100">+ เพิ่มรายคน</button>
+                        <button onclick="downloadCSVTemplate()" class="w-full md:w-auto bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 โหลดตัวอย่าง CSV</button>
+                        <button onclick="importCSV()" class="w-full md:w-auto bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg">🚀 Import CSV</button>
+                        <button onclick="openUserModal()" class="w-full md:w-auto bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100">+ เพิ่มรายคน</button>
                     </div>
                 </div>
 
@@ -155,11 +155,12 @@ async function openUserModal(userData = null) {
         Object.keys(formValues).forEach(key => formData.append(key, formValues[key]));
         
         const endpoint = isEdit ? '/admin/user_update' : '/admin/user_store';
-        
+        const baseUrl = window.BASE_URL || '';
+
         Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
         try {
-            const res = await fetch(endpoint, { method: 'POST', body: formData });
+            const res = await fetch(`${baseUrl}${endpoint}`, { method: 'POST', body: formData });
             const result = await res.json();
             
             if(result.status === 'success') {
@@ -186,7 +187,8 @@ function deleteUser(id, name) {
         customClass: { popup: 'rounded-3xl' }
     }).then(async (result) => {
         if (result.isConfirmed) {
-            const res = await fetch('/admin/user_delete/' + id);
+            const baseUrl = window.BASE_URL || '';
+            const res = await fetch(`${baseUrl}/admin/user_delete/` + id);
             const data = await res.json();
             if(data.status === 'success') {
                 Swal.fire('ลบแล้ว!', 'ข้อมูลถูกลบออกจากระบบ', 'success').then(() => location.reload());
@@ -235,7 +237,8 @@ async function importCSV() {
         });
 
         try {
-            const res = await fetch('/admin/user_import', { method: 'POST', body: formData });
+            const baseUrl = window.BASE_URL || '';
+            const res = await fetch(`${baseUrl}/admin/user_import`, { method: 'POST', body: formData });
             const result = await res.json();
             
             if(result.status === 'success') {
@@ -286,7 +289,8 @@ async function resetPassword(userId, userName) {
         formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
         try {
-            const res = await fetch('/admin/user_password_reset', { 
+            const baseUrl = window.BASE_URL || '';
+            const res = await fetch(`${baseUrl}/admin/user_password_reset`, { 
                 method: 'POST', 
                 body: formData 
             });
@@ -304,4 +308,4 @@ async function resetPassword(userId, userName) {
 }
 </script>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

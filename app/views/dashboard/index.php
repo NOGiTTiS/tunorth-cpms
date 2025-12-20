@@ -1,8 +1,8 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="flex min-h-screen bg-gray-50 font-prompt">
     <!-- 1. Sidebar -->
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <!-- 2. Main Content Wrapper -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -129,7 +129,7 @@
                             <div class="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4 animate-bounce">📝</div>
                             <h3 class="text-4xl font-black text-slate-800"><?php echo $data['pending_count']; ?></h3>
                             <p class="text-gray-500 font-bold mt-2 uppercase tracking-tighter">งานที่รอคุณตรวจ</p>
-                            <a href="/teacher/review" class="mt-8 px-8 py-3 bg-pink-600 text-white rounded-2xl font-bold text-sm hover:bg-pink-700 transition-all shadow-lg shadow-pink-100">ตรวจสอบเดี๋ยวนี้</a>
+                            <a href="<?php echo BASE_URL; ?>/teacher/review" class="mt-8 px-8 py-3 bg-pink-600 text-white rounded-2xl font-bold text-sm hover:bg-pink-700 transition-all shadow-lg shadow-pink-100">ตรวจสอบเดี๋ยวนี้</a>
                         </div>
                         <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                             <h3 class="font-bold text-gray-800 mb-6">สรุปสถานะกลุ่มในที่ปรึกษา</h3>
@@ -245,4 +245,4 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

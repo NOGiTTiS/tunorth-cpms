@@ -2,19 +2,19 @@
 class Controller {
     // ฟังก์ชันสำหรับเรียกใช้ Model
     public function model($model) {
-        require_once '../app/models/' . $model . '.php';
+        require_once __DIR__ . '/../models/' . $model . '.php';
         return new $model();
     }
 
     // ฟังก์ชันสำหรับเรียกใช้ View (หน้า HTML)
     public function view($view, $data = []) {
-        require_once '../app/views/' . $view . '.php';
+        require_once __DIR__ . '/../views/' . $view . '.php';
     }
 
     // ฟังก์ชันตรวจสอบ Session
     public function middleware() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /auth');
+            header('Location: ' . BASE_URL . '/auth');
             exit;
         }
     }

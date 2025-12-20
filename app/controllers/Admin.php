@@ -201,4 +201,51 @@ class Admin extends Controller {
             }
         }
     }
+
+    // --- Admin Settings ---
+    public function settings() {
+        $settingsModel = $this->model('Settings_model');
+        $data['settings'] = $settingsModel->getAll();
+        $this->view('admin/settings', $data);
+    }
+
+    public function settings_update() {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $settingsModel = $this->model('Settings_model');
+            
+            // Text Settings
+            foreach ($_POST as $key => $value) {
+                if ($key !== 'csrf_token') {
+                     $settingsModel->set($key, trim($value));
+                }
+            }
+
+            // File Settings (Logo / Favicon)
+            $uploadDir = __DIR__ . '/../../public/uploads/';
+            if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-icon', 'image/vnd.microsoft.icon'];
+            
+            foreach (['site_logo', 'site_favicon'] as $fileKey) {
+                if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
+                    $fileTmp = $_FILES[$fileKey]['tmp_name'];
+                    $fileType = $_FILES[$fileKey]['type'];
+                    
+                    if (in_array($fileType, $allowedTypes)) {
+                        $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
+                        $fileName = $fileKey . '_' . time() . '.' . $ext;
+                        
+                        if (move_uploaded_file($fileTmp, $uploadDir . $fileName)) {
+                            // Save path relative to project root (accessible via browser)
+                            // Assuming BASE_URL points to project root, we need to include 'public/'
+                            $settingsModel->set($fileKey, 'public/uploads/' . $fileName);
+                        }
+                    }
+                }
+            }
+
+            echo json_encode(['status' => 'success', 'message' => 'บันทึกการตั้งค่าเรียบร้อยแล้ว']);
+        }
+    }
 }

@@ -47,7 +47,7 @@ class Dashboard extends Controller {
 
         elseif ($_SESSION['user_role'] == 'TEACHER') {
             $teacherModel = $this->model('Teacher_model');
-            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id']);
+            $submissions = $teacherModel->getPendingSubmissions(null, 'PENDING');
             $data['pending_count'] = count($submissions);
         }
 

@@ -1,9 +1,9 @@
 <?php
 class Database {
-    private $host = "db"; // ชื่อ service ใน docker-compose
-    private $db_name = "cpms_db";
-    private $username = "root";
-    private $password = "root_password";
+    private $host = "localhost"; // ชื่อ service ใน docker-compose
+    private $db_name = "krusitti_cpms_db";
+    private $username = "krusitti_db";
+    private $password = "HpXENgteAbC8CzDuXXrQ";
     public $conn;
 
     public function getConnection() {

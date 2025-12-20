@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 19, 2025 at 03:17 PM
+-- Generation Time: Dec 19, 2025 at 03:32 PM
 -- Server version: 8.0.44
 -- PHP Version: 8.3.29
 
@@ -29,11 +29,11 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `announcements` (
   `id` int NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `content` text,
-  `type` enum('INFO','WARNING','DANGER') DEFAULT 'INFO',
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `content` text COLLATE utf8mb4_general_ci,
+  `type` enum('INFO','WARNING','DANGER') COLLATE utf8mb4_general_ci DEFAULT 'INFO',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -44,7 +44,7 @@ CREATE TABLE `announcements` (
 CREATE TABLE `group_members` (
   `group_id` int NOT NULL,
   `user_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -54,13 +54,13 @@ CREATE TABLE `group_members` (
 
 CREATE TABLE `project_groups` (
   `id` int NOT NULL,
-  `project_name_th` varchar(255) NOT NULL,
-  `project_name_en` varchar(255) NOT NULL,
+  `project_name_th` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `project_name_en` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `advisor_id` int DEFAULT NULL,
-  `advisor_name` varchar(255) DEFAULT NULL,
-  `room` varchar(10) DEFAULT NULL,
-  `status` enum('PENDING','APPROVED','COMPLETED') DEFAULT 'PENDING'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `advisor_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `room` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` enum('PENDING','APPROVED','COMPLETED') COLLATE utf8mb4_general_ci DEFAULT 'PENDING'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -70,9 +70,9 @@ CREATE TABLE `project_groups` (
 
 CREATE TABLE `project_steps` (
   `id` int NOT NULL,
-  `step_name` varchar(100) NOT NULL,
+  `step_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `step_order` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -85,11 +85,11 @@ CREATE TABLE `submissions` (
   `group_id` int DEFAULT NULL,
   `user_id` int DEFAULT NULL,
   `step_id` int DEFAULT NULL,
-  `file_path` varchar(255) DEFAULT NULL,
-  `comment` text,
-  `status` enum('PENDING','REJECTED','APPROVED') DEFAULT 'PENDING',
+  `file_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `comment` text COLLATE utf8mb4_general_ci,
+  `status` enum('PENDING','REJECTED','APPROVED') COLLATE utf8mb4_general_ci DEFAULT 'PENDING',
   `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -99,14 +99,14 @@ CREATE TABLE `submissions` (
 
 CREATE TABLE `users` (
   `id` int NOT NULL,
-  `student_id` varchar(20) DEFAULT NULL,
-  `room` varchar(10) DEFAULT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `full_name` varchar(100) NOT NULL,
-  `role` enum('ADMIN','TEACHER','STUDENT') NOT NULL,
+  `student_id` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `room` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `full_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `role` enum('ADMIN','TEACHER','STUDENT') COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables

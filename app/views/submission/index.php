@@ -1,7 +1,7 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="flex min-h-screen bg-gray-50">
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <!-- Mobile Header -->
@@ -145,7 +145,7 @@ async function openUploadModal(stepId, stepName) {
         });
 
         try {
-            const res = await fetch('/submission/upload', { method: 'POST', body: formData });
+            const res = await fetch(BASE_URL + '/submission/upload', { method: 'POST', body: formData });
             const result = await res.json();
             if (result.status === 'success') {
                 Swal.fire({ icon: 'success', title: 'ส่งงานสำเร็จ!', showConfirmButton: false, timer: 1500 })
@@ -160,4 +160,4 @@ async function openUploadModal(stepId, stepName) {
 }
 </script>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

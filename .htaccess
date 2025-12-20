@@ -1,13 +1,16 @@
 <IfModule mod_rewrite.c>
+    Options -MultiViews
     RewriteEngine On
+    RewriteBase /tunorth-cpms/
 
-    # 1. ถ้าเรียกไฟล์ที่อยู่ในโฟลเดอร์ public ให้ชี้เข้าไปที่นั่นโดยตรง
-    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
-    RewriteRule ^(.*)$ public/$1 [L]
-
-    # 2. กฎการ Routing ปกติสำหรับ MVC
+    # 1. Routing เข้า public/index.php โดยตรง
     RewriteRule ^$ public/index.php [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]
+
+    # 2. ถ้าเข้าถึงไฟล์จริงๆ (เช่น images) ให้ข้ามไป
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 3. ส่ง Request อื่นๆ เข้าไปที่ public/index.php
+    RewriteRule ^((?!public/).*)$ public/index.php?url=$1 [QSA,L]
 </IfModule>

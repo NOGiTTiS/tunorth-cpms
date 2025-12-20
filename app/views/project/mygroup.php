@@ -1,8 +1,8 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="flex min-h-screen bg-gray-50 font-prompt">
     <!-- 1. Sidebar -->
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <!-- 2. Main Content Wrapper -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -26,7 +26,7 @@
 
                 <?php if (!$data['group']): ?>
                     <!-- ✅ CASE 1: ยังไม่มีกลุ่ม (ฟอร์มสร้างกลุ่มใหม่) -->
-                    <div class="max-w-2xl bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="bg-slate-900 p-6 text-white text-center">
                             <h3 class="text-xl font-bold italic text-pink-500 tracking-tighter uppercase">Get Started</h3>
                             <p class="text-slate-400 text-xs mt-1">กรุณาระบุข้อมูลโครงงานเพื่อเริ่มต้นระบบ</p>
@@ -127,7 +127,7 @@
                                         </div>
                                         <!-- ลบสมาชิก (เฉพาะเมื่อไม่ใช่ตัวเอง) -->
                                         <?php if($m['user_id'] != $_SESSION['user_id']): ?>
-                                            <button onclick="removeMember(<?php echo $m['user_id']; ?>, '<?php echo htmlspecialchars($m['full_name']); ?>')" class="opacity-0 group-hover:opacity-100 p-2 text-gray-300 hover:text-red-500 transition-all">🗑️</button>
+                                            <button onclick="removeMember(<?php echo $m['user_id']; ?>, '<?php echo htmlspecialchars($m['full_name']); ?>')" class="p-2 bg-slate-100 text-slate-400 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors" title="ลบสมาชิก">🗑️</button>
                                         <?php endif; ?>
                                     </li>
                                     <?php endforeach; ?>
@@ -154,7 +154,7 @@ document.getElementById('createGroupForm')?.addEventListener('submit', async (e)
     const formData = new FormData(e.target);
     formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
     Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    const res = await fetch('/project/create', { method: 'POST', body: formData });
+    const res = await fetch(BASE_URL + '/project/create', { method: 'POST', body: formData });
     const result = await res.json();
     if(result.status === 'success') {
         Swal.fire('สำเร็จ', 'สร้างกลุ่มโครงงานเรียบร้อยแล้ว', 'success').then(() => location.reload());
@@ -210,7 +210,7 @@ async function openEditProjectModal(projectData) {
         const fd = new FormData();
         fd.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
         Object.keys(formValues).forEach(key => fd.append(key, formValues[key]));
-        const res = await fetch('/project/update', { method: 'POST', body: fd });
+        const res = await fetch(BASE_URL + '/project/update', { method: 'POST', body: fd });
         const result = await res.json();
         if(result.status === 'success') {
             Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: result.message, showConfirmButton: false, timer: 1500 }).then(() => location.reload());
@@ -219,8 +219,9 @@ async function openEditProjectModal(projectData) {
 }
 
 // --- ส่วนการเชิญเพื่อนแบบเลือกห้อง (Dropdown) ---
+// --- ส่วนการเชิญเพื่อนแบบ Multiple Select ---
 async function openInviteModal() {
-    // ขั้นตอนที่ 1: เลือกห้อง
+    // 1. เลือกห้อง
     const { value: selectedRoom } = await Swal.fire({
         title: 'เลือกห้องของเพื่อน',
         input: 'select',
@@ -237,38 +238,73 @@ async function openInviteModal() {
     });
 
     if (selectedRoom) {
-        Swal.fire({ title: 'กำลังโหลดรายชื่อ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        const res = await fetch(`/project/get_available_by_room?room=${selectedRoom}`);
+        Swal.showLoading();
+        const res = await fetch(`${BASE_URL}/project/get_available_by_room?room=${selectedRoom}`);
         const students = await res.json();
 
         if (students.length === 0) {
             return Swal.fire('ไม่พบนักเรียน', `นักเรียนในห้อง ${selectedRoom} มีกลุ่มกันหมดแล้ว`, 'info');
         }
 
-        const studentOptions = students.reduce((acc, s) => {
-            acc[s.id] = `${s.student_id} - ${s.full_name}`;
-            return acc;
-        }, {});
+        // 2. สร้าง HTML Checkbox List
+        const checkboxHtml = students.map(s => `
+            <label class="flex items-center p-3 hover:bg-pink-50 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-pink-100 mb-2 text-left">
+                <input type="checkbox" name="selected_students" value="${s.id}" class="w-5 h-5 text-pink-600 border-gray-300 rounded focus:ring-pink-500 mr-3">
+                <div>
+                    <span class="font-bold text-gray-800 text-sm block">${s.full_name}</span>
+                    <span class="text-xs text-slate-400 font-mono">${s.student_id}</span>
+                </div>
+            </label>
+        `).join('');
 
-        const { value: selectedId } = await Swal.fire({
+        const { value: isConfirmed } = await Swal.fire({
             title: `เลือกเพื่อน (ห้อง ${selectedRoom})`,
-            input: 'select',
-            inputOptions: studentOptions,
-            inputPlaceholder: '-- เลือกชื่อเพื่อน --',
+            html: `
+                <div class="text-xs text-gray-500 mb-4 text-left">เลือกได้หลายคน</div>
+                <div class="max-h-[300px] overflow-y-auto custom-scrollbar p-1 border border-gray-100 rounded-2xl bg-white">
+                    ${checkboxHtml}
+                </div>
+            `,
             showCancelButton: true,
             confirmButtonText: 'เชิญเข้ากลุ่ม',
             confirmButtonColor: '#ec4899',
-            customClass: { popup: 'rounded-3xl' }
+            customClass: { popup: 'rounded-3xl p-6' },
+            preConfirm: () => {
+                const checked = document.querySelectorAll('input[name="selected_students"]:checked');
+                if (checked.length === 0) {
+                    Swal.showValidationMessage('กรุณาเลือกเพื่อนอย่างน้อย 1 คน');
+                    return false;
+                }
+                return Array.from(checked).map(c => c.value);
+            }
         });
 
-        if (selectedId) {
-            const fd = new FormData();
-            fd.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-            fd.append('user_id', selectedId);
-            const resAdd = await fetch('/project/add_member', { method: 'POST', body: fd });
-            const result = await resAdd.json();
-            if(result.status === 'success') location.reload();
-            else Swal.fire('ผิดพลาด', result.message, 'error');
+        // 3. Loop เพิ่มทีละคน
+        if (isConfirmed) {
+            Swal.fire({ title: 'กำลังเชิญสมาชิก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            let successCount = 0;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            for (const uid of isConfirmed) {
+                const fd = new FormData();
+                fd.append('csrf_token', csrfToken);
+                fd.append('user_id', uid);
+                
+                try {
+                    const resAdd = await fetch(BASE_URL + '/project/add_member', { method: 'POST', body: fd });
+                    const result = await resAdd.json();
+                    if(result.status === 'success') successCount++;
+                } catch(e) { console.error(e); }
+            }
+            
+            Swal.fire({
+                icon: 'success', 
+                title: 'เสร็จสิ้น!', 
+                text: `เชิญสมาชิกสำเร็จ ${successCount} จาก ${isConfirmed.length} คน`,
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => location.reload());
         }
     }
 }
@@ -287,7 +323,7 @@ function removeMember(id, name) {
             const fd = new FormData();
             fd.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
             fd.append('user_id', id);
-            const res = await fetch('/project/remove_member', { method: 'POST', body: fd });
+            const res = await fetch(BASE_URL + '/project/remove_member', { method: 'POST', body: fd });
             const result = await res.json();
             if(result.status === 'success') location.reload();
         }
@@ -329,12 +365,12 @@ async function dissolveGroup() {
             formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
             try {
-                const res = await fetch('/project/delete', { method: 'POST', body: formData });
+                const res = await fetch(BASE_URL + '/project/delete', { method: 'POST', body: formData });
                 const result = await res.json();
                 
                 if (result.status === 'success') {
                     Swal.fire({ icon: 'success', title: 'ยุบกลุ่มแล้ว', text: 'คุณสามารถไปสร้างกลุ่มใหม่หรือเข้ากลุ่มเพื่อนได้ทันที', confirmButtonColor: '#ec4899' })
-                        .then(() => window.location.href = '/project/mygroup');
+                        .then(() => window.location.href = BASE_URL + '/project/mygroup');
                 } else {
                     Swal.fire('ผิดพลาด', result.message, 'error');
                 }
@@ -346,4 +382,4 @@ async function dissolveGroup() {
 }
 </script>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

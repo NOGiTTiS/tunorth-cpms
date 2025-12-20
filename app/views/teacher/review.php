@@ -1,8 +1,8 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="flex min-h-screen bg-gray-50 font-prompt">
     <!-- 1. Sidebar -->
-    <?php include '../app/views/templates/sidebar.php'; ?>
+    <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <!-- 2. Main Content -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -104,7 +104,7 @@
                                     <!-- จัดการ (ดู/ตรวจ) -->
                                     <td class="px-6 py-5">
                                         <div class="flex justify-center items-center space-x-2">
-                                            <a href="/public/<?php echo $row['file_path']; ?>" target="_blank" 
+                                            <a href="<?php echo BASE_URL . '/' . htmlspecialchars($row['file_path']); ?>" target="_blank" 
                                                class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm" title="เปิดดูเอกสาร PDF">
                                                 👁️
                                             </a>
@@ -179,7 +179,7 @@ async function gradeModal(data) {
         Object.keys(formValues).forEach(key => formData.append(key, formValues[key]));
         
         try {
-            const res = await fetch('/teacher/grade', { method: 'POST', body: formData });
+            const res = await fetch(BASE_URL + '/teacher/grade', { method: 'POST', body: formData });
             const result = await res.json();
             
             if(result.status === 'success') {
@@ -195,4 +195,4 @@ async function gradeModal(data) {
 }
 </script>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

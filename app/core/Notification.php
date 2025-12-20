@@ -1,12 +1,26 @@
-<?php
-class Notification {
-    private static $token = "7997326343:AAHhG63Os0vaCxSeNv0qaeCWq7XNsMWi3MM"; // ใส่ Token ที่ได้จาก BotFather
-    private static $chat_id = "7606578887";
+require_once __DIR__ . '/Database.php';
 
+class Notification {
+    
     public static function sendTelegram($message) {
-        $url = "https://api.telegram.org/bot" . self::$token . "/sendMessage";
+        $db = (new Database())->getConnection();
+        
+        // ดึงค่า Token และ Chat ID จาก Database
+        $stmt = $db->prepare("SELECT setting_key, setting_value FROM system_settings WHERE setting_key IN ('telegram_api_token', 'telegram_chat_id')");
+        $stmt->execute();
+        $settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        
+        $token = $settings['telegram_api_token'] ?? '';
+        $chat_id = $settings['telegram_chat_id'] ?? '';
+
+        // ถ้ายังไม่ได้ตั้งค่า ให้หยุดทำงาน
+        if (empty($token) || empty($chat_id)) {
+            return false;
+        }
+
+        $url = "https://api.telegram.org/bot" . $token . "/sendMessage";
         $data = [
-            'chat_id' => self::$chat_id,
+            'chat_id' => $chat_id,
             'text' => $message,
             'parse_mode' => 'HTML'
         ];

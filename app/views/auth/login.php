@@ -1,9 +1,12 @@
-<?php require_once '../app/views/templates/header.php'; ?>
+<?php require_once __DIR__ . '/../templates/header.php'; ?>
 
 <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
         <div>
-            <img class="mx-auto h-24 w-auto" src="http://www.tn.ac.th/_files_school/65012004/data/65012004_0_20241212-145309.png" alt="Logo">
+            <?php 
+                $logo = !empty($data['site_logo']) ? BASE_URL . '/' . $data['site_logo'] : 'http://www.tn.ac.th/_files_school/65012004/data/65012004_0_20241212-145309.png';
+            ?>
+            <img class="mx-auto h-24 w-auto object-contain" src="<?php echo $logo; ?>" alt="Logo">
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 CPMS Login
             </h2>
@@ -41,7 +44,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
     
     try {
-        const response = await fetch('/auth/login', {
+        // ตรวจสอบว่ามี BASE_URL หรือไม่ ถ้าไม่มีให้ใช้ค่า default
+        const baseUrl = window.BASE_URL || ''; 
+        const response = await fetch(`${baseUrl}/auth/login`, {
             method: 'POST',
             body: formData
         });
@@ -55,7 +60,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 timer: 1500,
                 showConfirmButton: false
             }).then(() => {
-                window.location.href = '/dashboard';
+                const baseUrl = window.BASE_URL || '';
+                window.location.href = `${baseUrl}/dashboard`;
             });
         } else {
             Swal.fire({
@@ -70,4 +76,4 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 </script>
 
-<?php require_once '../app/views/templates/footer.php'; ?>
+<?php require_once __DIR__ . '/../templates/footer.php'; ?>

@@ -28,7 +28,7 @@ class Project extends Controller {
 
             if ($result) {
                 // ส่งแจ้งเตือน Telegram
-                require_once '../app/core/Notification.php';
+                require_once __DIR__ . '/../core/Notification.php';
                 Notification::sendTelegram("🚀 <b>กลุ่มใหม่ถูกสร้าง:</b>\n" . $_POST['project_name_th']);
                 
                 echo json_encode(['status' => 'success']);

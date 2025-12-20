@@ -73,16 +73,24 @@ class Submission extends Controller {
             // ป้องกันแฮกเกอร์ตั้งชื่อไฟล์เป็น ../../index.php เพื่อเขียนทับไฟล์ระบบ
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $safeFileName = "group_" . $group_id . "_step_" . $step_id . "_" . bin2hex(random_bytes(8)) . "." . $ext;
-            $targetPath = "uploads/" . $safeFileName;
+            
+            // ใช้ Absolute Path สำหรับย้ายไฟล์ (Disk Operation)
+            $uploadDir = __DIR__ . '/../../public/uploads/';
+            if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+            $targetPath = $uploadDir . $safeFileName;
+            
+            // ใช้ Relative Path สำหรับเก็บลง DB และเรียกใช้ผ่าน Web (Web URL)
+            // เก็บเป็น public/uploads/... เพื่อให้ BASE_URL + /public/uploads/... ทำงานได้ถูกต้อง
+            $dbPath = 'public/uploads/' . $safeFileName;
 
             // --- จบส่วนความปลอดภัย ---
 
             if (move_uploaded_file($file['tmp_name'], $targetPath)) {
                 $subModel = $this->model('Submission_model');
                 // ส่ง $user_id ไปด้วย
-                $subModel->submitWork($group_id, $step_id, $targetPath, $user_id);
+                $subModel->submitWork($group_id, $step_id, $dbPath, $user_id);
                 
-                require_once '../app/core/Notification.php';
+                require_once __DIR__ . '/../core/Notification.php';
                 Notification::sendTelegram("📁 <b>มีการส่งงานใหม่!</b>\nกลุ่ม: " . $_POST['group_name'] . "\nงาน: " . $_POST['step_name']);
                 
                 echo json_encode(['status' => 'success']);
