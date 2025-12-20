@@ -177,16 +177,14 @@
                      ========================================== -->
                 <?php elseif($_SESSION['user_role'] == 'TEACHER'): ?>
                     
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center">
-                            <div class="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-4xl mb-4 animate-bounce">📝</div>
-                            <h3 class="text-4xl font-black text-slate-800"><?php echo $data['pending_count']; ?></h3>
-                            <p class="text-gray-500 font-bold mt-2 uppercase tracking-tighter">งานที่รอคุณตรวจ</p>
-                            <a href="<?php echo BASE_URL; ?>/teacher/review" class="mt-8 px-8 py-3 bg-pink-600 text-white rounded-2xl font-bold text-sm hover:bg-pink-700 transition-all shadow-lg shadow-pink-100">ตรวจสอบเดี๋ยวนี้</a>
-                        </div>
-                        <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                            <h3 class="font-bold text-gray-800 mb-6">สรุปสถานะกลุ่มในที่ปรึกษา</h3>
-                            <div class="h-64"><canvas id="teacherLoadChart"></canvas></div>
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 text-center flex flex-col items-center justify-center transition-transform hover:scale-105">
+                            <div class="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-5xl mb-6 animate-bounce shadow-sm">📝</div>
+                            <h3 class="text-6xl font-black text-slate-800 tracking-tighter"><?php echo $data['pending_count']; ?></h3>
+                            <p class="text-gray-500 font-bold mt-2 uppercase tracking-tight">งานที่รอคุณตรวจ (รวมทุกห้อง)</p>
+                            <a href="<?php echo BASE_URL; ?>/teacher/review" class="mt-8 px-10 py-4 bg-pink-600 text-white rounded-2xl font-bold text-lg hover:bg-pink-700 transition-all shadow-xl shadow-pink-200 ring-4 ring-pink-50">
+                                🚀 เริ่มตรวจงานเดี๋ยวนี้
+                            </a>
                         </div>
                     </div>
 
