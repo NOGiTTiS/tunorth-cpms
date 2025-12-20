@@ -16,6 +16,10 @@ class Admin extends Controller {
         $data['chart_labels'] = array_column($data['summary']['step_progress'], 'step_name');
         $data['chart_data'] = array_column($data['summary']['step_progress'], 'approved_count');
         
+        // Widget: Recent Activities
+        $logModel = $this->model('Log_model');
+        $data['recent_activities'] = $logModel->getLogs(5); // 5 รายการล่าสุด
+
         $this->view('admin/dashboard', $data);
     }
 

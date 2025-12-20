@@ -119,6 +119,59 @@
                         </div>
                     </div>
 
+                    <!-- Row 3: Recent Activity Logs -->
+                    <div class="mt-8 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-gray-800 flex items-center">
+                                <span class="mr-2 text-pink-500">📜</span> กิจกรรมล่าสุดในระบบ (Recent Activity)
+                            </h3>
+                            <a href="<?php echo BASE_URL; ?>/admin/logs" class="text-xs font-bold text-pink-600 hover:text-pink-800 transition-colors">ดูทั้งหมด &rarr;</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b border-gray-100 text-[10px] uppercase text-gray-400 font-black tracking-widest">
+                                    <tr>
+                                        <th class="px-4 py-3 rounded-tl-xl">เวลา</th>
+                                        <th class="px-4 py-3">ผู้ใช้งาน</th>
+                                        <th class="px-4 py-3">กิจกรรม</th>
+                                        <th class="px-4 py-3 rounded-tr-xl">รายละเอียด</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50 text-xs">
+                                    <?php if(!empty($data['recent_activities'])): ?>
+                                        <?php foreach($data['recent_activities'] as $log): ?>
+                                        <tr class="hover:bg-slate-50/50 transition-colors">
+                                            <td class="px-4 py-3 text-gray-500 font-mono whitespace-nowrap">
+                                                <?php echo date('d M H:i', strtotime($log['created_at'])); ?>
+                                            </td>
+                                            <td class="px-4 py-3 font-bold text-slate-700 whitespace-nowrap">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[8px]"><?php echo mb_substr($log['full_name'] ?? '?',0,1); ?></div>
+                                                    <?php echo htmlspecialchars($log['full_name'] ?? 'Guest'); ?>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <?php
+                                                    $actionColor = 'text-slate-500';
+                                                    if(strpos($log['action'], 'LOGIN') !== false) $actionColor = 'text-green-600';
+                                                    if(strpos($log['action'], 'DELETE') !== false) $actionColor = 'text-red-500';
+                                                    if(strpos($log['action'], 'UPLOAD') !== false) $actionColor = 'text-blue-500';
+                                                    echo '<span class="'.$actionColor.' font-bold">'.$log['action'].'</span>';
+                                                ?>
+                                            </td>
+                                            <td class="px-4 py-3 text-gray-500 truncate max-w-xs">
+                                                <?php echo htmlspecialchars($log['description']); ?>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr><td colspan="4" class="p-4 text-center text-gray-400 italic">ยังไม่มีกิจกรรมเร็วๆ นี้</td></tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 <!-- ==========================================
                      CASE 2: TEACHER DASHBOARD
                      ========================================== -->
