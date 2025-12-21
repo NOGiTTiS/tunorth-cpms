@@ -61,7 +61,10 @@
             </a>
         <?php endif; ?>
 
-        <div class="pt-10">
+        <div class="pt-10 space-y-2">
+            <a href="<?php echo BASE_URL; ?>/profile" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'profile') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">👤</span> ข้อมูลส่วนตัว
+            </a>
             <a href="<?php echo BASE_URL; ?>/auth/logout" class="flex items-center p-3 hover:bg-red-900/50 text-red-400 rounded-lg transition-all">
                 <span class="mr-3">🚪</span> ออกจากระบบ
             </a>

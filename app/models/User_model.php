@@ -34,4 +34,17 @@ class User_model {
 
         return $stmt->execute();
     }
+
+    public function getUserById($id) {
+        $stmt = $this->db->prepare("SELECT * FROM " . $this->table . " WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePassword($id, $new_password) {
+        $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare("UPDATE " . $this->table . " SET password = :pass WHERE id = :id");
+        return $stmt->execute([':pass' => $hashed, ':id' => $id]);
+    }
 }
