@@ -29,8 +29,11 @@
         <?php endif; ?>
         
         <?php if($_SESSION['user_role'] == 'TEACHER'): ?>
-            <a href="<?php echo BASE_URL; ?>/teacher/review" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+            <a href="<?php echo BASE_URL; ?>/teacher/review" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher/review') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📝</span> ตรวจงานนักเรียน
+            </a>
+            <a href="<?php echo BASE_URL; ?>/teacher/progress" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher/progress') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">📈</span> ตารางความก้าวหน้า
             </a>
         <?php endif; ?>
 

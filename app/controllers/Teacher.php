@@ -118,4 +118,16 @@ class Teacher extends Controller {
         fclose($output);
         exit;
     }
+
+    public function progress() {
+        // Reuse Admin_model for Progress Matrix logic to avoid duplication
+        $adminModel = $this->model('Admin_model');
+        $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        
+        $data = $adminModel->getProgressMatrix($room);
+        $data['selected_room'] = $room;
+        
+        // Reuse the Admin view because it's identical
+        $this->view('admin/progress', $data);
+    }
 }
