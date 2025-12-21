@@ -78,7 +78,11 @@
                                 <tr class="hover:bg-slate-50/50 transition-colors">
                                     <!-- โครงงาน / ผู้ส่ง -->
                                     <td class="px-6 py-5 min-w-[220px]">
-                                        <p class="font-bold text-slate-800 leading-tight mb-1"><?php echo htmlspecialchars($row['project_name_th']); ?></p>
+                                        <a href="<?php echo BASE_URL . '/project/details/' . $row['group_id']; ?>" class="block group">
+                                            <p class="font-bold text-slate-800 leading-tight mb-1 group-hover:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4">
+                                                <?php echo htmlspecialchars($row['project_name_th']); ?>
+                                            </p>
+                                        </a>
                                         <p class="text-[10px] text-gray-400 font-medium italic">โดย: <?php echo htmlspecialchars($row['submitter_name']); ?></p>
                                     </td>
 

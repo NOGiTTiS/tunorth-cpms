@@ -66,7 +66,11 @@
                                                 <?php echo htmlspecialchars($group['room'] ?? '-'); ?>
                                             </div>
                                             <div>
-                                                <p class="font-bold text-slate-800 line-clamp-2 leading-tight"><?php echo htmlspecialchars($group['project_name_th']); ?></p>
+                                                <a href="<?php echo BASE_URL . '/project/details/' . $group['id']; ?>" class="block group/link">
+                                                    <p class="font-bold text-slate-800 line-clamp-2 leading-tight group-hover/link:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4">
+                                                        <?php echo htmlspecialchars($group['project_name_th']); ?>
+                                                    </p>
+                                                </a>
                                                 <p class="text-[10px] text-gray-400 mt-1">ที่ปรึกษา: <?php echo htmlspecialchars($group['advisor_name'] ?: '-'); ?></p>
                                             </div>
                                         </div>

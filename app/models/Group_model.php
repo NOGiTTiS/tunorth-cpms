@@ -22,6 +22,15 @@ class Group_model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // ดึงข้อมูลกลุ่มจาก ID
+    public function getGroupById($id) {
+        $query = "SELECT * FROM project_groups WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     // ดึงสมาชิกในกลุ่ม
     public function getMembers($group_id) {
         // เพิ่ม u.id AS user_id เข้าไปใน SELECT

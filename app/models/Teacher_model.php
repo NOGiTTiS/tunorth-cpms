@@ -8,7 +8,7 @@ class Teacher_model {
 
     public function getPendingSubmissions($advisor_id = null, $status = null, $room = null) {
         $query = "SELECT 
-                    s.id, s.status, s.file_path, s.comment, s.submitted_at,
+                    s.id, s.status, s.file_path, s.comment, s.submitted_at, s.group_id,
                     g.project_name_th, g.advisor_name,
                     ps.step_name, 
                     u_std.full_name as submitter_name,

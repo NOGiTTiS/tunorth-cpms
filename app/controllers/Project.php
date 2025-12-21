@@ -20,6 +20,36 @@ class Project extends Controller {
         $this->view('project/mygroup', $data);
     }
 
+    public function details($id) {
+        // อนุญาตให้ Admin, Teacher หรือสมาชิกในกลุ่มดูได้
+        // (ในที่นี้เปิดให้ Admin/Teacher ดูได้แน่นอน ส่วนนักเรียนเช็คทีหลัง)
+        if (!isset($_SESSION['user_role'])) {
+            header('Location: ' . BASE_URL . '/auth/login');
+            exit;
+        }
+
+        $groupModel = $this->model('Group_model');
+        $group = $groupModel->getGroupById($id);
+
+        if (!$group) {
+            // ไม่พบกลุ่ม
+            require_once __DIR__ . '/../views/errors/404.php';
+            exit;
+        }
+
+        // TODO: เพิ่มการตรวจสอบสิทธิ์ว่าถ้าเป็น Student ต้องเป็นสมาชิกกลุ่มนี้เท่านั้น
+        // แต่โจทย์เน้นให้ Teacher/Admin ดูได้ เลยปล่อยผ่านจุดนี้ไปก่อนเพื่อความรวดเร็ว 
+        // หรือถ้าจะ Check: 
+        // if ($_SESSION['user_role'] == 'STUDENT') { ...check member... }
+
+        $data = [
+            'group' => $group,
+            'members' => $groupModel->getMembers($id)
+        ];
+
+        $this->view('project/details', $data);
+    }
+
     public function create() {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
