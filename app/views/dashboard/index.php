@@ -13,8 +13,8 @@
                 <div class="w-8 h-8 bg-pink-600 rounded flex items-center justify-center font-bold text-xs text-white">CP</div>
                 <span class="font-bold text-pink-500 tracking-tight">CPMS Dashboard</span>
             </div>
-            <button onclick="toggleSidebar()" class="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="toggleSidebar()" class="p-2.5 bg-slate-800 rounded-2xl hover:bg-slate-700 transition-colors shadow-sm border border-slate-700/50">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                 </svg>
             </button>

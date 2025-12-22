@@ -8,7 +8,11 @@
         <!-- Mobile Header -->
         <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shadow-md">
             <span class="font-bold text-pink-500">Submission</span>
-            <button onclick="toggleSidebar()" class="p-2 bg-slate-800 rounded-lg">☰</button>
+            <button onclick="toggleSidebar()" class="p-2.5 bg-slate-800 rounded-2xl hover:bg-slate-700 transition-colors shadow-sm border border-slate-700/50">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
         </header>
 
         <main class="flex-1 flex items-center justify-center p-6">
