@@ -163,8 +163,8 @@ CREATE TABLE `system_settings` (
 --
 
 INSERT INTO `system_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
-(1, 'site_logo', 'public/uploads/site_logo_1766205255.png', '2025-12-20 04:34:15'),
-(2, 'site_favicon', 'public/uploads/site_favicon_1766205255.ico', '2025-12-20 04:34:15'),
+(1, 'site_logo', 'uploads/site_logo_1766205255.png', '2025-12-20 04:34:15'),
+(2, 'site_favicon', 'uploads/site_favicon_1766205255.ico', '2025-12-20 04:34:15'),
 (3, 'site_copyright', '© 2025 TU-North CPMS. All rights reserved.', '2025-12-20 04:25:06'),
 (4, 'telegram_api_token', '7997326343:AAHhG63Os0vaCxSeNv0qaeCWq7XNsMWi3MM', '2025-12-20 04:26:50'),
 (5, 'telegram_chat_id', '7606578887', '2025-12-20 04:26:50');
