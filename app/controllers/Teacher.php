@@ -15,7 +15,19 @@ class Teacher extends Controller {
         // เปลี่ยนจาก 'mine' เป็น 'all' เพื่อให้เป็นค่าเริ่มต้น
         $mode = $_GET['mode'] ?? 'all'; 
         $room = $_GET['room'] ?? ''; // Filter by room
-        $year = $_GET['year'] ?? ''; // Filter by year
+        
+        // Default Year Logic
+        $yearModel = $this->model('Year_model');
+        $currentYearObj = $yearModel->getCurrentYear();
+        $defaultYear = $currentYearObj['year'];
+        
+        // ถ้ามี parameter year ส่งมา (แม้จะเป็นค่าว่าง) ให้ใช้ค่านั้น
+        // ถ้าไม่มีส่งมาเลย (เข้าครั้งแรก) ให้ใช้ defaultYear
+        if (isset($_GET['year'])) {
+             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+        } else {
+             $year = $defaultYear;
+        }
         
         if ($mode === 'mine') {
             // ดึงเฉพาะงานที่ครูคนนี้ดูแล
@@ -25,11 +37,13 @@ class Teacher extends Controller {
             $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year);
         }
 
+        $yearModel = $this->model('Year_model');
         $data = [
             'submissions' => $submissions,
             'current_mode' => $mode,
             'selected_room' => $room,
-            'selected_year' => $year
+            'selected_year' => $year,
+            'years' => $yearModel->getAll() // Load years
         ];
         $this->view('teacher/review', $data);
     }
@@ -124,13 +138,25 @@ class Teacher extends Controller {
     public function progress() {
         // Reuse Admin_model for Progress Matrix logic to avoid duplication
         $adminModel = $this->model('Admin_model');
+        $yearModel = $this->model('Year_model');
+        
+        $currentYearObj = $yearModel->getCurrentYear();
+        $defaultYear = $currentYearObj['year'];
+        
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
-        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
+        
+        if (isset($_GET['year'])) {
+             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+        } else {
+             $year = $defaultYear;
+        }
         
         $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
         $data['selected_year'] = $year;
         
+        $data['years'] = $yearModel->getAll();
+
         // Reuse the Admin view because it's identical
         $this->view('admin/progress', $data);
     }

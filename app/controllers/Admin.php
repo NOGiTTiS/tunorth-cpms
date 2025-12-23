@@ -277,13 +277,74 @@ class Admin extends Controller {
 
     public function progress() {
         $adminModel = $this->model('Admin_model');
+        $yearModel = $this->model('Year_model');
+        
+        $currentYearObj = $yearModel->getCurrentYear();
+        $defaultYear = $currentYearObj['year'];
+
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
-        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
+        if (isset($_GET['year'])) {
+             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+        } else {
+             $year = $defaultYear;
+        }
         
         $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
         $data['selected_year'] = $year;
+        $data['years'] = $yearModel->getAll(); // Load years
         
         $this->view('admin/progress', $data);
+    }
+
+
+    // --- Academic Year Management ---
+    public function years() {
+        $yearModel = $this->model('Year_model');
+        $data['years'] = $yearModel->getAll();
+        $this->view('admin/years', $data);
+    }
+
+    public function year_store() {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $yearModel = $this->model('Year_model');
+            if ($yearModel->create($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'เพิ่มปีการศึกษาสำเร็จ']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาด']);
+            }
+        }
+    }
+
+    public function year_update() {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $yearModel = $this->model('Year_model');
+            if ($yearModel->update($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'แก้ไขข้อมูลสำเร็จ']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาด']);
+            }
+        }
+    }
+
+    public function year_set_current() {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $yearModel = $this->model('Year_model');
+            if ($yearModel->setCurrent($_POST['id'])) {
+                echo json_encode(['status' => 'success', 'message' => 'ตั้งค่าปีปัจจุบันเรียบร้อย']);
+            }
+        }
+    }
+
+    public function year_delete($id) {
+        $yearModel = $this->model('Year_model');
+        if ($yearModel->delete($id)) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'ไม่สามารถลบปีปัจจุบันได้']);
+        }
     }
 }

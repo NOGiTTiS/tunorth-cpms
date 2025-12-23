@@ -49,12 +49,11 @@
                         <!-- Year Filter (New) -->
                         <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>&year='+this.value" class="px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-blue-600 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
                             <option value="">🗓️ ทุกปี</option>
-                            <?php 
-                            $curYear = date("Y")+543; 
-                            if(date("m") < 5) $curYear--;
-                            for($y=$curYear; $y>=$curYear-2; $y--): ?>
-                                <option value="<?php echo $y; ?>" <?php echo ($data['selected_year'] == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
-                            <?php endfor; ?>
+                            <?php foreach($data['years'] as $yr): ?>
+                                <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
+                                    <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
 
                         <!-- Export Button -->

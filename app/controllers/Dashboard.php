@@ -14,16 +14,27 @@ class Dashboard extends Controller {
         
         // 2. รับค่า Room Filter (สำหรับ Admin)
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
-        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
+        
+        $yearModel = $this->model('Year_model');
+        $currentYearObj = $yearModel->getCurrentYear();
+        $defaultYear = $currentYearObj['year'];
+
+        if (isset($_GET['year'])) {
+             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+        } else {
+             $year = $defaultYear;
+        }
 
         // 3. เตรียมข้อมูลพื้นฐาน (ประกาศต้องมีให้ทุก Role เห็น)
+        // $yearModel is already loaded above
         $data = [
             'title' => 'Dashboard',
             'user_role' => $_SESSION['user_role'],
             'user_name' => $_SESSION['user_name'],
             'current_room' => $room,
             'current_year' => $year,
-            'announcements' => $adminModel->getAllAnnouncements() // <-- เพิ่มบรรทัดนี้
+            'years' => $yearModel->getAll(), // Pass dynamic years
+            'announcements' => $adminModel->getAllAnnouncements() 
         ];
 
         // 4. Logic แยกตาม Role

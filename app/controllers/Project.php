@@ -8,9 +8,12 @@ class Project extends Controller {
         $groupModel = $this->model('Group_model');
         $myGroup = $groupModel->getGroupByUser($_SESSION['user_id']);
         
+        $yearModel = $this->model('Year_model');
         $data = [
             'group' => $myGroup,
-            'teachers' => $groupModel->getTeachers()
+            'teachers' => $groupModel->getTeachers(),
+            'years' => $yearModel->getAll(),
+            'current_year' => $yearModel->getCurrentYear()
         ];
 
         if ($myGroup) {

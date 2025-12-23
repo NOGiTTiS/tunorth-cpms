@@ -30,12 +30,11 @@
                             <span class="text-xs font-bold text-gray-500 mr-2 hidden md:inline">ปี:</span>
                             <select onchange="updateFilter('year', this.value)" class="bg-transparent text-sm font-bold text-blue-600 outline-none cursor-pointer">
                                 <option value="">ทั้งหมด</option>
-                                <?php 
-                                $curYear = date("Y")+543; 
-                                if(date("m") < 5) $curYear--; // Use Academic Year Logic
-                                for($y=$curYear; $y>=$curYear-2; $y--): ?>
-                                    <option value="<?php echo $y; ?>" <?php echo ($data['selected_year'] == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
-                                <?php endfor; ?>
+                                <?php foreach($data['years'] as $yr): ?>
+                                    <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
+                                        <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
@@ -154,11 +153,9 @@
 <script>
 function updateFilter(key, value) {
     const url = new URL(window.location.href);
-    if (value) {
-        url.searchParams.set(key, value);
-    } else {
-        url.searchParams.delete(key);
-    }
+    // Always set the parameter, specifically for 'year' where empty string means "All" 
+    // while missing parameter means "Current Year"
+    url.searchParams.set(key, value);
     window.location.href = url.toString();
 }
 </script>

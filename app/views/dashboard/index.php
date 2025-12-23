@@ -54,12 +54,11 @@
                                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ปีการศึกษา</p>
                                 <select onchange="updateDashboardFilter('year', this.value)" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-blue-600 focus:ring-0 outline-none cursor-pointer">
                                     <option value="">ทั้งหมด</option>
-                                    <?php 
-                                    $curYear = date("Y")+543; 
-                                    if(date("m") < 5) $curYear--;
-                                    for($y=$curYear; $y>=$curYear-2; $y--): ?>
-                                        <option value="<?php echo $y; ?>" <?php echo ($data['current_year'] == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
-                                    <?php endfor; ?>
+                                    <?php foreach($data['years'] as $yr): ?>
+                                        <option value="<?php echo $yr['year']; ?>" <?php echo ($data['current_year'] == $yr['year']) ? 'selected' : ''; ?>>
+                                            <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
@@ -88,11 +87,8 @@
                     <script>
                     function updateDashboardFilter(key, value) {
                         const url = new URL(window.location.href);
-                        if (value) {
-                            url.searchParams.set(key, value);
-                        } else {
-                            url.searchParams.delete(key);
-                        }
+                        // Always set the parameter, specifically for 'year' where empty string means "All" 
+                        url.searchParams.set(key, value);
                         window.location.href = url.toString();
                     }
                     </script>

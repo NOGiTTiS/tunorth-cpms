@@ -60,14 +60,13 @@
                                     <div>
                                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-blue-600">ปีการศึกษา</label>
                                         <select name="academic_year" required class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all">
-                                            <?php 
-                                            $currentYear = date("Y") + 543;
-                                            // ถ้าเดือนปัจจุบัน < 5 (พฤษภาคม) ให้ลบ 1 ปี (เป็นปีการศึกษาเก่า)
-                                            if(date("m") < 5) $currentYear--;
-                                            
-                                            for($i=$currentYear-2; $i<=$currentYear+1; $i++): ?>
-                                                <option value="<?php echo $i; ?>" <?php echo $i==$currentYear ? 'selected':''; ?>><?php echo $i; ?></option>
-                                            <?php endfor; ?>
+                                            <?php foreach($data['years'] as $yr): ?>
+                                                <?php if($yr['is_active']): ?>
+                                                    <option value="<?php echo $yr['year']; ?>" <?php echo $yr['is_current'] ? 'selected':''; ?>>
+                                                        <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
+                                                    </option>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -164,6 +163,8 @@
 </div>
 
 <script>
+const academicYears = <?php echo json_encode($data['years']); ?>;
+
 // --- ส่วนการสร้างกลุ่ม ---
 document.getElementById('createGroupForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -206,7 +207,11 @@ async function openEditProjectModal(projectData) {
                     </div>
                     <div>
                         <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-blue-600">ปีการศึกษา</label>
-                        <input id="edit-acad-year" type="number" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all" value="${projectData.academic_year || '2567'}">
+                        <select id="edit-acad-year" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all">
+                            ${academicYears.map(y => 
+                                `<option value="${y.year}" ${projectData.academic_year == y.year ? 'selected' : ''}>${y.year}</option>`
+                            ).join('')}
+                        </select>
                     </div>
                 </div>
             </div>`,

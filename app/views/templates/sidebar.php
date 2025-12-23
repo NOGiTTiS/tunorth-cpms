@@ -47,6 +47,9 @@
             <a href="<?php echo BASE_URL; ?>/admin/steps" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/steps') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">⚙️</span> ตั้งค่าขั้นตอนงาน
             </a>
+            <a href="<?php echo BASE_URL; ?>/admin/years" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/years') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">🗓️</span> จัดการปีการศึกษา
+            </a>
             <a href="<?php echo BASE_URL; ?>/admin/progress" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/progress') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📈</span> ติดตามความก้าวหน้า
             </a>
