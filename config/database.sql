@@ -24,6 +24,29 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `academic_years`
+--
+
+CREATE TABLE `academic_years` (
+  `id` int(11) NOT NULL,
+  `year` varchar(4) NOT NULL,
+  `term` varchar(1) DEFAULT '1',
+  `is_current` tinyint(1) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `academic_years`
+--
+
+INSERT INTO `academic_years` (`id`, `year`, `term`, `is_current`, `is_active`, `created_at`) VALUES
+(1, '2568', '1', 1, 1, '2025-12-23 03:51:53'),
+(2, '2567', '1', 0, 1, '2025-12-23 03:51:53');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `activity_logs`
 --
 
@@ -168,6 +191,12 @@ CREATE TABLE `users` (
 --
 
 --
+-- Indexes for table `academic_years`
+--
+ALTER TABLE `academic_years`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
@@ -226,6 +255,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `academic_years`
+--
+ALTER TABLE `academic_years`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `activity_logs`
