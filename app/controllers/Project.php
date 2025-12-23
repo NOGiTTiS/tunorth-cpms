@@ -127,13 +127,7 @@ class Project extends Controller {
         }
     }
 
-    // API สำหรับค้นหาเพื่อน
-    public function search_students() {
-        $search = $_GET['q'] ?? '';
-        $groupModel = $this->model('Group_model');
-        $students = $groupModel->getAvailableStudents($search, $_SESSION['user_id']);
-        echo json_encode($students);
-    }
+
 
     // API สำหรับกดเพิ่มเพื่อน
     public function add_member() {

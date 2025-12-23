@@ -87,16 +87,7 @@ class Admin extends Controller {
         }
     }
 
-    // API สำหรับสร้าง User
-    public function user_create() {
-        $this->verifyCsrfToken();
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $adminModel = $this->model('Admin_model');
-            if ($adminModel->createUser($_POST)) {
-                echo json_encode(['status' => 'success']);
-            }
-        }
-    }
+
 
     // หน้าจัดการขั้นตอนส่งงาน
     public function steps() {
