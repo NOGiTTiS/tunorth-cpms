@@ -243,7 +243,8 @@ class Admin extends Controller {
             }
 
             // File Settings (Logo / Favicon)
-            $uploadDir = __DIR__ . '/../../public/uploads/';
+            // Updated: Uploads are now at root
+            $uploadDir = __DIR__ . '/../../uploads/';
             if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
 
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-icon', 'image/vnd.microsoft.icon'];
@@ -259,8 +260,8 @@ class Admin extends Controller {
                         
                         if (move_uploaded_file($fileTmp, $uploadDir . $fileName)) {
                             // Save path relative to project root (accessible via browser)
-                            // Assuming BASE_URL points to project root, we need to include 'public/'
-                            $settingsModel->set($fileKey, 'public/uploads/' . $fileName);
+                            // Updated: No 'public/' prefix needed
+                            $settingsModel->set($fileKey, 'uploads/' . $fileName);
                         }
                     }
                 }

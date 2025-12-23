@@ -90,11 +90,12 @@ class Submission extends Controller {
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $safeFileName = "group_" . $group_id . "_step_" . $step_id . "_" . bin2hex(random_bytes(8)) . "." . $ext;
                 
-                $uploadDir = __DIR__ . '/../../public/uploads/';
+                // Updated: Uploads are now at root
+                $uploadDir = __DIR__ . '/../../uploads/';
                 if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
                 $targetPath = $uploadDir . $safeFileName;
                 
-                $dbPath = 'public/uploads/' . $safeFileName;
+                $dbPath = 'uploads/' . $safeFileName;
 
                 if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
                     echo json_encode(['status' => 'error', 'message' => 'Upload failed']);
