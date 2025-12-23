@@ -57,6 +57,19 @@
                                             <?php endfor; ?>
                                         </select>
                                     </div>
+                                    <div>
+                                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-blue-600">ปีการศึกษา</label>
+                                        <select name="academic_year" required class="w-full px-4 py-3 border border-gray-200 rounded-2xl bg-white mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all">
+                                            <?php 
+                                            $currentYear = date("Y") + 543;
+                                            // ถ้าเดือนปัจจุบัน < 5 (พฤษภาคม) ให้ลบ 1 ปี (เป็นปีการศึกษาเก่า)
+                                            if(date("m") < 5) $currentYear--;
+                                            
+                                            for($i=$currentYear-2; $i<=$currentYear+1; $i++): ?>
+                                                <option value="<?php echo $i; ?>" <?php echo $i==$currentYear ? 'selected':''; ?>><?php echo $i; ?></option>
+                                            <?php endfor; ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <button type="submit" class="w-full bg-pink-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-pink-700 transition shadow-lg shadow-pink-100 active:scale-95">สร้างกลุ่มโครงงาน</button>
@@ -75,6 +88,7 @@
                                     <div class="flex flex-col items-end">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Status: <span class="text-pink-600"><?php echo htmlspecialchars($data['group']['status']); ?></span></span>
                                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-1 text-right italic">Room: ม.<?php echo htmlspecialchars($data['group']['room'] ?? ''); ?></span>
+                                        <span class="text-[10px] font-bold text-blue-500 uppercase tracking-tighter mt-1 text-right">Year: <?php echo htmlspecialchars($data['group']['academic_year'] ?? ''); ?></span>
                                     </div>
                                 </div>
                                 <h3 class="text-2xl font-bold text-gray-800 leading-tight"><?php echo htmlspecialchars($data['group']['project_name_th']); ?></h3>
@@ -190,6 +204,10 @@ async function openEditProjectModal(projectData) {
                             ).join('')}
                         </select>
                     </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest text-blue-600">ปีการศึกษา</label>
+                        <input id="edit-acad-year" type="number" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all" value="${projectData.academic_year || '2567'}">
+                    </div>
                 </div>
             </div>`,
         showCancelButton: true,
@@ -202,7 +220,8 @@ async function openEditProjectModal(projectData) {
                 project_name_th: document.getElementById('edit-name-th').value,
                 project_name_en: document.getElementById('edit-name-en').value,
                 advisor_name: document.getElementById('edit-advisor').value,
-                room: document.getElementById('edit-room').value
+                room: document.getElementById('edit-room').value,
+                academic_year: document.getElementById('edit-acad-year').value
             }
         }
     });

@@ -99,18 +99,21 @@ class Admin_model {
     }
 
     // ฟังก์ชันดึงสถิติ (ใช้ใน Dashboard)
-    public function getSummaryStats($room = null) {
+    public function getSummaryStats($room = null, $year = null) {
         $stats = [];
         
         // 1. นับจำนวนกลุ่มโครงงาน (กรองตามห้องของสมาชิกในกลุ่ม)
         $sqlGroups = "SELECT COUNT(DISTINCT g.id) as total FROM project_groups g";
-        if ($room) {
+        if ($room || $year) {
             $sqlGroups .= " JOIN group_members gm ON g.id = gm.group_id 
                             JOIN users u ON gm.user_id = u.id 
-                            WHERE u.room = :room";
+                            WHERE 1=1";
+            if ($room) $sqlGroups .= " AND u.room = :room";
+            if ($year) $sqlGroups .= " AND g.academic_year = :year";
         }
         $stmt = $this->db->prepare($sqlGroups);
-        if ($room) $stmt->bindParam(':room', $room);
+        if ($room) $stmt->bindValue(':room', $room);
+        if ($year) $stmt->bindValue(':year', $year);
         $stmt->execute();
         $stats['total_groups'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
@@ -130,15 +133,19 @@ class Admin_model {
         $sqlSteps = "SELECT ps.step_name, COUNT(DISTINCT s.id) as approved_count 
                      FROM project_steps ps 
                      LEFT JOIN submissions s ON ps.id = s.step_id AND s.status = 'APPROVED'
+                     LEFT JOIN project_groups g ON s.group_id = g.id
                      LEFT JOIN group_members gm ON s.group_id = gm.group_id
-                     LEFT JOIN users u ON gm.user_id = u.id";
-        if ($room) {
-            $sqlSteps .= " WHERE u.room = :room";
-        }
+                     LEFT JOIN users u ON gm.user_id = u.id
+                     WHERE 1=1";
+                     
+        if ($room) $sqlSteps .= " AND u.room = :room";
+        if ($year) $sqlSteps .= " AND g.academic_year = :year";
+
         $sqlSteps .= " GROUP BY ps.id ORDER BY ps.step_order";
         
         $stmt = $this->db->prepare($sqlSteps);
-        if ($room) $stmt->bindParam(':room', $room);
+        if ($room) $stmt->bindValue(':room', $room);
+        if ($year) $stmt->bindValue(':year', $year);
         $stmt->execute();
         $stats['step_progress'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -264,10 +271,10 @@ class Admin_model {
             ':id'   => $id
         ]);
     }
-    public function getProgressMatrix($room = null) {
+    public function getProgressMatrix($room = null, $year = null) {
         // 1. Get Groups (and filtering)
         // Group by project to avoid duplicates, use MIN(room) as representative room
-        $sql = "SELECT g.id, g.project_name_th, g.advisor_name, MIN(u.room) as room
+        $sql = "SELECT g.id, g.project_name_th, g.advisor_name, g.academic_year, MIN(u.room) as room
                 FROM project_groups g
                 JOIN group_members gm ON g.id = gm.group_id
                 JOIN users u ON gm.user_id = u.id
@@ -276,11 +283,15 @@ class Admin_model {
         if ($room) {
             $sql .= " AND u.room = :room";
         }
+        if ($year) {
+            $sql .= " AND g.academic_year = :year";
+        }
         
         $sql .= " GROUP BY g.id ORDER BY room ASC, g.id ASC";
         
         $stmt = $this->db->prepare($sql);
         if ($room) $stmt->bindValue(':room', $room);
+        if ($year) $stmt->bindValue(':year', $year);
         $stmt->execute();
         $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

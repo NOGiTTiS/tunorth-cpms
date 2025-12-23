@@ -14,6 +14,7 @@ class Dashboard extends Controller {
         
         // 2. รับค่า Room Filter (สำหรับ Admin)
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
 
         // 3. เตรียมข้อมูลพื้นฐาน (ประกาศต้องมีให้ทุก Role เห็น)
         $data = [
@@ -21,12 +22,13 @@ class Dashboard extends Controller {
             'user_role' => $_SESSION['user_role'],
             'user_name' => $_SESSION['user_name'],
             'current_room' => $room,
+            'current_year' => $year,
             'announcements' => $adminModel->getAllAnnouncements() // <-- เพิ่มบรรทัดนี้
         ];
 
         // 4. Logic แยกตาม Role
         if ($_SESSION['user_role'] == 'ADMIN') {
-            $data['summary'] = $adminModel->getSummaryStats($room);
+            $data['summary'] = $adminModel->getSummaryStats($room, $year);
             $data['chart_labels'] = array_column($data['summary']['step_progress'], 'step_name');
             $data['chart_data'] = array_column($data['summary']['step_progress'], 'approved_count');
         } 

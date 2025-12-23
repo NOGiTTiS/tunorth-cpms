@@ -15,19 +15,21 @@ class Teacher extends Controller {
         // เปลี่ยนจาก 'mine' เป็น 'all' เพื่อให้เป็นค่าเริ่มต้น
         $mode = $_GET['mode'] ?? 'all'; 
         $room = $_GET['room'] ?? ''; // Filter by room
+        $year = $_GET['year'] ?? ''; // Filter by year
         
         if ($mode === 'mine') {
             // ดึงเฉพาะงานที่ครูคนนี้ดูแล
-            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room);
+            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room, $year);
         } else {
             // ดึงงานทั้งหมด (default)
-            $submissions = $teacherModel->getPendingSubmissions(null, null, $room);
+            $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year);
         }
 
         $data = [
             'submissions' => $submissions,
             'current_mode' => $mode,
-            'selected_room' => $room
+            'selected_room' => $room,
+            'selected_year' => $year
         ];
         $this->view('teacher/review', $data);
     }
@@ -123,9 +125,11 @@ class Teacher extends Controller {
         // Reuse Admin_model for Progress Matrix logic to avoid duplication
         $adminModel = $this->model('Admin_model');
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
         
-        $data = $adminModel->getProgressMatrix($room);
+        $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
+        $data['selected_year'] = $year;
         
         // Reuse the Admin view because it's identical
         $this->view('admin/progress', $data);

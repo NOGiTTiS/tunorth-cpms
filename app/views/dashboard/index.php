@@ -44,33 +44,63 @@
                      ========================================== -->
                 <?php if($_SESSION['user_role'] == 'ADMIN'): ?>
                     
-                    <!-- 🔍 Room Filter Bar -->
+                    <!-- Admin Filter Bar -->
                     <div class="mb-8 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-gray-100 shadow-sm border-l-8 border-l-slate-800">
                         <div class="flex items-center space-x-4">
                             <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-lg">🔍</div>
+                            
+                            <!-- Year Filter -->
                             <div>
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ตัวกรองข้อมูลรายห้อง</p>
-                                <select onchange="window.location.href='?room='+this.value" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-slate-800 focus:ring-0 outline-none cursor-pointer">
-                                    <option value="">ชั้น ม.6 ทุกห้อง (6.1 - 6.15)</option>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ปีการศึกษา</p>
+                                <select onchange="updateDashboardFilter('year', this.value)" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-blue-600 focus:ring-0 outline-none cursor-pointer">
+                                    <option value="">ทั้งหมด</option>
+                                    <?php 
+                                    $curYear = date("Y")+543; 
+                                    if(date("m") < 5) $curYear--;
+                                    for($y=$curYear; $y>=$curYear-2; $y--): ?>
+                                        <option value="<?php echo $y; ?>" <?php echo ($data['current_year'] == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+
+                            <div class="w-px h-8 bg-gray-200 mx-2"></div>
+
+                            <!-- Room Filter -->
+                            <div>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ห้องเรียน</p>
+                                <select onchange="updateDashboardFilter('room', this.value)" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-slate-800 focus:ring-0 outline-none cursor-pointer">
+                                    <option value="">ชั้น ม.6 ทุกห้อง</option>
                                     <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
                                         <option value="<?php echo $r; ?>" <?php echo ($data['current_room'] === $r) ? 'selected' : ''; ?>>
-                                            ชั้น ม.<?php echo $r; ?>
+                                            ห้อง ม.<?php echo $r; ?>
                                         </option>
                                     <?php endfor; ?>
                                 </select>
                             </div>
                         </div>
-                        <?php if($data['current_room']): ?>
+                        <?php if($data['current_room'] || $data['current_year']): ?>
                             <a href="<?php echo BASE_URL; ?>/dashboard" class="px-4 py-2 bg-pink-50 text-pink-600 rounded-xl text-xs font-bold hover:bg-pink-100 transition-colors">
-                                ❌ ล้างตัวกรอง (แสดงทั้งหมด)
+                                ❌ ล้างค่า
                             </a>
                         <?php endif; ?>
                     </div>
+                    
+                    <script>
+                    function updateDashboardFilter(key, value) {
+                        const url = new URL(window.location.href);
+                        if (value) {
+                            url.searchParams.set(key, value);
+                        } else {
+                            url.searchParams.delete(key);
+                        }
+                        window.location.href = url.toString();
+                    }
+                    </script>
 
                     <!-- Admin Statistics Cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 border-b-4 border-b-pink-500 transition-transform hover:scale-105">
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">กลุ่มโครงงาน (<?php echo htmlspecialchars($data['current_room'] ?: 'ทั้งหมด'); ?>)</p>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">กลุ่มโครงงาน (<?php echo htmlspecialchars($data['current_year'] ? 'ปี '.$data['current_year'] : 'รวมทุกปี'); ?>)</p>
                             <p class="text-4xl font-black text-slate-800 mt-2"><?php echo $data['summary']['total_groups']; ?></p>
                         </div>
                         <?php foreach($data['summary']['users'] as $u): ?>

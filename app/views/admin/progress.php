@@ -24,16 +24,33 @@
                     </div>
 
                     <!-- Room Filter -->
-                    <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner">
-                        <span class="text-xs font-bold text-gray-500 mr-3 hidden md:inline">ตัวกรองห้องเรียน:</span>
-                        <select onchange="window.location.href='?room='+this.value" class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer min-w-[150px]">
-                            <option value="">🏫 ทุกห้องเรียน (ม.6)</option>
-                            <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
-                                <option value="<?php echo $r; ?>" <?php echo ($data['selected_room'] === $r) ? 'selected' : ''; ?>>
-                                    ม.<?php echo $r; ?>
-                                </option>
-                            <?php endfor; ?>
-                        </select>
+                    <div class="flex items-center gap-2">
+                        <!-- Year Filter -->
+                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner">
+                            <span class="text-xs font-bold text-gray-500 mr-2 hidden md:inline">ปี:</span>
+                            <select onchange="updateFilter('year', this.value)" class="bg-transparent text-sm font-bold text-blue-600 outline-none cursor-pointer">
+                                <option value="">ทั้งหมด</option>
+                                <?php 
+                                $curYear = date("Y")+543; 
+                                if(date("m") < 5) $curYear--; // Use Academic Year Logic
+                                for($y=$curYear; $y>=$curYear-2; $y--): ?>
+                                    <option value="<?php echo $y; ?>" <?php echo ($data['selected_year'] == $y) ? 'selected' : ''; ?>><?php echo $y; ?></option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
+
+                        <!-- Room Filter -->
+                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner">
+                            <span class="text-xs font-bold text-gray-500 mr-3 hidden md:inline">ห้อง:</span>
+                            <select onchange="updateFilter('room', this.value)" class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer min-w-[50px]">
+                                <option value="">ทั้งหมด</option>
+                                <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
+                                    <option value="<?php echo $r; ?>" <?php echo ($data['selected_room'] === $r) ? 'selected' : ''; ?>>
+                                        6.<?php echo $i; ?>
+                                    </option>
+                                <?php endfor; ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -73,7 +90,10 @@
                                                         <?php echo htmlspecialchars($group['project_name_th']); ?>
                                                     </p>
                                                 </a>
-                                                <p class="text-[10px] text-gray-400 mt-1">ที่ปรึกษา: <?php echo htmlspecialchars($group['advisor_name'] ?: '-'); ?></p>
+                                                <p class="text-[10px] text-gray-400 mt-1">
+                                                    ที่ปรึกษา: <?php echo htmlspecialchars($group['advisor_name'] ?: '-'); ?> 
+                                                    <span class="text-blue-400 bg-blue-50 px-1 rounded ml-1"><?php echo htmlspecialchars($group['academic_year'] ?? ''); ?></span>
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
@@ -131,3 +151,14 @@
 </style>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
+<script>
+function updateFilter(key, value) {
+    const url = new URL(window.location.href);
+    if (value) {
+        url.searchParams.set(key, value);
+    } else {
+        url.searchParams.delete(key);
+    }
+    window.location.href = url.toString();
+}
+</script>

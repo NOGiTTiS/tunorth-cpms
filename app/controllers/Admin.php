@@ -278,9 +278,11 @@ class Admin extends Controller {
     public function progress() {
         $adminModel = $this->model('Admin_model');
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        $year = isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null;
         
-        $data = $adminModel->getProgressMatrix($room);
+        $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
+        $data['selected_year'] = $year;
         
         $this->view('admin/progress', $data);
     }

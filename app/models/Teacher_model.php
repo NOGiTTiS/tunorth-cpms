@@ -6,7 +6,7 @@ class Teacher_model {
         $this->db = (new Database())->getConnection();
     }
 
-    public function getPendingSubmissions($advisor_id = null, $status = null, $room = null) {
+    public function getPendingSubmissions($advisor_id = null, $status = null, $room = null, $year = null) {
         $query = "SELECT 
                     s.id, s.status, s.file_path, s.comment, s.submitted_at, s.group_id,
                     g.project_name_th, g.advisor_name,
@@ -31,6 +31,10 @@ class Teacher_model {
             $query .= " AND u_std.room = :room";
         }
 
+        if ($year !== null && $year !== '') {
+            $query .= " AND g.academic_year = :year";
+        }
+
         $query .= " ORDER BY s.submitted_at DESC";
                 
         $stmt = $this->db->prepare($query);
@@ -43,6 +47,9 @@ class Teacher_model {
         }
         if ($room !== null && $room !== '') {
             $stmt->bindValue(':room', $room);
+        }
+        if ($year !== null && $year !== '') {
+            $stmt->bindValue(':year', $year);
         }
 
         $stmt->execute();

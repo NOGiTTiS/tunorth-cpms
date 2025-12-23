@@ -55,13 +55,14 @@ class Group_model {
     public function createGroup($data, $creator_id) {
         try {
             $this->db->beginTransaction();
-            $query = "INSERT INTO project_groups (project_name_th, project_name_en, advisor_name, room) 
-                    VALUES (:name_th, :name_en, :advisor_name, :room)";
+            $query = "INSERT INTO project_groups (project_name_th, project_name_en, advisor_name, academic_year, room) 
+                    VALUES (:name_th, :name_en, :advisor_name, :academic_year, :room)";
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 ':name_th' => $data['project_name_th'],
                 ':name_en' => $data['project_name_en'],
                 ':advisor_name' => $data['advisor_name'],
+                ':academic_year' => $data['academic_year'],
                 ':room' => $data['room'] // เพิ่มการบันทึกห้อง
             ]);
             
@@ -84,6 +85,7 @@ class Group_model {
                     project_name_th = :name_th, 
                     project_name_en = :name_en, 
                     advisor_name = :advisor,
+                    academic_year = :academic_year,
                     room = :room 
                 WHERE id = :id";
         $stmt = $this->db->prepare($query);
@@ -91,6 +93,7 @@ class Group_model {
             ':name_th' => $data['project_name_th'],
             ':name_en' => $data['project_name_en'],
             ':advisor' => $data['advisor_name'],
+            ':academic_year' => $data['academic_year'],
             ':room' => $data['room'], // เพิ่มการอัปเดตห้อง
             ':id' => $id
         ]);
