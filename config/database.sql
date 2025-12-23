@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: db
--- Generation Time: Dec 19, 2025 at 03:32 PM
--- Server version: 8.0.44
--- PHP Version: 8.3.29
+-- Host: localhost:3306
+-- Generation Time: Dec 23, 2025 at 10:38 AM
+-- Server version: 10.6.16-MariaDB-log
+-- PHP Version: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,8 +18,24 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cpms_db`
+-- Database: `krusitti_cpms_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_logs`
+--
+
+CREATE TABLE `activity_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `user_role` varchar(50) DEFAULT NULL,
+  `action` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -28,11 +44,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `announcements` (
-  `id` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `content` text COLLATE utf8mb4_general_ci,
-  `type` enum('INFO','WARNING','DANGER') COLLATE utf8mb4_general_ci DEFAULT 'INFO',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text DEFAULT NULL,
+  `type` enum('INFO','WARNING','DANGER') DEFAULT 'INFO',
+  `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -42,8 +58,8 @@ CREATE TABLE `announcements` (
 --
 
 CREATE TABLE `group_members` (
-  `group_id` int NOT NULL,
-  `user_id` int NOT NULL
+  `group_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -53,13 +69,14 @@ CREATE TABLE `group_members` (
 --
 
 CREATE TABLE `project_groups` (
-  `id` int NOT NULL,
-  `project_name_th` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `project_name_en` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `advisor_id` int DEFAULT NULL,
-  `advisor_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `room` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `status` enum('PENDING','APPROVED','COMPLETED') COLLATE utf8mb4_general_ci DEFAULT 'PENDING'
+  `id` int(11) NOT NULL,
+  `project_name_th` varchar(255) NOT NULL,
+  `project_name_en` varchar(255) NOT NULL,
+  `advisor_id` int(11) DEFAULT NULL,
+  `advisor_name` varchar(255) DEFAULT NULL,
+  `room` varchar(10) DEFAULT NULL,
+  `status` enum('PENDING','APPROVED','COMPLETED') DEFAULT 'PENDING',
+  `academic_year` varchar(10) NOT NULL DEFAULT '2567'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -69,10 +86,24 @@ CREATE TABLE `project_groups` (
 --
 
 CREATE TABLE `project_steps` (
-  `id` int NOT NULL,
-  `step_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `step_order` int NOT NULL
+  `id` int(11) NOT NULL,
+  `step_name` varchar(100) NOT NULL,
+  `step_order` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `project_steps`
+--
+
+INSERT INTO `project_steps` (`id`, `step_name`, `step_order`) VALUES
+(1, 'เค้าโครงโครงงาน', 1),
+(2, 'เอกสารบทที่ 1', 2),
+(3, 'เอกสารบทที่ 2', 3),
+(4, 'เอกสารบทที่ 3', 4),
+(5, 'เอกสารบทที่ 4', 5),
+(6, 'เอกสารบทที่ 5', 6),
+(7, 'สไลด์นำเสนอ', 7),
+(8, 'สรุปโครงงาน', 8);
 
 -- --------------------------------------------------------
 
@@ -81,15 +112,39 @@ CREATE TABLE `project_steps` (
 --
 
 CREATE TABLE `submissions` (
-  `id` int NOT NULL,
-  `group_id` int DEFAULT NULL,
-  `user_id` int DEFAULT NULL,
-  `step_id` int DEFAULT NULL,
-  `file_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `comment` text COLLATE utf8mb4_general_ci,
-  `status` enum('PENDING','REJECTED','APPROVED') COLLATE utf8mb4_general_ci DEFAULT 'PENDING',
-  `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `group_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `step_id` int(11) DEFAULT NULL,
+  `file_path` varchar(255) DEFAULT NULL,
+  `comment` text DEFAULT NULL,
+  `status` enum('PENDING','REJECTED','APPROVED') DEFAULT 'PENDING',
+  `submitted_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_settings`
+--
+
+CREATE TABLE `system_settings` (
+  `id` int(11) NOT NULL,
+  `setting_key` varchar(255) NOT NULL,
+  `setting_value` text DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `system_settings`
+--
+
+INSERT INTO `system_settings` (`id`, `setting_key`, `setting_value`, `updated_at`) VALUES
+(1, 'site_logo', 'public/uploads/site_logo_1766205255.png', '2025-12-20 04:34:15'),
+(2, 'site_favicon', 'public/uploads/site_favicon_1766205255.ico', '2025-12-20 04:34:15'),
+(3, 'site_copyright', '© 2025 TU-North CPMS. All rights reserved.', '2025-12-20 04:25:06'),
+(4, 'telegram_api_token', '7997326343:AAHhG63Os0vaCxSeNv0qaeCWq7XNsMWi3MM', '2025-12-20 04:26:50'),
+(5, 'telegram_chat_id', '7606578887', '2025-12-20 04:26:50');
 
 -- --------------------------------------------------------
 
@@ -98,19 +153,25 @@ CREATE TABLE `submissions` (
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
-  `student_id` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `room` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `role` enum('ADMIN','TEACHER','STUDENT') COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `id` int(11) NOT NULL,
+  `student_id` varchar(20) DEFAULT NULL,
+  `room` varchar(10) DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) NOT NULL,
+  `role` enum('ADMIN','TEACHER','STUDENT') NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `announcements`
@@ -148,6 +209,13 @@ ALTER TABLE `submissions`
   ADD KEY `submissions_ibfk_1` (`group_id`);
 
 --
+-- Indexes for table `system_settings`
+--
+ALTER TABLE `system_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `setting_key` (`setting_key`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -160,34 +228,46 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `project_groups`
 --
 ALTER TABLE `project_groups`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `project_steps`
 --
 ALTER TABLE `project_steps`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `submissions`
 --
 ALTER TABLE `submissions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `system_settings`
+--
+ALTER TABLE `system_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
