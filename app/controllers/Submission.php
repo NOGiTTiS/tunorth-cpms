@@ -58,7 +58,18 @@ class Submission extends Controller {
 
                 // 1. ตรวจสอบ Error ของการอัปโหลด
                 if ($file['error'] !== UPLOAD_ERR_OK) {
-                    echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์']);
+                    $errorMessages = [
+                        UPLOAD_ERR_INI_SIZE => 'ขนาดไฟล์เกินกำหนดของเซิร์ฟเวอร์ (upload_max_filesize)',
+                        UPLOAD_ERR_FORM_SIZE => 'ขนาดไฟล์เกินกำหนดของฟอร์ม (MAX_FILE_SIZE)',
+                        UPLOAD_ERR_PARTIAL => 'อัปโหลดไฟล์ไม่สมบูรณ์',
+                        UPLOAD_ERR_NO_FILE => 'ไม่ได้เลือกไฟล์',
+                        UPLOAD_ERR_NO_TMP_DIR => 'ไม่พบโฟลเดอร์ชั่วคราว',
+                        UPLOAD_ERR_CANT_WRITE => 'เขียนไฟล์ล้มเหลว',
+                        UPLOAD_ERR_EXTENSION => 'การอัปโหลดถูกหยุดโดยส่วนขยาย PHP',
+                    ];
+                    $message = $errorMessages[$file['error']] ?? 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์ (Code: ' . $file['error'] . ')';
+                    
+                    echo json_encode(['status' => 'error', 'message' => $message]);
                     return;
                 }
 
