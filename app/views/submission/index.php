@@ -54,6 +54,21 @@
                                                         <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">ส่งเมื่อ: <?php echo date('d/m/Y H:i', strtotime($step['submitted_at'])); ?></p>
                                                     <?php endif; ?>
 
+                                                    <!-- แสดงไฟล์ที่ส่ง -->
+                                                    <?php if(!empty($step['file_path'])): ?>
+                                                        <div class="mt-2">
+                                                            <?php 
+                                                                $isLink = preg_match('/^https?:\/\//', $step['file_path']);
+                                                                $targetUrl = $isLink ? $step['file_path'] : BASE_URL . '/' . $step['file_path'];
+                                                                $btnText = $isLink ? 'เปิดลิงก์งาน' : 'ดูไฟล์แนบ';
+                                                                $btnIcon = $isLink ? '🔗' : '📄';
+                                                            ?>
+                                                            <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank" class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors">
+                                                                <span class="mr-1"><?php echo $btnIcon; ?></span> <?php echo $btnText; ?>
+                                                            </a>
+                                                        </div>
+                                                    <?php endif; ?>
+
                                                     <!-- แสดงคอมเม้นต์จากครูทันที (ถ้ามี) -->
                                                     <?php if($step['comment']): ?>
                                                         <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-400 rounded-r-xl">
