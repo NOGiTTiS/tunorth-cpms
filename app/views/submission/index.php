@@ -148,19 +148,26 @@ async function openUploadModal(stepId, stepName) {
                 <div class="flex justify-center space-x-6 mb-6">
                     <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
                         <input type="radio" name="sub_type" value="file" checked class="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300" 
-                               onchange="document.getElementById('input-file-container').style.display='block';document.getElementById('input-link-container').style.display='none';">
+                               onclick="document.getElementById('input-file-container').style.display='block';document.getElementById('input-link-container').style.display='none';
+                                        const f = document.getElementById('swal-input-file'); f.accept='.pdf,.doc,.docx,.ppt,.pptx'; f.nextElementSibling.innerText='รองรับ PDF, Word, PowerPoint (ไม่เกิน 20MB)';">
                         <span class="text-sm font-bold text-gray-700">📄 อัปโหลดไฟล์</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
+                        <input type="radio" name="sub_type" value="image" class="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                               onclick="document.getElementById('input-file-container').style.display='block';document.getElementById('input-link-container').style.display='none';
+                                        const f = document.getElementById('swal-input-file'); f.accept='.jpg,.jpeg,.png,.gif,.webp'; f.nextElementSibling.innerText='รองรับ JPEG, PNG, GIF (ไม่เกิน 20MB)';">
+                        <span class="text-sm font-bold text-gray-700">🖼️ รูปภาพ</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
                         <input type="radio" name="sub_type" value="link" class="w-4 h-4 text-pink-600 focus:ring-pink-500 border-gray-300"
-                               onchange="document.getElementById('input-file-container').style.display='none';document.getElementById('input-link-container').style.display='block';">
-                        <span class="text-sm font-bold text-gray-700">🔗 แนบลิงก์ (Drive/Canva)</span>
+                               onclick="document.getElementById('input-file-container').style.display='none';document.getElementById('input-link-container').style.display='block';">
+                        <span class="text-sm font-bold text-gray-700">🔗 แนบลิงก์</span>
                     </label>
                 </div>
 
                 <div id="input-file-container" class="animate-fade-in">
                     <input type="file" id="swal-input-file" class="swal2-file block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100" accept=".pdf,.doc,.docx,.ppt,.pptx">
-                    <p class="text-xs text-gray-400 mt-2 text-center">รองรับ PDF, Word, PowerPoint (ไม่เกิน 20MB)</p>
+                    <p class="text-xs text-gray-400 mt-2 text-center text-file-hint">รองรับ PDF, Word, PowerPoint (ไม่เกิน 20MB)</p>
                 </div>
 
                 <div id="input-link-container" style="display:none;" class="animate-fade-in">
@@ -177,13 +184,13 @@ async function openUploadModal(stepId, stepName) {
         customClass: { popup: 'rounded-3xl' },
         preConfirm: () => {
             const type = document.querySelector('input[name="sub_type"]:checked').value;
-            if (type === 'file') {
+            if (type === 'file' || type === 'image') {
                 const fileInput = document.getElementById('swal-input-file');
                 if (!fileInput.files.length) {
                     Swal.showValidationMessage('กรุณาเลือกไฟล์ก่อนส่ง');
                     return false;
                 }
-                return { type: 'file', file: fileInput.files[0] };
+                return { type: type, file: fileInput.files[0] };
             } else {
                 const linkInput = document.getElementById('swal-input-link').value;
                 if (!linkInput) {
@@ -208,7 +215,7 @@ async function openUploadModal(stepId, stepName) {
         formData.append('group_name', '<?php echo $data['group']['project_name_th']; ?>');
         formData.append('submission_type', formValues.type);
 
-        if (formValues.type === 'file') {
+        if (formValues.type === 'file' || formValues.type === 'image') {
             formData.append('project_file', formValues.file);
         } else {
             formData.append('project_link', formValues.link);

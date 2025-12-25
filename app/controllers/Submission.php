@@ -89,11 +89,15 @@ class Submission extends Controller {
                     'application/msword',
                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                     'application/vnd.ms-powerpoint',
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp'
                 ];
 
                 if (!in_array($mime, $allowedMimeTypes)) {
-                    echo json_encode(['status' => 'error', 'message' => 'อนุญาตเฉพาะไฟล์ PDF, Word และ PowerPoint เท่านั้น']);
+                    echo json_encode(['status' => 'error', 'message' => 'อนุญาตเฉพาะไฟล์ PDF, Word, PowerPoint และรูปภาพ (JPG, PNG) เท่านั้น']);
                     return;
                 }
 
