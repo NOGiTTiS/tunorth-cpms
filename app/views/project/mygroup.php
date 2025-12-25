@@ -40,8 +40,8 @@
                                     <input type="text" name="project_name_th" required class="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-pink-500 outline-none transition-all mt-1" placeholder="ระบุชื่อภาษาไทย">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Project Name (English)</label>
-                                    <input type="text" name="project_name_en" required class="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-pink-500 outline-none transition-all mt-1" placeholder="Project Name in English">
+                                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Project Name (English) <span class="text-gray-300 font-normal normal-case">(ไม่บังคับ)</span></label>
+                                    <input type="text" name="project_name_en" class="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-pink-500 outline-none transition-all mt-1" placeholder="Project Name in English (Optional)">
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -189,8 +189,8 @@ async function openEditProjectModal(projectData) {
                     <input id="edit-name-th" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all" value="${projectData.project_name_th}">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Project Name (English)</label>
-                    <input id="edit-name-en" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all" value="${projectData.project_name_en}">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Project Name (English) <span class="text-gray-300 font-normal normal-case">(ไม่บังคับ)</span></label>
+                    <input id="edit-name-en" class="w-full p-4 border border-gray-200 rounded-2xl mt-1 outline-none focus:ring-2 focus:ring-pink-500 transition-all" value="${projectData.project_name_en || ''}">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
