@@ -103,20 +103,48 @@
                                     ?>
                                         <td class="px-4 py-4 text-center border-gray-50">
                                             <div class="flex justify-center">
+                                                <?php 
+                                                    // Determine Link target if submission exists
+                                                    $linkUrl = null;
+                                                    // Allow click only if role is TEACHER
+                                                    if ($status && $status !== 'NOT_SUBMITTED' && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'TEACHER') {
+                                                        // ใช้ mode=all เพื่อให้มั่นใจว่าเห็นงานแน่นอน แม้ไม่ใช่ที่ปรึกษา
+                                                        $linkUrl = BASE_URL . "/teacher/review?mode=all&group_id=" . $group['id'] . "&year=" . ($data['selected_year'] ?? '');
+                                                    }
+                                                ?>
+                                                
                                                 <?php if($status === 'APPROVED'): ?>
-                                                    <div class="w-8 h-8 rounded-lg bg-green-500 shadow-lg shadow-green-200 flex items-center justify-center text-white" title="ผ่านเรียบร้อย">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                    </div>
+                                                    <?php if($linkUrl): ?>
+                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                    <?php endif; ?>
+                                                        <div class="w-8 h-8 rounded-lg bg-green-500 shadow-lg shadow-green-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ผ่านเรียบร้อย - คลิกเพื่อดูงาน' : 'ผ่านเรียบร้อย'; ?>">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                        </div>
+                                                    <?php if($linkUrl): ?>
+                                                    </a>
+                                                    <?php endif; ?>
                                                 <?php elseif($status === 'PENDING'): ?>
-                                                    <div class="w-8 h-8 rounded-lg bg-amber-400 shadow-lg shadow-amber-100 flex items-center justify-center text-white animate-pulse" title="รอตรวจ">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    </div>
+                                                    <?php if($linkUrl): ?>
+                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                    <?php endif; ?>
+                                                        <div class="w-8 h-8 rounded-lg bg-amber-400 shadow-lg shadow-amber-100 flex items-center justify-center text-white animate-pulse" title="<?php echo $linkUrl ? 'รอตรวจ - คลิกเพื่อตรวจงาน' : 'รอตรวจ'; ?>">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                        </div>
+                                                    <?php if($linkUrl): ?>
+                                                    </a>
+                                                    <?php endif; ?>
                                                 <?php elseif($status === 'REJECTED'): ?>
-                                                    <div class="w-8 h-8 rounded-lg bg-rose-500 shadow-lg shadow-rose-200 flex items-center justify-center text-white" title="ต้องแก้ไข">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </div>
+                                                    <?php if($linkUrl): ?>
+                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                    <?php endif; ?>
+                                                        <div class="w-8 h-8 rounded-lg bg-rose-500 shadow-lg shadow-rose-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ต้องแก้ไข - คลิกเพื่อดูงาน' : 'ต้องแก้ไข'; ?>">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                        </div>
+                                                    <?php if($linkUrl): ?>
+                                                    </a>
+                                                    <?php endif; ?>
                                                 <?php else: ?>
-                                                    <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200" title="ยังไม่ส่ง"></div>
+                                                    <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 cursor-default" title="ยังไม่ส่ง"></div>
                                                 <?php endif; ?>
                                             </div>
                                         </td>

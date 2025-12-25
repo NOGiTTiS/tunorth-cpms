@@ -6,12 +6,12 @@ class Teacher_model {
         $this->db = (new Database())->getConnection();
     }
 
-    public function getPendingSubmissions($advisor_id = null, $status = null, $room = null, $year = null) {
+    public function getPendingSubmissions($advisor_id = null, $status = null, $room = null, $year = null, $group_id = null) {
         $this->ensureScoreColumn();
         $query = "SELECT 
                     s.id, s.status, s.file_path, s.comment, s.score, s.submitted_at, s.group_id,
                     g.project_name_th, g.advisor_name,
-                    ps.step_name, 
+                    ps.step_name, ps.id as step_id,
                     u_std.full_name as submitter_name,
                     u_std.room as student_room
                 FROM submissions s
@@ -36,6 +36,10 @@ class Teacher_model {
             $query .= " AND g.academic_year = :year";
         }
 
+        if ($group_id !== null && $group_id !== '') {
+            $query .= " AND s.group_id = :gid";
+        }
+
         $query .= " ORDER BY s.submitted_at DESC";
                 
         $stmt = $this->db->prepare($query);
@@ -51,6 +55,9 @@ class Teacher_model {
         }
         if ($year !== null && $year !== '') {
             $stmt->bindValue(':year', $year);
+        }
+        if ($group_id !== null && $group_id !== '') {
+            $stmt->bindValue(':gid', $group_id);
         }
 
         $stmt->execute();

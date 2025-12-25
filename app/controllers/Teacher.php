@@ -21,20 +21,15 @@ class Teacher extends Controller {
         $currentYearObj = $yearModel->getCurrentYear();
         $defaultYear = $currentYearObj['year'];
         
-        // ถ้ามี parameter year ส่งมา (แม้จะเป็นค่าว่าง) ให้ใช้ค่านั้น
-        // ถ้าไม่มีส่งมาเลย (เข้าครั้งแรก) ให้ใช้ defaultYear
-        if (isset($_GET['year'])) {
-             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
-        } else {
-             $year = $defaultYear;
-        }
+        $year = isset($_GET['year']) ? ($_GET['year'] !== '' ? $_GET['year'] : null) : $defaultYear;
+        $group_id = isset($_GET['group_id']) ? $_GET['group_id'] : null;
         
         if ($mode === 'mine') {
             // ดึงเฉพาะงานที่ครูคนนี้ดูแล
-            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room, $year);
+            $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room, $year, $group_id);
         } else {
             // ดึงงานทั้งหมด (default)
-            $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year);
+            $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year, $group_id);
         }
 
         $yearModel = $this->model('Year_model');
