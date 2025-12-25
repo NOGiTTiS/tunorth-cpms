@@ -23,8 +23,27 @@
                 ?>
             </h2>
             <p class="mt-2 text-center text-sm text-gray-600">
-                ระบบจัดการโครงงานคอมพิวเตอร์ ม.6 <br>
-                <span class="font-medium text-pink-600">โรงเรียนเตรียมอุดมศึกษา ภาคเหนือ</span>
+                <?php 
+                    // Calculate Description & Institute Name (similar fallback logic)
+                    $sysDesc = 'ระบบจัดการโครงงานคอมพิวเตอร์ ม.6';
+                    $instName = 'โรงเรียนเตรียมอุดมศึกษา ภาคเหนือ';
+
+                    if (!empty($data['settings'])) {
+                        $sysDesc = $data['settings']['system_description'] ?? $sysDesc;
+                        $instName = $data['settings']['institute_name'] ?? $instName;
+                    } else if (isset($this) && method_exists($this, 'model')) {
+                        try {
+                            // If settings not passed directly, try fetch
+                            if (!isset($settingsModel)) $settingsModel = $this->model('Settings_model');
+                            $dbDesc = $settingsModel->get('system_description');
+                            $dbInst = $settingsModel->get('institute_name');
+                            if ($dbDesc) $sysDesc = $dbDesc;
+                            if ($dbInst) $instName = $dbInst;
+                        } catch (Exception $e) {}
+                    }
+                    echo htmlspecialchars($sysDesc); 
+                ?> <br>
+                <span class="font-medium text-pink-600"><?php echo htmlspecialchars($instName); ?></span>
             </p>
         </div>
         

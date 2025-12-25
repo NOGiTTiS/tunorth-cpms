@@ -12,18 +12,23 @@
     <div class="p-6 text-center border-b border-slate-800">
         <?php
             $systemName = 'CPMS TU-North'; // Default
-            if (!empty($data['settings']['system_name'])) {
-                $systemName = $data['settings']['system_name'];
+            $systemDesc = 'ระบบจัดการโครงงาน'; // Default
+            
+            if (!empty($data['settings'])) {
+                $systemName = $data['settings']['system_name'] ?? $systemName;
+                $systemDesc = $data['settings']['system_description'] ?? $systemDesc;
             } else if (isset($this) && method_exists($this, 'model')) {
                 try {
                     $settingsModel = $this->model('Settings_model');
                     $dbSystemName = $settingsModel->get('system_name');
+                    $dbSystemDesc = $settingsModel->get('system_description');
                     if ($dbSystemName) $systemName = $dbSystemName;
+                    if ($dbSystemDesc) $systemDesc = $dbSystemDesc;
                 } catch (Exception $e) {}
             }
         ?>
         <h1 class="text-xl font-bold text-pink-500"><?php echo htmlspecialchars($systemName); ?></h1>
-        <p class="text-xs text-gray-400 mt-1">ระบบจัดการโครงงาน</p>
+        <p class="text-xs text-gray-400 mt-1"><?php echo htmlspecialchars($systemDesc); ?></p>
     </div>
 
     <nav class="p-4 space-y-2">

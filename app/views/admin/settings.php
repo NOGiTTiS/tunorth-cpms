@@ -37,6 +37,14 @@
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Copyright Text</label>
                                     <input type="text" name="site_copyright" value="<?php echo htmlspecialchars($data['settings']['site_copyright'] ?? ''); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="© 2025 Your Company">
                                 </div>
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">System Description</label>
+                                    <input type="text" name="system_description" value="<?php echo htmlspecialchars($data['settings']['system_description'] ?? 'ระบบจัดการโครงงานคอมพิวเตอร์ ม.6'); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Institute Name</label>
+                                    <input type="text" name="institute_name" value="<?php echo htmlspecialchars($data['settings']['institute_name'] ?? 'โรงเรียนเตรียมอุดมศึกษา ภาคเหนือ'); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300">
+                                </div>
                             </div>
                         </div>
 
