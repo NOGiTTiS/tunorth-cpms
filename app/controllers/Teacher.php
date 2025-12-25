@@ -91,7 +91,10 @@ class Teacher extends Controller {
                 ];
             }
             if ($row['step_id']) {
-                $students[$sid]['steps'][$row['step_id']] = $row['status'];
+                $students[$sid]['steps'][$row['step_id']] = [
+                    'status' => $row['status'],
+                    'score' => $row['score']
+                ];
             }
         }
 
@@ -107,7 +110,8 @@ class Teacher extends Controller {
         // Header Row
         $header = ['รหัสนักเรียน', 'ชื่อ-นามสกุล', 'ห้อง', 'ชื่อโครงงาน'];
         foreach ($steps as $step) {
-            $header[] = $step['step_name'];
+            $header[] = $step['step_name'] . ' (สถานะ)';
+            $header[] = $step['step_name'] . ' (คะแนน)';
         }
         fputcsv($output, $header);
 
@@ -120,13 +124,17 @@ class Teacher extends Controller {
                 $student['project_name']
             ];
             foreach ($steps as $step) {
-                $status = $student['steps'][$step['id']] ?? '-';
+                $stepData = $student['steps'][$step['id']] ?? null;
+                $status = $stepData ? $stepData['status'] : '-';
+                $score = ($stepData && isset($stepData['score'])) ? $stepData['score'] : '-';
+
                 // Translate Status
                 if ($status == 'APPROVED') $status = 'ผ่าน';
                 elseif ($status == 'REJECTED') $status = 'ไม่ผ่าน';
                 elseif ($status == 'PENDING') $status = 'รอตรวจ';
                 
                 $row[] = $status;
+                $row[] = $score;
             }
             fputcsv($output, $row);
         }

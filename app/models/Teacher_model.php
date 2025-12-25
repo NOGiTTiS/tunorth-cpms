@@ -82,7 +82,7 @@ class Teacher_model {
         $sql = "SELECT 
                     u.student_id, u.full_name, u.room, 
                     g.project_name_th, g.advisor_name,
-                    s.step_id, s.status, ps.step_name
+                    s.step_id, s.status, s.score, ps.step_name
                 FROM users u
                 JOIN group_members gm ON u.id = gm.user_id
                 JOIN project_groups g ON gm.group_id = g.id
