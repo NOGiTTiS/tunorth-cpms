@@ -20,14 +20,55 @@
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             <div class="max-w-7xl mx-auto">
                 
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+                <!-- Filters -->
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-6">
+                    <form action="" method="GET" class="flex flex-col lg:flex-row items-center gap-4">
+                        
+                        <!-- Role Filter -->
+                        <div class="w-full lg:w-auto">
+                            <select name="role" class="w-full p-3 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-pink-500">
+                                <option value="">ทุกบทบาท (All Roles)</option>
+                                <option value="ADMIN" <?php echo ($data['filters']['role'] == 'ADMIN') ? 'selected' : ''; ?>>ผู้ดูแลระบบ (Admin)</option>
+                                <option value="TEACHER" <?php echo ($data['filters']['role'] == 'TEACHER') ? 'selected' : ''; ?>>ครูที่ปรึกษา (Teacher)</option>
+                                <option value="STUDENT" <?php echo ($data['filters']['role'] == 'STUDENT') ? 'selected' : ''; ?>>นักเรียน (Student)</option>
+                            </select>
+                        </div>
+
+                        <!-- Date Filter -->
+                        <div class="w-full lg:w-auto">
+                            <input type="date" name="date" value="<?php echo htmlspecialchars($data['filters']['date']); ?>" class="w-full p-3 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-pink-500">
+                        </div>
+
+                        <!-- Search -->
+                        <div class="w-full flex-1">
+                            <div class="relative">
+                                <span class="absolute left-4 top-3.5 text-gray-400">🔍</span>
+                                <input type="text" name="q" value="<?php echo htmlspecialchars($data['filters']['search']); ?>" placeholder="ค้นหาชื่อ, กิจกรรม, หรือรายละเอียด..." class="w-full p-3 pl-10 bg-slate-50 border border-gray-200 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex gap-2 w-full lg:w-auto">
+                            <button type="submit" class="flex-1 lg:flex-none px-6 py-3 bg-pink-600 text-white rounded-xl font-bold shadow-lg shadow-pink-200 hover:bg-pink-700 transition">
+                                กรองข้อมูล
+                            </button>
+                            <?php if(!empty($data['filters']['role']) || !empty($data['filters']['date']) || !empty($data['filters']['search'])): ?>
+                                <a href="<?php echo BASE_URL; ?>/admin/logs" class="flex-1 lg:flex-none px-6 py-3 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition text-center">
+                                    ล้างค่า
+                                </a>
+                            <?php endif; ?>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
                     <div>
-                        <h2 class="text-3xl font-bold text-slate-800">บันทึกกิจกรรม (Activity Logs)</h2>
-                        <p class="text-gray-500 text-sm mt-1">ประวัติการใช้งานและกิจกรรมต่างๆ ภายในระบบ (แสดง 100 รายการล่าสุด)</p>
+                        <h2 class="text-2xl font-bold text-slate-800">รายการบันทึก (Logs List)</h2>
                     </div>
-                    <button onclick="location.reload()" class="w-full md:w-auto p-3 md:p-2 bg-white border border-gray-200 rounded-xl hover:bg-slate-50 transition text-slate-500 text-center flex items-center justify-center font-bold">
-                        <span class="mr-2">🔄</span> Refresh
-                    </button>
+                    <div class="text-xs text-gray-400 font-bold bg-slate-100 px-3 py-1 rounded-lg">
+                        แสดง 100 รายการล่าสุด
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

@@ -263,7 +263,18 @@ class Admin extends Controller {
     }
     public function logs() {
         $logModel = $this->model('Log_model');
-        $data['logs'] = $logModel->getLogs(100); // 100 รายการล่าสุด
+        
+        // Capture filters
+        $filters = [
+            'role' => isset($_GET['role']) ? $_GET['role'] : '',
+            'date' => isset($_GET['date']) ? $_GET['date'] : '',
+            'search' => isset($_GET['q']) ? trim($_GET['q']) : ''
+        ];
+
+        // Pass filters to model
+        $data['logs'] = $logModel->getLogs(100, $filters); 
+        $data['filters'] = $filters; // Send back to view to maintain state
+        
         $this->view('admin/logs', $data);
     }
 

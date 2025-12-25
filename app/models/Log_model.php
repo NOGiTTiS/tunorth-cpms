@@ -42,14 +42,42 @@ class Log_model {
         ]);
     }
 
-    public function getLogs($limit = 100) {
-        $query = "SELECT l.*, u.full_name, u.student_id 
-                  FROM " . $this->table . " l 
-                  LEFT JOIN users u ON l.user_id = u.id 
-                  ORDER BY l.created_at DESC LIMIT :limit";
+    public function getLogs($limit = 100, $filters = []) {
+        $sql = "SELECT l.*, u.full_name, u.student_id 
+                FROM " . $this->table . " l 
+                LEFT JOIN users u ON l.user_id = u.id 
+                WHERE 1=1 ";
         
-        $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $params = [];
+
+        // Filter by Role
+        if (!empty($filters['role'])) {
+            $sql .= " AND l.user_role = :role ";
+            $params[':role'] = $filters['role'];
+        }
+
+        // Filter by Date
+        if (!empty($filters['date'])) {
+            $sql .= " AND DATE(l.created_at) = :date ";
+            $params[':date'] = $filters['date'];
+        }
+
+        // Filter by Search Keyword
+        if (!empty($filters['search'])) {
+            $sql .= " AND (u.full_name LIKE :search OR l.action LIKE :search OR l.description LIKE :search) ";
+            $params[':search'] = "%" . $filters['search'] . "%";
+        }
+
+        $sql .= " ORDER BY l.created_at DESC LIMIT :limit";
+        $params[':limit'] = (int)$limit;
+        
+        $stmt = $this->db->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
