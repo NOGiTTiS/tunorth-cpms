@@ -129,8 +129,17 @@ class Submission extends Controller {
             // Log & Notification
             $this->model('Log_model')->log($user_id, $_SESSION['user_role'], 'UPLOAD', "ส่งงาน ($submission_type) Step ID: $step_id");
             
+            // ดึงข้อมูลกลุ่มเพื่อระบุห้อง
+            $groupData = $this->model('Group_model')->getGroupById($group_id);
+            $room = $groupData['room'] ?? 'N/A';
+
             require_once __DIR__ . '/../core/Notification.php';
-            Notification::sendTelegram("📁 <b>มีการส่งงานใหม่! (" . strtoupper($submission_type) . ")</b>\nกลุ่ม: " . $_POST['group_name'] . "\nงาน: " . $_POST['step_name']);
+            $msg = "📁 <b>มีการส่งงานใหม่! (" . strtoupper($submission_type) . ")</b>\n" .
+                   "กลุ่ม: " . $_POST['group_name'] . "\n" .
+                   "ห้อง: ม." . $room . "\n" .
+                   "งาน: " . $_POST['step_name'];
+            
+            Notification::sendTelegram($msg, 'submission');
             
             echo json_encode(['status' => 'success']);
         }

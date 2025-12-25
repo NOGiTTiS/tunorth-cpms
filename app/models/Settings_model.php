@@ -35,9 +35,12 @@ class Settings_model {
             'site_copyright' => '© 2025 TU-North CPMS. All rights reserved.',
             'telegram_api_token' => '',
             'telegram_chat_id' => '',
+            'telegram_chat_id_student' => '', // สำหรับแจ้งเตือนนักเรียน (ผลตรวจ)
             'system_description' => 'ระบบจัดการโครงงานคอมพิวเตอร์ ม.6',
             'institute_name' => 'โรงเรียนเตรียมอุดมศึกษา ภาคเหนือ',
-            'submission_mode' => 'open' // open, sequential
+            'submission_mode' => 'open', // open, sequential
+            'enable_submission_notify' => '1',
+            'enable_grading_notify' => '1'
         ];
 
         foreach ($defaults as $key => $value) {

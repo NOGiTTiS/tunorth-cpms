@@ -55,7 +55,14 @@ class Teacher extends Controller {
 
                 // ส่ง Telegram แจ้งเตือนนักเรียน (Optional)
                 require_once __DIR__ . '/../core/Notification.php';
-                Notification::sendTelegram("🔔 <b>ครูตรวจงานแล้ว!</b>\nโครงงาน: " . $_POST['project_name'] . "\nผลการตรวจ: " . $_POST['status']);
+                
+                $msg = "🔔 <b>ครูตรวจงานแล้ว!</b>\n" .
+                       "โครงงาน: " . $_POST['project_name'] . "\n" .
+                       "ห้อง: ม." . ($_POST['room'] ?? '-') . "\n" .
+                       "งาน: " . ($_POST['step_name'] ?? '-') . "\n" .
+                       "ผลการตรวจ: " . $_POST['status'];
+
+                Notification::sendTelegram($msg, 'grading');
                 
                 echo json_encode(['status' => 'success']);
             }

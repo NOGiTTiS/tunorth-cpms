@@ -218,7 +218,9 @@ async function gradeModal(data) {
                 status: document.getElementById('swal-status').value,
                 comment: document.getElementById('swal-comment').value,
                 score: document.getElementById('swal-score').value,
-                project_name: data.project_name_th
+                project_name: data.project_name_th,
+                step_name: data.step_name,
+                room: data.student_room
             }
         }
     });
