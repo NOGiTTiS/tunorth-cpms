@@ -7,8 +7,9 @@ class Teacher_model {
     }
 
     public function getPendingSubmissions($advisor_id = null, $status = null, $room = null, $year = null) {
+        $this->ensureScoreColumn();
         $query = "SELECT 
-                    s.id, s.status, s.file_path, s.comment, s.submitted_at, s.group_id,
+                    s.id, s.status, s.file_path, s.comment, s.score, s.submitted_at, s.group_id,
                     g.project_name_th, g.advisor_name,
                     ps.step_name, 
                     u_std.full_name as submitter_name,
@@ -56,12 +57,22 @@ class Teacher_model {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateReview($submission_id, $status, $comment) {
-        $query = "UPDATE submissions SET status = :status, comment = :comment WHERE id = :id";
+    public function ensureScoreColumn() {
+        try {
+            $this->db->exec("ALTER TABLE submissions ADD COLUMN score INT NULL DEFAULT NULL");
+        } catch (PDOException $e) {
+            // Column likely exists
+        }
+    }
+
+    public function updateReview($submission_id, $status, $comment, $score = null) {
+        $this->ensureScoreColumn();
+        $query = "UPDATE submissions SET status = :status, comment = :comment, score = :score WHERE id = :id";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             ':status' => $status,
             ':comment' => $comment,
+            ':score' => ($score !== '' ? $score : null),
             ':id' => $submission_id
         ]);
     }

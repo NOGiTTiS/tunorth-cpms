@@ -184,6 +184,10 @@ async function gradeModal(data) {
                     <option value="REJECTED" ${data.status === 'REJECTED' ? 'selected' : ''}>❌ ตีกลับ (ให้แก้ไขใหม่)</option>
                     <option value="PENDING" ${data.status === 'PENDING' ? 'selected' : ''}>⏳ รอการตรวจสอบ</option>
                 </select>
+
+                <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">คะแนน (0-100) (ไม่บังคับ)</p>
+                <input type="number" id="swal-score" class="w-full p-4 border border-gray-200 rounded-2xl mb-5 focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300 font-bold" placeholder="ระบุคะแนน..." min="0" max="100" value="${data.score || ''}">
+
                 <p class="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest">ข้อเสนอแนะแก่กลุ่มนักเรียน</p>
                 <textarea id="swal-comment" class="w-full p-4 border border-gray-200 rounded-2xl h-40 focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="ระบุสิ่งที่นักเรียนต้องปรับปรุง...">${data.comment || ''}</textarea>
             </div>`,
@@ -202,6 +206,7 @@ async function gradeModal(data) {
                 id: data.id,
                 status: document.getElementById('swal-status').value,
                 comment: document.getElementById('swal-comment').value,
+                score: document.getElementById('swal-score').value,
                 project_name: data.project_name_th
             }
         }

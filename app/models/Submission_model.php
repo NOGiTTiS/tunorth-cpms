@@ -7,7 +7,7 @@ class Submission_model {
     }
 
     public function getStepsWithStatus($group_id) {
-        $query = "SELECT ps.*, s.status, s.file_path, s.comment, s.submitted_at 
+        $query = "SELECT ps.*, s.status, s.file_path, s.comment, s.score, s.submitted_at 
                   FROM project_steps ps 
                   LEFT JOIN submissions s ON ps.id = s.step_id AND s.group_id = :group_id
                   ORDER BY ps.step_order ASC";

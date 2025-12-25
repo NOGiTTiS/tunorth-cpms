@@ -52,7 +52,7 @@ class Teacher extends Controller {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $teacherModel = $this->model('Teacher_model');
-            $success = $teacherModel->updateReview($_POST['id'], $_POST['status'], $_POST['comment']);
+            $success = $teacherModel->updateReview($_POST['id'], $_POST['status'], $_POST['comment'], $_POST['score'] ?? null);
 
             if ($success) {
                 // Log Activity

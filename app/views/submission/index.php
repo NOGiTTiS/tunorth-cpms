@@ -77,11 +77,17 @@
                                                 if($step['status'] == 'APPROVED') { $badgeClass = "bg-green-100 text-green-600"; $text = "ผ่านแล้ว"; }
                                                 if($step['status'] == 'REJECTED') { $badgeClass = "bg-rose-100 text-rose-600"; $text = "แก้ไข"; }
                                             ?>
-                                            <div class="mt-1">
-                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badgeClass; ?>">
-                                                    <?php echo $text; ?>
-                                                </span>
-                                            </div>
+                                                <div class="mt-1 flex items-center gap-2">
+                                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badgeClass; ?>">
+                                                        <?php echo $text; ?>
+                                                    </span>
+                                                    
+                                                    <?php if(isset($step['score']) && $step['score'] !== null): ?>
+                                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200">
+                                                            ⭐ คะแนน: <?php echo $step['score']; ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
                                         </td>
                                         
                                         <td class="px-6 py-5 align-top text-center">

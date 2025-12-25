@@ -23,6 +23,17 @@
             เซิร์ฟเวอร์พบปัญหาบางอย่างและไม่สามารถดำเนินการตามคำขอของคุณได้ กรุณาลองใหม่อีกครั้งในภายหลัง
         </p>
         
+        <?php if(isset($data['error']) || isset($e)): ?>
+            <div class="bg-red-50 p-4 rounded-xl text-left mb-6 overflow-auto max-h-40">
+                <p class="text-red-800 font-mono text-xs">
+                    <?php 
+                        echo htmlspecialchars($data['error'] ?? '');
+                        if(isset($e)) echo "<br>" . htmlspecialchars($e->getMessage()); 
+                    ?>
+                </p>
+            </div>
+        <?php endif; ?>
+        
         <div class="space-y-3">
             <button onclick="location.reload()" class="w-full px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-colors shadow-lg">
                 ลองใหม่อีกครั้ง (Refresh)
