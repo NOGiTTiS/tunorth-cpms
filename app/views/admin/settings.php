@@ -28,7 +28,7 @@
                             <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center">
                                 <span class="bg-pink-100 text-pink-600 rounded-lg p-2 mr-3 text-sm">📂</span> ทั่วไป (General)
                             </h3>
-                            <div class="grid grid-cols-1 gap-6 pl-0 md:pl-12">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-0 md:pl-12">
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">System Name</label>
                                     <input type="text" name="system_name" value="<?php echo htmlspecialchars($data['settings']['system_name'] ?? 'CPMS TU-North'); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="CPMS TU-North">
@@ -36,6 +36,57 @@
                                 <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Copyright Text</label>
                                     <input type="text" name="site_copyright" value="<?php echo htmlspecialchars($data['settings']['site_copyright'] ?? ''); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="© 2025 Your Company">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-100">
+
+                        <!-- Academic Settings -->
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center">
+                                <span class="bg-purple-100 text-purple-600 rounded-lg p-2 mr-3 text-sm">🎓</span> ตั้งค่าการศึกษา (Academic)
+                            </h3>
+                            <div class="grid grid-cols-1 gap-6 pl-0 md:pl-12">
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">รูปแบบการส่งงาน (Submission Mode)</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- Open Mode -->
+                                        <label class="relative flex items-start p-4 border-2 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all <?php echo ($data['settings']['submission_mode'] ?? 'open') === 'open' ? 'border-pink-500 bg-pink-50/50' : 'border-gray-100'; ?>">
+                                            <input type="radio" name="submission_mode" value="open" class="peer sr-only" <?php echo ($data['settings']['submission_mode'] ?? 'open') === 'open' ? 'checked' : ''; ?>
+                                                onchange="document.querySelectorAll('input[name=\'submission_mode\']').forEach(el => { el.parentElement.classList.remove('border-pink-500', 'bg-pink-50/50'); el.parentElement.classList.add('border-gray-100'); }); this.parentElement.classList.remove('border-gray-100'); this.parentElement.classList.add('border-pink-500', 'bg-pink-50/50');">
+                                            
+                                            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-600 mr-3 shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            </div>
+                                            <div>
+                                                <span class="block text-sm font-bold text-gray-800 mb-0.5">อิสระ (Open)</span>
+                                                <span class="block text-[10px] text-slate-500 leading-tight">ส่งงานขั้นตอนใดก็ได้ ไม่ต้องเรียงลำดับ</span>
+                                            </div>
+                                            
+                                            <div class="absolute top-3 right-3 text-pink-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            </div>
+                                        </label>
+
+                                        <!-- Sequential Mode -->
+                                        <label class="relative flex items-start p-4 border-2 rounded-2xl cursor-pointer hover:bg-slate-50 transition-all <?php echo ($data['settings']['submission_mode'] ?? '') === 'sequential' ? 'border-pink-500 bg-pink-50/50' : 'border-gray-100'; ?>">
+                                            <input type="radio" name="submission_mode" value="sequential" class="peer sr-only" <?php echo ($data['settings']['submission_mode'] ?? '') === 'sequential' ? 'checked' : ''; ?>
+                                                onchange="document.querySelectorAll('input[name=\'submission_mode\']').forEach(el => { el.parentElement.classList.remove('border-pink-500', 'bg-pink-50/50'); el.parentElement.classList.add('border-gray-100'); }); this.parentElement.classList.remove('border-gray-100'); this.parentElement.classList.add('border-pink-500', 'bg-pink-50/50');">
+                                            
+                                            <div class="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-600 mr-3 shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                            </div>
+                                            <div>
+                                                <span class="block text-sm font-bold text-gray-800 mb-0.5">ตามลำดับ (Sequential)</span>
+                                                <span class="block text-[10px] text-slate-500 leading-tight">ต้องผ่านงานก่อนหน้า จึงจะส่งงานถัดไปได้</span>
+                                            </div>
+
+                                            <div class="absolute top-3 right-3 text-pink-500 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

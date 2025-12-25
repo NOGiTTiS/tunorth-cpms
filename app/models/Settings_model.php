@@ -34,7 +34,8 @@ class Settings_model {
             'site_favicon' => '',
             'site_copyright' => '© 2025 TU-North CPMS. All rights reserved.',
             'telegram_api_token' => '',
-            'telegram_chat_id' => ''
+            'telegram_chat_id' => '',
+            'submission_mode' => 'open' // open, sequential
         ];
 
         foreach ($defaults as $key => $value) {

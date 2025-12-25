@@ -17,9 +17,13 @@ class Submission extends Controller {
             return; // หยุดการทำงานตรงนี้
         }
 
+        $settingsModel = $this->model('Settings_model');
+        $submissionMode = $settingsModel->get('submission_mode') ?? 'open';
+
         $data = [
             'steps' => $subModel->getStepsWithStatus($myGroup['id']),
-            'group' => $myGroup
+            'group' => $myGroup,
+            'submission_mode' => $submissionMode
         ];
 
         $this->view('submission/index', $data);

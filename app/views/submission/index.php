@@ -38,7 +38,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 block md:table-row-group">
-                                <?php foreach($data['steps'] as $step): ?>
+                                <?php foreach($data['steps'] as $key => $step): ?>
                                     <tr class="hover:bg-slate-50/50 transition-colors block md:table-row border-b border-gray-100 md:border-none p-4 md:p-0 mb-4 md:mb-0 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none">
                                         <td class="px-0 py-2 md:px-6 md:py-5 align-top block md:table-cell">
                                             <div class="flex items-start">
@@ -108,10 +108,31 @@
                                         <td class="px-0 py-2 md:px-6 md:py-5 align-top text-center block md:table-cell pl-[3.5rem] md:pl-6 md:text-center text-left">
                                             <div class="flex items-center justify-start md:justify-center">
                                                 <!-- ปุ่มอัปโหลด -->
-                                                <button onclick="openUploadModal(<?php echo $step['id']; ?>, '<?php echo htmlspecialchars($step['step_name'], ENT_QUOTES); ?>')" 
-                                                    class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-pink-100 active:scale-95 whitespace-nowrap w-full md:w-auto text-center justify-center flex">
-                                                    <?php echo ($step['status']) ? 'ส่งใหม่' : '🚀 อัปโหลดส่งงาน'; ?>
-                                                </button>
+                                                <?php
+                                                    $canSubmit = true;
+                                                    if ($data['submission_mode'] === 'sequential') {
+                                                        // เช็ค step ก่อนหน้า
+                                                        $prevIndex = $key - 1;
+                                                        if ($prevIndex >= 0) {
+                                                            $prevStep = $data['steps'][$prevIndex];
+                                                            // ถ้าก่อนหน้ายังไม่ APPROVED -> ห้ามส่ง
+                                                            if ($prevStep['status'] !== 'APPROVED') {
+                                                                $canSubmit = false;
+                                                            }
+                                                        }
+                                                    }
+                                                ?>
+                                                
+                                                <?php if($canSubmit): ?>
+                                                    <button onclick="openUploadModal(<?php echo $step['id']; ?>, '<?php echo htmlspecialchars($step['step_name'], ENT_QUOTES); ?>')" 
+                                                        class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-pink-100 active:scale-95 whitespace-nowrap w-full md:w-auto text-center justify-center flex">
+                                                        <?php echo ($step['status']) ? 'ส่งใหม่' : '🚀 อัปโหลดส่งงาน'; ?>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button disabled class="px-4 py-2 bg-slate-100 text-slate-400 rounded-xl text-xs font-bold whitespace-nowrap w-full md:w-auto text-center justify-center flex cursor-not-allowed items-center">
+                                                        <span class="mr-1">🔒</span> ต้องผ่านงานก่อนหน้า
+                                                    </button>
+                                                <?php endif; ?>
                                             </div>
                                         </td>
                                     </tr>

@@ -152,11 +152,11 @@
                                                 $tooltip = $isLink ? 'เปิดลิงก์งาน' : 'เปิดดูเอกสาร PDF';
                                             ?>
                                             <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank" 
-                                               class="flex-1 md:flex-none h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm font-bold text-xs" title="<?php echo $tooltip; ?>">
+                                               class="flex-1 md:flex-none w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm font-bold text-xs" title="<?php echo $tooltip; ?>">
                                                 <span class="md:hidden mr-2">ดูงาน</span> <?php echo $icon; ?>
                                             </a>
                                             <button onclick='gradeModal(<?php echo htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>)' 
-                                                    class="flex-1 md:flex-none h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center hover:bg-pink-700 transition-all shadow-lg shadow-pink-200 font-bold text-xs px-4" title="ลงคะแนนและคอมเมนต์">
+                                                    class="flex-1 md:flex-none w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center hover:bg-pink-700 transition-all shadow-lg shadow-pink-200 font-bold text-xs" title="ลงคะแนนและคอมเมนต์">
                                                 <span class="md:hidden mr-2">ตรวจให้คะแนน</span> ✏️
                                             </button>
                                         </div>

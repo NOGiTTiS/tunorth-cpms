@@ -13,24 +13,26 @@
         </header>
 
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-            <div class="max-w-6xl mx-auto">
-                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4">
-                    <div class="mb-2 xl:mb-0">
-                        <h2 class="text-3xl font-bold text-gray-800 font-prompt">จัดการผู้ใช้งาน</h2>
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
+                    <div class="mb-2 lg:mb-0">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 font-prompt">จัดการผู้ใช้งาน</h2>
                         <p class="text-gray-500 text-sm">ดูแลสิทธิ์การเข้าถึงของครูและนักเรียน</p>
                     </div>
 
-                    <!-- Search Bar -->
-                    <form method="GET" class="flex-grow max-w-md w-full relative group">
-                        <input type="hidden" name="limit" value="<?php echo $data['pagination']['limit']; ?>">
-                        <span class="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-pink-500 transition-colors">🔍</span>
-                        <input type="text" name="q" value="<?php echo htmlspecialchars($data['pagination']['search']); ?>" placeholder="ค้นหาชื่อ, อีเมล หรือรหัสนักเรียน..." class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all shadow-sm text-sm">
-                    </form>
+                    <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto flex-1 justify-end items-center">
+                        <!-- Search Bar -->
+                        <form method="GET" class="w-full md:max-w-xs relative group order-2 md:order-1">
+                            <input type="hidden" name="limit" value="<?php echo $data['pagination']['limit']; ?>">
+                            <span class="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-pink-500 transition-colors">🔍</span>
+                            <input type="text" name="q" value="<?php echo htmlspecialchars($data['pagination']['search']); ?>" placeholder="ค้นหา..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all shadow-sm text-sm">
+                        </form>
 
-                    <div class="flex flex-col sm:flex-row gap-2 w-full xl:w-auto">
-                        <button onclick="downloadCSVTemplate()" class="w-full sm:flex-1 xl:flex-none bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 ตัวอย่าง</button>
-                        <button onclick="importCSV()" class="w-full sm:flex-1 xl:flex-none bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg text-sm">🚀 Import</button>
-                        <button onclick="openUserModal()" class="w-full sm:flex-1 xl:flex-none bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100 text-sm">+ เพิ่ม</button>
+                        <div class="flex gap-2 w-full md:w-auto order-1 md:order-2">
+                            <button onclick="downloadCSVTemplate()" class="flex-1 md:flex-none bg-white border border-gray-200 text-slate-600 px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-50 transition shadow-sm">📥 ตัวอย่าง CSV</button>
+                            <button onclick="importCSV()" class="flex-1 md:flex-none bg-slate-800 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-slate-700 transition shadow-lg shadow-slate-200 text-xs">🚀 Import</button>
+                            <button onclick="openUserModal()" class="flex-1 md:flex-none bg-pink-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-200 text-xs whitespace-nowrap">+ เพิ่มผู้ใช้</button>
+                        </div>
                     </div>
                 </div>
 
@@ -39,21 +41,21 @@
                         <table class="w-full text-left border-collapse block md:table">
                             <thead class="bg-slate-50 border-b border-gray-100 hidden md:table-header-group">
                                 <tr>
-                                    <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">ข้อมูลผู้ใช้</th>
-                                    <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">บทบาท</th>
-                                    <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">อีเมล</th>
-                                    <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">จัดการ</th>
+                                    <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase tracking-widest leading-normal">ข้อมูลผู้ใช้</th>
+                                    <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase tracking-widest leading-normal">บทบาท</th>
+                                    <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase tracking-widest leading-normal">อีเมล</th>
+                                    <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase tracking-widest text-center leading-normal">จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 block md:table-row-group">
                                 <?php foreach($data['users'] as $user): ?>
-                                <tr class="hover:bg-pink-50/30 transition-colors block md:table-row border-b border-gray-100 md:border-none p-5 md:p-0 mb-4 md:mb-0 bg-white shadow-sm md:shadow-none rounded-2xl md:rounded-none">
-                                    <td class="px-0 py-2 md:px-6 md:py-4 block md:table-cell">
-                                        <div class="font-bold text-gray-800 text-base md:text-sm"><?php echo htmlspecialchars($user['full_name']); ?></div>
+                                <tr class="hover:bg-pink-50/30 transition-colors block md:table-row border-b border-gray-100 md:border-none p-4 md:p-0 mb-4 md:mb-0 bg-white shadow-sm md:shadow-none rounded-2xl md:rounded-none">
+                                    <td class="px-0 py-2 md:px-6 md:py-3 block md:table-cell">
+                                        <div class="font-bold text-gray-800 text-sm"><?php echo htmlspecialchars($user['full_name']); ?></div>
                                         <div class="text-[10px] text-gray-400 font-mono"><?php echo htmlspecialchars($user['student_id'] ?: 'STAFF ID'); ?></div>
                                         <!-- Mobile Email show here if needed, but let's keep separate -->
                                     </td>
-                                    <td class="px-0 py-2 md:px-6 md:py-4 block md:table-cell">
+                                    <td class="px-0 py-2 md:px-6 md:py-3 block md:table-cell">
                                         <?php 
                                             $roleColor = $user['role'] == 'ADMIN' ? 'bg-purple-100 text-purple-600' : 
                                                         ($user['role'] == 'TEACHER' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600');
@@ -62,11 +64,11 @@
                                             <?php echo htmlspecialchars($user['role']); ?>
                                         </span>
                                     </td>
-                                    <td class="px-0 py-2 md:px-6 md:py-4 text-sm text-gray-500 block md:table-cell">
+                                    <td class="px-0 py-2 md:px-6 md:py-3 text-sm text-gray-500 block md:table-cell">
                                         <span class="md:hidden text-[10px] font-bold text-gray-400 mr-2">📧</span>
                                         <?php echo htmlspecialchars($user['email']); ?>
                                     </td>
-                                    <td class="px-0 py-3 md:px-6 md:py-4 block md:table-cell">
+                                    <td class="px-0 py-3 md:px-6 md:py-3 block md:table-cell">
                                         <div class="flex justify-start md:justify-center space-x-2">
                                             <button onclick="openUserModal(<?php echo htmlspecialchars(json_encode($user)); ?>)" class="flex-1 md:flex-none p-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-pink-600 hover:text-white transition-all font-bold text-xs flex items-center justify-center">
                                                 <span class="md:hidden mr-2">แก้ไข</span> ✏️
