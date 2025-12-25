@@ -20,13 +20,13 @@
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             <div class="max-w-7xl mx-auto">
                 
-                <div class="flex items-center justify-between mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
                     <div>
                         <h2 class="text-3xl font-bold text-slate-800">บันทึกกิจกรรม (Activity Logs)</h2>
                         <p class="text-gray-500 text-sm mt-1">ประวัติการใช้งานและกิจกรรมต่างๆ ภายในระบบ (แสดง 100 รายการล่าสุด)</p>
                     </div>
-                    <button onclick="location.reload()" class="p-2 bg-white border border-gray-200 rounded-xl hover:bg-slate-50 transition text-slate-500">
-                        🔄 Refresh
+                    <button onclick="location.reload()" class="w-full md:w-auto p-3 md:p-2 bg-white border border-gray-200 rounded-xl hover:bg-slate-50 transition text-slate-500 text-center flex items-center justify-center font-bold">
+                        <span class="mr-2">🔄</span> Refresh
                     </button>
                 </div>
 

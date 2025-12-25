@@ -21,44 +21,46 @@
             <div class="max-w-7xl mx-auto">
                 
                 <!-- Page Title & Mode Switcher -->
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
                     <div>
                         <h2 class="text-3xl font-bold text-gray-800 leading-tight">รายการตรวจงาน</h2>
                         <p class="text-gray-500 text-sm mt-1">ตรวจสอบเอกสารและให้ข้อเสนอแนะแก่รายห้องเรียน</p>
                     </div>
 
                     <!-- 🔘 แท็บสลับโหมดการดูงาน -->
-                    <div class="flex items-center gap-2 self-start md:self-auto flex-wrap">
-                         <div class="bg-white p-1 rounded-2xl shadow-sm border border-gray-100 flex">
-                            <a href="?mode=mine&room=<?php echo $data['selected_room']; ?>&year=<?php echo $data['selected_year']; ?>" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
-                                📁 งานในที่ปรึกษา
+                    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full xl:w-auto">
+                         <div class="bg-white p-1 rounded-2xl shadow-sm border border-gray-100 flex overflow-x-auto min-w-0">
+                            <a href="?mode=mine&room=<?php echo $data['selected_room']; ?>&year=<?php echo $data['selected_year']; ?>" class="flex-1 whitespace-nowrap text-center px-4 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] != 'all') ? 'bg-pink-600 text-white shadow-lg shadow-pink-100' : 'text-gray-400 hover:text-gray-600'; ?>">
+                                📁 ที่ปรึกษา
                             </a>
-                            <a href="?mode=all&room=<?php echo $data['selected_room']; ?>&year=<?php echo $data['selected_year']; ?>" class="px-5 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
-                                🌍 งานทั้งหมดในระบบ
+                            <a href="?mode=all&room=<?php echo $data['selected_room']; ?>&year=<?php echo $data['selected_year']; ?>" class="flex-1 whitespace-nowrap text-center px-4 py-2 rounded-xl text-xs font-bold transition-all <?php echo ($data['current_mode'] == 'all') ? 'bg-slate-800 text-white shadow-lg' : 'text-gray-400 hover:text-gray-600'; ?>">
+                                🌍 ทั้งหมด
                             </a>
                         </div>
                         
-                        <!-- Room Filter -->
-                        <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&year=<?php echo $data['selected_year']; ?>&room='+this.value" class="px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-slate-700 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
-                            <option value="">📚 ทุกห้องเรียน</option>
-                            <?php for($i=1; $i<=15; $i++): ?>
-                                <option value="6.<?php echo $i; ?>" <?php echo $data['selected_room'] === "6.$i" ? 'selected' : ''; ?>>ม.6.<?php echo $i; ?></option>
-                            <?php endfor; ?>
-                        </select>
-
-                        <!-- Year Filter (New) -->
-                        <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>&year='+this.value" class="px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-blue-600 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
-                            <option value="">🗓️ ทุกปี</option>
-                            <?php foreach($data['years'] as $yr): ?>
-                                <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
-                                    <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="flex gap-2">
+                            <!-- Room Filter -->
+                            <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&year=<?php echo $data['selected_year']; ?>&room='+this.value" class="flex-1 px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-slate-700 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
+                                <option value="">📚 ทุกห้อง</option>
+                                <?php for($i=1; $i<=15; $i++): ?>
+                                    <option value="6.<?php echo $i; ?>" <?php echo $data['selected_room'] === "6.$i" ? 'selected' : ''; ?>>ม.6.<?php echo $i; ?></option>
+                                <?php endfor; ?>
+                            </select>
+    
+                            <!-- Year Filter (New) -->
+                            <select onchange="window.location.href='?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>&year='+this.value" class="flex-1 px-4 py-2.5 border-none rounded-xl text-xs font-bold bg-white shadow-sm text-blue-600 focus:ring-2 focus:ring-pink-500 outline-none cursor-pointer hover:bg-gray-50">
+                                <option value="">🗓️ ทุกปี</option>
+                                <?php foreach($data['years'] as $yr): ?>
+                                    <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
+                                        <?php echo $yr['year']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
 
                         <!-- Export Button -->
-                        <a href="<?php echo BASE_URL; ?>/teacher/export_grades?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>" target="_blank" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-green-100 flex items-center transition-all">
-                            <span class="mr-2">📥</span> Excel/CSV
+                        <a href="<?php echo BASE_URL; ?>/teacher/export_grades?mode=<?php echo $data['current_mode']; ?>&room=<?php echo $data['selected_room']; ?>" target="_blank" class="w-full md:w-auto px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-green-100 flex items-center justify-center transition-all">
+                            <span class="mr-2">📥</span> Excel
                         </a>
                     </div>
                 </div>
@@ -66,8 +68,8 @@
                 <!-- Table Container -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-slate-50 border-b border-gray-100">
+                        <table class="w-full text-left border-collapse block md:table">
+                            <thead class="bg-slate-50 border-b border-gray-100 hidden md:table-header-group">
                                 <tr>
                                     <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">โครงงาน / ผู้ส่ง</th>
                                     <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">ห้อง</th>
@@ -77,19 +79,20 @@
                                     <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">จัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50 font-prompt">
+                            <tbody class="divide-y divide-gray-50 font-prompt block md:table-row-group">
                                 <?php if(empty($data['submissions'])): ?>
-                                    <tr>
-                                        <td colspan="6" class="px-6 py-20 text-center text-gray-400 italic">ยังไม่มีข้อมูลการส่งงานในหมวดนี้</td>
+                                    <tr class="block md:table-row">
+                                        <td colspan="6" class="px-6 py-20 text-center text-gray-400 italic block md:table-cell">ยังไม่มีข้อมูลการส่งงานในหมวดนี้</td>
                                     </tr>
                                 <?php endif; ?>
 
                                 <?php foreach($data['submissions'] as $row): ?>
-                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                <tr class="hover:bg-slate-50/50 transition-colors block md:table-row border-b border-gray-100 md:border-none p-5 md:p-0 mb-4 md:mb-0 bg-white shadow-sm md:shadow-none rounded-2xl md:rounded-none mx-0 md:mx-0">
                                     <!-- โครงงาน / ผู้ส่ง -->
-                                    <td class="px-6 py-5 min-w-[220px]">
+                                    <td class="px-0 py-2 md:px-6 md:py-5 min-w-[220px] block md:table-cell">
+                                        <div class="md:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">โครงงาน</div>
                                         <a href="<?php echo BASE_URL . '/project/details/' . $row['group_id']; ?>" class="block group">
-                                            <p class="font-bold text-slate-800 leading-tight mb-1 group-hover:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4">
+                                            <p class="font-bold text-slate-800 leading-tight mb-1 group-hover:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4 text-sm md:text-base">
                                                 <?php echo htmlspecialchars($row['project_name_th']); ?>
                                             </p>
                                         </a>
@@ -97,14 +100,15 @@
                                     </td>
 
                                     <!-- ห้อง (New!) -->
-                                    <td class="px-6 py-5 whitespace-nowrap">
+                                    <td class="px-0 py-2 md:px-6 md:py-5 whitespace-nowrap block md:table-cell">
                                         <span class="bg-slate-800 text-white text-[10px] font-black px-2.5 py-1 rounded-lg">
                                             ม.<?php echo htmlspecialchars($row['student_room'] ?: 'N/A'); ?>
                                         </span>
                                     </td>
 
                                     <!-- ครูที่ปรึกษา (แสดงจากที่นักเรียนพิมพ์มา) -->
-                                    <td class="px-6 py-5 min-w-[150px]">
+                                    <td class="px-0 py-2 md:px-6 md:py-5 min-w-[150px] block md:table-cell">
+                                        <div class="md:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">ครูที่ปรึกษา</div>
                                         <div class="flex items-center space-x-2">
                                             <span class="text-xs font-bold text-slate-500">
                                                 👤 <?php echo htmlspecialchars($row['advisor_name'] ?: 'ไม่ระบุ'); ?>
@@ -113,26 +117,33 @@
                                     </td>
 
                                     <!-- หัวข้อบทที่ส่ง -->
-                                    <td class="px-6 py-5 text-center whitespace-nowrap">
-                                        <span class="text-[10px] font-black text-pink-600 bg-pink-50 px-3 py-1 rounded-lg border border-pink-100 uppercase">
+                                    <td class="px-0 py-2 md:px-6 md:py-5 text-center whitespace-nowrap block md:table-cell md:text-center text-left">
+                                        <div class="md:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">หัวข้อที่ส่ง</div>
+                                        <span class="text-[10px] font-black text-pink-600 bg-pink-50 px-3 py-1 rounded-lg border border-pink-100 uppercase inline-block">
                                             <?php echo htmlspecialchars($row['step_name']); ?>
                                         </span>
                                     </td>
 
                                     <!-- สถานะ -->
-                                    <td class="px-6 py-5">
+                                    <td class="px-0 py-2 md:px-6 md:py-5 block md:table-cell">
+                                        <div class="md:hidden text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">สถานะ</div>
                                         <?php 
                                             $badge = ($row['status'] == 'APPROVED') ? 'bg-green-100 text-green-600' : 
                                                     (($row['status'] == 'REJECTED') ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600');
                                         ?>
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badge; ?>">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badge; ?> inline-block">
                                             <?php echo ($row['status'] == 'PENDING') ? 'รอตรวจ' : $row['status']; ?>
                                         </span>
+                                        <?php if(isset($row['score']) && $row['score'] !== null): ?>
+                                            <span class="ml-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200 inline-block">
+                                                ⭐ <?php echo $row['score']; ?>
+                                            </span>
+                                        <?php endif; ?>
                                     </td>
 
                                     <!-- จัดการ (ดู/ตรวจ) -->
-                                    <td class="px-6 py-5">
-                                        <div class="flex justify-center items-center space-x-2">
+                                    <td class="px-0 py-3 md:px-6 md:py-5 block md:table-cell">
+                                        <div class="flex justify-start md:justify-center items-center space-x-2 w-full">
                                             <?php 
                                                 $path = $row['file_path'];
                                                 $isLink = preg_match('/^https?:\/\//', $path);
@@ -141,12 +152,12 @@
                                                 $tooltip = $isLink ? 'เปิดลิงก์งาน' : 'เปิดดูเอกสาร PDF';
                                             ?>
                                             <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank" 
-                                               class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm" title="<?php echo $tooltip; ?>">
-                                                <?php echo $icon; ?>
+                                               class="flex-1 md:flex-none h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm font-bold text-xs" title="<?php echo $tooltip; ?>">
+                                                <span class="md:hidden mr-2">ดูงาน</span> <?php echo $icon; ?>
                                             </a>
                                             <button onclick='gradeModal(<?php echo htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>)' 
-                                                    class="w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all shadow-sm" title="ลงคะแนนและคอมเมนต์">
-                                                ✏️
+                                                    class="flex-1 md:flex-none h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center hover:bg-pink-700 transition-all shadow-lg shadow-pink-200 font-bold text-xs px-4" title="ลงคะแนนและคอมเมนต์">
+                                                <span class="md:hidden mr-2">ตรวจให้คะแนน</span> ✏️
                                             </button>
                                         </div>
                                     </td>

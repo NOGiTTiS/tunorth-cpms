@@ -27,17 +27,17 @@
                         <input type="text" name="q" value="<?php echo htmlspecialchars($data['pagination']['search']); ?>" placeholder="ค้นหาชื่อ, อีเมล หรือรหัสนักเรียน..." class="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all shadow-sm text-sm">
                     </form>
 
-                    <div class="flex flex-wrap gap-2 w-full xl:w-auto">
-                        <button onclick="downloadCSVTemplate()" class="flex-1 xl:flex-none bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 ตัวอย่าง</button>
-                        <button onclick="importCSV()" class="flex-1 xl:flex-none bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg text-sm">🚀 Import</button>
-                        <button onclick="openUserModal()" class="flex-1 xl:flex-none bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100 text-sm">+ เพิ่ม</button>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full xl:w-auto">
+                        <button onclick="downloadCSVTemplate()" class="w-full sm:flex-1 xl:flex-none bg-slate-100 text-slate-600 px-4 py-3 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">📥 ตัวอย่าง</button>
+                        <button onclick="importCSV()" class="w-full sm:flex-1 xl:flex-none bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold hover:bg-slate-700 transition shadow-lg text-sm">🚀 Import</button>
+                        <button onclick="openUserModal()" class="w-full sm:flex-1 xl:flex-none bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-pink-700 transition shadow-lg shadow-pink-100 text-sm">+ เพิ่ม</button>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-slate-50 border-b border-gray-100">
+                        <table class="w-full text-left border-collapse block md:table">
+                            <thead class="bg-slate-50 border-b border-gray-100 hidden md:table-header-group">
                                 <tr>
                                     <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">ข้อมูลผู้ใช้</th>
                                     <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest">บทบาท</th>
@@ -45,28 +45,38 @@
                                     <th class="px-6 py-4 text-xs font-black text-gray-400 uppercase tracking-widest text-center">จัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody class="divide-y divide-gray-50 block md:table-row-group">
                                 <?php foreach($data['users'] as $user): ?>
-                                <tr class="hover:bg-pink-50/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-800"><?php echo htmlspecialchars($user['full_name']); ?></div>
+                                <tr class="hover:bg-pink-50/30 transition-colors block md:table-row border-b border-gray-100 md:border-none p-5 md:p-0 mb-4 md:mb-0 bg-white shadow-sm md:shadow-none rounded-2xl md:rounded-none">
+                                    <td class="px-0 py-2 md:px-6 md:py-4 block md:table-cell">
+                                        <div class="font-bold text-gray-800 text-base md:text-sm"><?php echo htmlspecialchars($user['full_name']); ?></div>
                                         <div class="text-[10px] text-gray-400 font-mono"><?php echo htmlspecialchars($user['student_id'] ?: 'STAFF ID'); ?></div>
+                                        <!-- Mobile Email show here if needed, but let's keep separate -->
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-0 py-2 md:px-6 md:py-4 block md:table-cell">
                                         <?php 
                                             $roleColor = $user['role'] == 'ADMIN' ? 'bg-purple-100 text-purple-600' : 
                                                         ($user['role'] == 'TEACHER' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600');
                                         ?>
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black <?php echo $roleColor; ?>">
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black <?php echo $roleColor; ?> inline-block">
                                             <?php echo htmlspecialchars($user['role']); ?>
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><?php echo htmlspecialchars($user['email']); ?></td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex justify-center space-x-2">
-                                            <button onclick="openUserModal(<?php echo htmlspecialchars(json_encode($user)); ?>)" class="p-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-pink-600 hover:text-white transition-all">✏️</button>
-                                            <button onclick="deleteUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['full_name'], ENT_QUOTES); ?>')" class="p-2 bg-slate-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all">🗑️</button>
-                                            <button onclick="resetPassword(<?php echo $user['id']; ?>, '<?php echo $user['full_name']; ?>')"  class="p-2 bg-slate-100 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all shadow-sm" title="รีเซ็ตรหัสผ่าน">🔄</button>
+                                    <td class="px-0 py-2 md:px-6 md:py-4 text-sm text-gray-500 block md:table-cell">
+                                        <span class="md:hidden text-[10px] font-bold text-gray-400 mr-2">📧</span>
+                                        <?php echo htmlspecialchars($user['email']); ?>
+                                    </td>
+                                    <td class="px-0 py-3 md:px-6 md:py-4 block md:table-cell">
+                                        <div class="flex justify-start md:justify-center space-x-2">
+                                            <button onclick="openUserModal(<?php echo htmlspecialchars(json_encode($user)); ?>)" class="flex-1 md:flex-none p-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-pink-600 hover:text-white transition-all font-bold text-xs flex items-center justify-center">
+                                                <span class="md:hidden mr-2">แก้ไข</span> ✏️
+                                            </button>
+                                            <button onclick="deleteUser(<?php echo $user['id']; ?>, '<?php echo htmlspecialchars($user['full_name'], ENT_QUOTES); ?>')" class="flex-1 md:flex-none p-2 bg-slate-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all font-bold text-xs flex items-center justify-center">
+                                                <span class="md:hidden mr-2">ลบ</span> 🗑️
+                                            </button>
+                                            <button onclick="resetPassword(<?php echo $user['id']; ?>, '<?php echo $user['full_name']; ?>')"  class="flex-1 md:flex-none p-2 bg-slate-100 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all shadow-sm font-bold text-xs flex items-center justify-center" title="รีเซ็ตรหัสผ่าน">
+                                                <span class="md:hidden mr-2">รีเซ็ต</span> 🔄
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

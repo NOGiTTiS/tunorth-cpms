@@ -45,14 +45,14 @@
                 <?php if($_SESSION['user_role'] == 'ADMIN'): ?>
                     
                     <!-- Admin Filter Bar -->
-                    <div class="mb-8 flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-gray-100 shadow-sm border-l-8 border-l-slate-800">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-lg">🔍</div>
+                    <div class="mb-8 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-gray-100 shadow-sm border-l-8 border-l-slate-800">
+                        <div class="flex flex-col md:flex-row items-center gap-4">
+                            <div class="hidden md:flex w-10 h-10 bg-slate-100 rounded-xl items-center justify-center text-lg">🔍</div>
                             
                             <!-- Year Filter -->
-                            <div>
+                            <div class="w-full md:w-auto">
                                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ปีการศึกษา</p>
-                                <select onchange="updateDashboardFilter('year', this.value)" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-blue-600 focus:ring-0 outline-none cursor-pointer">
+                                <select onchange="updateDashboardFilter('year', this.value)" class="w-full md:w-auto bg-transparent border-b md:border-none p-2 md:p-0 pr-8 text-lg font-bold text-blue-600 focus:ring-0 outline-none cursor-pointer">
                                     <option value="">ทั้งหมด</option>
                                     <?php foreach($data['years'] as $yr): ?>
                                         <option value="<?php echo $yr['year']; ?>" <?php echo ($data['current_year'] == $yr['year']) ? 'selected' : ''; ?>>
@@ -62,12 +62,12 @@
                                 </select>
                             </div>
 
-                            <div class="w-px h-8 bg-gray-200 mx-2"></div>
+                            <div class="hidden md:block w-px h-8 bg-gray-200 mx-2"></div>
 
                             <!-- Room Filter -->
-                            <div>
+                            <div class="w-full md:w-auto">
                                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">ห้องเรียน</p>
-                                <select onchange="updateDashboardFilter('room', this.value)" class="bg-transparent border-none p-0 pr-8 text-lg font-bold text-slate-800 focus:ring-0 outline-none cursor-pointer">
+                                <select onchange="updateDashboardFilter('room', this.value)" class="w-full md:w-auto bg-transparent border-b md:border-none p-2 md:p-0 pr-8 text-lg font-bold text-slate-800 focus:ring-0 outline-none cursor-pointer">
                                     <option value="">ชั้น ม.6 ทุกห้อง</option>
                                     <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
                                         <option value="<?php echo $r; ?>" <?php echo ($data['current_room'] === $r) ? 'selected' : ''; ?>>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <?php if($data['current_room'] || $data['current_year']): ?>
-                            <a href="<?php echo BASE_URL; ?>/dashboard" class="px-4 py-2 bg-pink-50 text-pink-600 rounded-xl text-xs font-bold hover:bg-pink-100 transition-colors">
+                            <a href="<?php echo BASE_URL; ?>/dashboard" class="w-full md:w-auto px-4 py-3 md:py-2 bg-pink-50 text-pink-600 rounded-xl text-xs font-bold hover:bg-pink-100 transition-colors text-center">
                                 ❌ ล้างค่า
                             </a>
                         <?php endif; ?>
@@ -130,7 +130,7 @@
                             <div class="w-24 h-24 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-5xl mb-6 animate-bounce shadow-sm">📝</div>
                             <h3 class="text-6xl font-black text-slate-800 tracking-tighter"><?php echo $data['pending_count']; ?></h3>
                             <p class="text-gray-500 font-bold mt-2 uppercase tracking-tight">งานที่รอคุณตรวจ (รวมทุกห้อง)</p>
-                            <a href="<?php echo BASE_URL; ?>/teacher/review" class="mt-8 px-10 py-4 bg-pink-600 text-white rounded-2xl font-bold text-lg hover:bg-pink-700 transition-all shadow-xl shadow-pink-200 ring-4 ring-pink-50">
+                            <a href="<?php echo BASE_URL; ?>/teacher/review" class="w-full md:w-auto mt-8 px-10 py-4 bg-pink-600 text-white rounded-2xl font-bold text-lg hover:bg-pink-700 transition-all shadow-xl shadow-pink-200 ring-4 ring-pink-50">
                                 🚀 เริ่มตรวจงานเดี๋ยวนี้
                             </a>
                         </div>

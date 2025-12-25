@@ -24,11 +24,11 @@
                     </div>
 
                     <!-- Room Filter -->
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
                         <!-- Year Filter -->
-                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner">
-                            <span class="text-xs font-bold text-gray-500 mr-2 hidden md:inline">ปี:</span>
-                            <select onchange="updateFilter('year', this.value)" class="bg-transparent text-sm font-bold text-blue-600 outline-none cursor-pointer">
+                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner w-full md:w-auto">
+                            <span class="text-xs font-bold text-gray-500 mr-2 whitespace-nowrap">ปี:</span>
+                            <select onchange="updateFilter('year', this.value)" class="bg-transparent text-sm font-bold text-blue-600 outline-none cursor-pointer w-full md:w-auto">
                                 <option value="">ทั้งหมด</option>
                                 <?php foreach($data['years'] as $yr): ?>
                                     <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
@@ -39,9 +39,9 @@
                         </div>
 
                         <!-- Room Filter -->
-                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner">
-                            <span class="text-xs font-bold text-gray-500 mr-3 hidden md:inline">ห้อง:</span>
-                            <select onchange="updateFilter('room', this.value)" class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer min-w-[50px]">
+                        <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner w-full md:w-auto">
+                            <span class="text-xs font-bold text-gray-500 mr-3 whitespace-nowrap">ห้อง:</span>
+                            <select onchange="updateFilter('room', this.value)" class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer w-full md:w-auto min-w-[50px]">
                                 <option value="">ทั้งหมด</option>
                                 <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
                                     <option value="<?php echo $r; ?>" <?php echo ($data['selected_room'] === $r) ? 'selected' : ''; ?>>

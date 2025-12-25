@@ -101,7 +101,7 @@
                                             <p class="font-bold text-slate-700"><?php echo htmlspecialchars($data['group']['advisor_name'] ?: 'ยังไม่ได้ระบุ'); ?></p>
                                         </div>
                                     </div>
-                                    <button onclick='openEditProjectModal(<?php echo htmlspecialchars(json_encode($data['group']), ENT_QUOTES, 'UTF-8'); ?>)' class="px-5 py-3 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold hover:bg-slate-900 hover:text-white transition-all">✏️ แก้ไขข้อมูลโครงงาน</button>
+                                    <button onclick='openEditProjectModal(<?php echo htmlspecialchars(json_encode($data['group']), ENT_QUOTES, 'UTF-8'); ?>)' class="w-full md:w-auto px-5 py-3 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold hover:bg-slate-900 hover:text-white transition-all">✏️ แก้ไขข้อมูลโครงงาน</button>
                                     
                                 </div>
                                 <div class="mt-10 pt-10 border-t border-gray-200">
@@ -110,7 +110,7 @@
                                             <h4 class="text-red-600 font-bold text-sm uppercase tracking-widest">Danger Zone</h4>
                                             <p class="text-xs text-red-400 mt-1 italic">หากยุบกลุ่ม ข้อมูลสมาชิกและเอกสารที่ส่งมาทั้งหมดจะถูกลบถาวร</p>
                                         </div>
-                                        <button onclick="dissolveGroup()" class="px-6 py-3 bg-red-600 text-white rounded-2xl font-bold text-sm hover:bg-red-700 transition shadow-lg shadow-red-100 active:scale-95">
+                                        <button onclick="dissolveGroup()" class="w-full md:w-auto px-6 py-3 bg-red-600 text-white rounded-2xl font-bold text-sm hover:bg-red-700 transition shadow-lg shadow-red-100 active:scale-95">
                                             💥 ยุบกลุ่มโครงงานนี้
                                         </button>
                                     </div>

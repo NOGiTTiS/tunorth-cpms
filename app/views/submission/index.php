@@ -29,18 +29,18 @@
                 <!-- Table Container -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-slate-50 border-b border-gray-100">
+                        <table class="w-full text-left border-collapse block md:table">
+                            <thead class="bg-slate-50 border-b border-gray-100 hidden md:table-header-group">
                                 <tr>
                                     <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">ลำดับ & ขั้นตอน</th>
                                     <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">สถานะ</th>
                                     <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">จัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody class="divide-y divide-gray-50 block md:table-row-group">
                                 <?php foreach($data['steps'] as $step): ?>
-                                    <tr class="hover:bg-slate-50/50 transition-colors">
-                                        <td class="px-6 py-5 align-top">
+                                    <tr class="hover:bg-slate-50/50 transition-colors block md:table-row border-b border-gray-100 md:border-none p-4 md:p-0 mb-4 md:mb-0 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none">
+                                        <td class="px-0 py-2 md:px-6 md:py-5 align-top block md:table-cell">
                                             <div class="flex items-start">
                                                 <!-- ลำดับเลข -->
                                                 <div class="w-8 h-8 rounded-lg bg-pink-50 text-pink-500 flex items-center justify-center font-bold text-xs mr-4 shrink-0 mt-1">
@@ -84,7 +84,7 @@
                                             </div>
                                         </td>
                                         
-                                        <td class="px-6 py-5 align-top">
+                                        <td class="px-0 py-2 md:px-6 md:py-5 align-top block md:table-cell pl-[3.5rem] md:pl-6">
                                             <?php 
                                                 $badgeClass = "bg-gray-100 text-gray-400";
                                                 $text = "ยังไม่ส่ง";
@@ -92,7 +92,7 @@
                                                 if($step['status'] == 'APPROVED') { $badgeClass = "bg-green-100 text-green-600"; $text = "ผ่านแล้ว"; }
                                                 if($step['status'] == 'REJECTED') { $badgeClass = "bg-rose-100 text-rose-600"; $text = "แก้ไข"; }
                                             ?>
-                                                <div class="mt-1 flex items-center gap-2">
+                                                <div class="mt-1 flex items-center gap-2 flex-wrap">
                                                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badgeClass; ?>">
                                                         <?php echo $text; ?>
                                                     </span>
@@ -105,12 +105,12 @@
                                                 </div>
                                         </td>
                                         
-                                        <td class="px-6 py-5 align-top text-center">
-                                            <div class="flex items-center justify-center">
+                                        <td class="px-0 py-2 md:px-6 md:py-5 align-top text-center block md:table-cell pl-[3.5rem] md:pl-6 md:text-center text-left">
+                                            <div class="flex items-center justify-start md:justify-center">
                                                 <!-- ปุ่มอัปโหลด -->
                                                 <button onclick="openUploadModal(<?php echo $step['id']; ?>, '<?php echo htmlspecialchars($step['step_name'], ENT_QUOTES); ?>')" 
-                                                    class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-pink-100 active:scale-95 whitespace-nowrap">
-                                                    <?php echo ($step['status']) ? 'ส่งใหม่' : 'อัปโหลด'; ?>
+                                                    class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-pink-100 active:scale-95 whitespace-nowrap w-full md:w-auto text-center justify-center flex">
+                                                    <?php echo ($step['status']) ? 'ส่งใหม่' : '🚀 อัปโหลดส่งงาน'; ?>
                                                 </button>
                                             </div>
                                         </td>

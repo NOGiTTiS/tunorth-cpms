@@ -24,7 +24,7 @@
                         <h2 class="text-3xl font-bold text-gray-800 leading-tight">จัดการปีการศึกษา</h2>
                         <p class="text-gray-500 text-sm mt-1">กำหนดปีการศึกษาปัจจุบันและประวัติย้อนหลัง</p>
                     </div>
-                    <button onclick="openAddYearModal()" class="bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all flex items-center">
+                    <button onclick="openAddYearModal()" class="w-full md:w-auto bg-pink-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-pink-200 hover:bg-pink-700 transition-all flex items-center justify-center">
                         <span class="text-xl mr-2">+</span> เพิ่มปีการศึกษา
                     </button>
                 </div>
