@@ -8,7 +8,19 @@
             ?>
             <img class="mx-auto h-24 w-auto object-contain" src="<?php echo $logo; ?>" alt="Logo">
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                CPMS Login
+                <?php
+                    $systemName = 'CPMS TU-North'; // Default
+                    if (!empty($data['settings']['system_name'])) {
+                        $systemName = $data['settings']['system_name'];
+                    } else if (isset($this) && method_exists($this, 'model')) {
+                        try {
+                            $settingsModel = $this->model('Settings_model');
+                            $dbSystemName = $settingsModel->get('system_name');
+                            if ($dbSystemName) $systemName = $dbSystemName;
+                        } catch (Exception $e) {}
+                    }
+                    echo htmlspecialchars($systemName);
+                ?>
             </h2>
             <p class="mt-2 text-center text-sm text-gray-600">
                 ระบบจัดการโครงงานคอมพิวเตอร์ ม.6 <br>

@@ -29,6 +29,7 @@ class Settings_model {
 
     private function seedDefaults() {
         $defaults = [
+            'system_name' => 'CPMS TU-North',
             'site_logo' => '',
             'site_favicon' => '',
             'site_copyright' => '© 2025 TU-North CPMS. All rights reserved.',

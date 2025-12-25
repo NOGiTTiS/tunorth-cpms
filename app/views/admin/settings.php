@@ -30,6 +30,10 @@
                             </h3>
                             <div class="grid grid-cols-1 gap-6 pl-0 md:pl-12">
                                 <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">System Name</label>
+                                    <input type="text" name="system_name" value="<?php echo htmlspecialchars($data['settings']['system_name'] ?? 'CPMS TU-North'); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="CPMS TU-North">
+                                </div>
+                                <div>
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Copyright Text</label>
                                     <input type="text" name="site_copyright" value="<?php echo htmlspecialchars($data['settings']['site_copyright'] ?? ''); ?>" class="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition-all placeholder-gray-300" placeholder="© 2025 Your Company">
                                 </div>

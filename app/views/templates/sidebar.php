@@ -10,7 +10,19 @@
     </div>
 
     <div class="p-6 text-center border-b border-slate-800">
-        <h1 class="text-xl font-bold text-pink-500">CPMS TU-North</h1>
+        <?php
+            $systemName = 'CPMS TU-North'; // Default
+            if (!empty($data['settings']['system_name'])) {
+                $systemName = $data['settings']['system_name'];
+            } else if (isset($this) && method_exists($this, 'model')) {
+                try {
+                    $settingsModel = $this->model('Settings_model');
+                    $dbSystemName = $settingsModel->get('system_name');
+                    if ($dbSystemName) $systemName = $dbSystemName;
+                } catch (Exception $e) {}
+            }
+        ?>
+        <h1 class="text-xl font-bold text-pink-500"><?php echo htmlspecialchars($systemName); ?></h1>
         <p class="text-xs text-gray-400 mt-1">ระบบจัดการโครงงาน</p>
     </div>
 

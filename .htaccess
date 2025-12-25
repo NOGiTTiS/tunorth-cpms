@@ -11,5 +11,5 @@
     RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
 </IfModule>
 
-php_value upload_max_filesize 20M
-php_value post_max_size 20M
+# php_value upload_max_filesize 20M
+# php_value post_max_size 20M

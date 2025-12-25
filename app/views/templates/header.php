@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TU-North CPMS</title>
+    <?php
+        $systemName = 'TU-North CPMS'; // Default
+        if (!empty($data['settings']['system_name'])) {
+            $systemName = $data['settings']['system_name'];
+        } else if (isset($this) && method_exists($this, 'model')) {
+            try {
+                $settingsModel = $this->model('Settings_model');
+                $dbName = $settingsModel->get('system_name');
+                if ($dbName) {
+                    $systemName = $dbName;
+                }
+            } catch (Exception $e) {}
+        }
+    ?>
+    <title><?php echo htmlspecialchars($systemName); ?></title>
     <meta name="csrf-token" content="<?php echo (new Controller())->generateCsrfToken(); ?>">
     <!-- Google Font: Prompt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
