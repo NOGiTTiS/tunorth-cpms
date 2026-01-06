@@ -1,6 +1,8 @@
 <?php
-class Teacher extends Controller {
-    public function __construct() {
+class Teacher extends Controller
+{
+    public function __construct()
+    {
         $this->middleware();
         // ตรวจสอบว่าเป็นครูจริงไหม
         if ($_SESSION['user_role'] !== 'TEACHER') {
@@ -9,41 +11,62 @@ class Teacher extends Controller {
         }
     }
 
-    public function review() {
+    public function review()
+    {
         $teacherModel = $this->model('Teacher_model');
-        
+
         // เปลี่ยนจาก 'mine' เป็น 'all' เพื่อให้เป็นค่าเริ่มต้น
-        $mode = $_GET['mode'] ?? 'all'; 
+        $mode = $_GET['mode'] ?? 'all';
         $room = $_GET['room'] ?? ''; // Filter by room
-        
+
         // Default Year Logic
         $yearModel = $this->model('Year_model');
         $currentYearObj = $yearModel->getCurrentYear();
         $defaultYear = $currentYearObj['year'];
-        
+
         $year = isset($_GET['year']) ? ($_GET['year'] !== '' ? $_GET['year'] : null) : $defaultYear;
         $group_id = isset($_GET['group_id']) ? $_GET['group_id'] : null;
-        
+
+        // Create Room Model Instance
+        $roomModel = $this->model('Room_model');
+        $assignedRooms = $roomModel->getAssignedRoomsByTeacher($_SESSION['user_id']); // Returns ['6.1', '6.10']
+
+        // Filter Logic
+        if (!empty($assignedRooms)) {
+            // If user selected a room that is NOT in their assigned list, reset to empty (All Assigned)
+            if ($room !== '' && !in_array($room, $assignedRooms)) {
+                $room = '';
+            }
+        }
+
+        // Pass filterRooms to model? OR handle in Controller loop?
+        // Ideally, if a teacher has assigned rooms, they CANNOT see others. 
+        // So we should enforce it in the Model Query too.
+
+        $limitRooms = !empty($assignedRooms) ? $assignedRooms : null;
+
         if ($mode === 'mine') {
-            // ดึงเฉพาะงานที่ครูคนนี้ดูแล
             $submissions = $teacherModel->getPendingSubmissions($_SESSION['user_id'], null, $room, $year, $group_id);
         } else {
-            // ดึงงานทั้งหมด (default)
-            $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year, $group_id);
+            // Updated Model Call to accept limitRooms
+            $submissions = $teacherModel->getPendingSubmissions(null, null, $room, $year, $group_id, $limitRooms);
         }
 
         $yearModel = $this->model('Year_model');
+
         $data = [
             'submissions' => $submissions,
             'current_mode' => $mode,
             'selected_room' => $room,
             'selected_year' => $year,
-            'years' => $yearModel->getAll() // Load years
+            'years' => $yearModel->getAll(),
+            'assigned_rooms' => $assignedRooms // Pass to view to populate dropdown
         ];
         $this->view('teacher/review', $data);
     }
 
-    public function grade() {
+    public function grade()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $teacherModel = $this->model('Teacher_model');
@@ -55,23 +78,24 @@ class Teacher extends Controller {
 
                 // ส่ง Telegram แจ้งเตือนนักเรียน (Optional)
                 require_once __DIR__ . '/../core/Notification.php';
-                
+
                 $msg = "🔔 <b>ครูตรวจงานแล้ว!</b>\n" .
-                       "โครงงาน: " . $_POST['project_name'] . "\n" .
-                       "ห้อง: ม." . ($_POST['room'] ?? '-') . "\n" .
-                       "งาน: " . ($_POST['step_name'] ?? '-') . "\n" .
-                       "ผลการตรวจ: " . $_POST['status'];
+                    "โครงงาน: " . $_POST['project_name'] . "\n" .
+                    "ห้อง: ม." . ($_POST['room'] ?? '-') . "\n" .
+                    "งาน: " . ($_POST['step_name'] ?? '-') . "\n" .
+                    "ผลการตรวจ: " . $_POST['status'];
 
                 Notification::sendTelegram($msg, 'grading');
-                
+
                 echo json_encode(['status' => 'success']);
             }
         }
     }
 
-    public function export_grades() {
+    public function export_grades()
+    {
         $teacherModel = $this->model('Teacher_model');
-        
+
         $mode = $_GET['mode'] ?? 'mine';
         $advisor_id = ($mode === 'mine') ? $_SESSION['user_id'] : null;
 
@@ -103,11 +127,11 @@ class Teacher extends Controller {
         // Export as CSV
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=grade_sheet_' . date('Y-m-d') . '.csv');
-        
+
         $output = fopen('php://output', 'w');
-        
+
         // Add BOM for Excel UTF-8
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
         // Header Row
         $header = ['รหัสนักเรียน', 'ชื่อ-นามสกุล', 'ห้อง', 'ชื่อโครงงาน'];
@@ -134,37 +158,38 @@ class Teacher extends Controller {
                 if ($status == 'APPROVED') $status = 'ผ่าน';
                 elseif ($status == 'REJECTED') $status = 'ไม่ผ่าน';
                 elseif ($status == 'PENDING') $status = 'รอตรวจ';
-                
+
                 $row[] = $status;
                 $row[] = $score;
             }
             fputcsv($output, $row);
         }
-        
+
         fclose($output);
         exit;
     }
 
-    public function progress() {
+    public function progress()
+    {
         // Reuse Admin_model for Progress Matrix logic to avoid duplication
         $adminModel = $this->model('Admin_model');
         $yearModel = $this->model('Year_model');
-        
+
         $currentYearObj = $yearModel->getCurrentYear();
         $defaultYear = $currentYearObj['year'];
-        
+
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
-        
+
         if (isset($_GET['year'])) {
-             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+            $year = $_GET['year'] !== '' ? $_GET['year'] : null;
         } else {
-             $year = $defaultYear;
+            $year = $defaultYear;
         }
-        
+
         $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
         $data['selected_year'] = $year;
-        
+
         $data['years'] = $yearModel->getAll();
 
         // Reuse the Admin view because it's identical

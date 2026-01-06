@@ -1,6 +1,8 @@
 <?php
-class Admin extends Controller {
-    public function __construct() {
+class Admin extends Controller
+{
+    public function __construct()
+    {
         $this->middleware();
         if ($_SESSION['user_role'] !== 'ADMIN') {
             header('Location: ' . BASE_URL . '/dashboard');
@@ -8,14 +10,15 @@ class Admin extends Controller {
         }
     }
 
-    public function index() {
+    public function index()
+    {
         $adminModel = $this->model('Admin_model');
         $data['summary'] = $adminModel->getSummaryStats();
-        
+
         // จัดรูปแบบ Data สำหรับ Chart.js
         $data['chart_labels'] = array_column($data['summary']['step_progress'], 'step_name');
         $data['chart_data'] = array_column($data['summary']['step_progress'], 'approved_count');
-        
+
         // Widget: Recent Activities
         $logModel = $this->model('Log_model');
         $data['recent_activities'] = $logModel->getLogs(5); // 5 รายการล่าสุด
@@ -24,9 +27,10 @@ class Admin extends Controller {
     }
 
     // หน้าจัดการผู้ใช้งาน
-    public function users() {
+    public function users()
+    {
         $adminModel = $this->model('Admin_model');
-        
+
         // Pagination logic
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 20;
@@ -35,7 +39,7 @@ class Admin extends Controller {
 
         $data['users'] = $adminModel->getAllUsers($limit, $offset, $search);
         $totalUsers = $adminModel->countAllUsers($search);
-        
+
         $data['pagination'] = [
             'current_page' => $page,
             'limit' => $limit,
@@ -47,7 +51,8 @@ class Admin extends Controller {
         $this->view('admin/users', $data);
     }
 
-    public function user_store() {
+    public function user_store()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $adminModel = $this->model('Admin_model');
@@ -60,7 +65,8 @@ class Admin extends Controller {
         }
     }
 
-    public function user_update() {
+    public function user_update()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $adminModel = $this->model('Admin_model');
@@ -72,13 +78,15 @@ class Admin extends Controller {
         }
     }
 
-    public function user_edit($id) {
+    public function user_edit($id)
+    {
         $adminModel = $this->model('Admin_model');
         $user = $adminModel->getUserById($id);
         echo json_encode($user);
     }
 
-    public function user_delete($id) {
+    public function user_delete($id)
+    {
         $adminModel = $this->model('Admin_model');
         if ($adminModel->deleteUser($id)) {
             echo json_encode(['status' => 'success']);
@@ -90,13 +98,15 @@ class Admin extends Controller {
 
 
     // หน้าจัดการขั้นตอนส่งงาน
-    public function steps() {
+    public function steps()
+    {
         $adminModel = $this->model('Admin_model');
         $data['steps'] = $adminModel->getAllSteps();
         $this->view('admin/steps', $data);
     }
 
-    public function step_store() {
+    public function step_store()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $adminModel = $this->model('Admin_model');
@@ -106,7 +116,8 @@ class Admin extends Controller {
         }
     }
 
-    public function step_update() {
+    public function step_update()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $adminModel = $this->model('Admin_model');
@@ -116,7 +127,8 @@ class Admin extends Controller {
         }
     }
 
-    public function step_delete($id) {
+    public function step_delete($id)
+    {
         $adminModel = $this->model('Admin_model');
         if ($adminModel->deleteStep($id)) {
             echo json_encode(['status' => 'success']);
@@ -125,12 +137,13 @@ class Admin extends Controller {
         }
     }
 
-    public function user_import() {
+    public function user_import()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['csv_file'])) {
             $file = $_FILES['csv_file']['tmp_name'];
             $handle = fopen($file, "r");
-            
+
             $adminModel = $this->model('Admin_model');
             $successCount = 0;
             $skipCount = 0;
@@ -162,19 +175,21 @@ class Admin extends Controller {
             fclose($handle);
 
             echo json_encode([
-                'status' => 'success', 
+                'status' => 'success',
                 'message' => "นำเข้าสำเร็จ $successCount รายการ, ข้ามข้อมูลซ้ำ $skipCount รายการ"
             ]);
         }
     }
 
-    public function announcements() {
+    public function announcements()
+    {
         $adminModel = $this->model('Admin_model');
         $data['announcements'] = $adminModel->getAllAnnouncements();
         $this->view('admin/announcements', $data);
     }
 
-    public function announcement_store() {
+    public function announcement_store()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $adminModel = $this->model('Admin_model');
@@ -184,17 +199,19 @@ class Admin extends Controller {
         }
     }
 
-    public function announcement_delete($id) {
+    public function announcement_delete($id)
+    {
         $adminModel = $this->model('Admin_model');
         if ($adminModel->deleteAnnouncement($id)) {
             echo json_encode(['status' => 'success']);
         }
     }
 
-    public function user_password_reset() {
+    public function user_password_reset()
+    {
         // 1. ตรวจสอบความปลอดภัย
         $this->verifyCsrfToken();
-        
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id = $_POST['id'];
             $new_pass = $_POST['new_password'];
@@ -215,21 +232,23 @@ class Admin extends Controller {
     }
 
     // --- Admin Settings ---
-    public function settings() {
+    public function settings()
+    {
         $settingsModel = $this->model('Settings_model');
         $data['settings'] = $settingsModel->getAll();
         $this->view('admin/settings', $data);
     }
 
-    public function settings_update() {
+    public function settings_update()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $settingsModel = $this->model('Settings_model');
-            
+
             // Text Settings
             foreach ($_POST as $key => $value) {
                 if ($key !== 'csrf_token') {
-                     $settingsModel->set($key, trim($value));
+                    $settingsModel->set($key, trim($value));
                 }
             }
 
@@ -239,16 +258,16 @@ class Admin extends Controller {
             if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
 
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/x-icon', 'image/vnd.microsoft.icon'];
-            
+
             foreach (['site_logo', 'site_favicon'] as $fileKey) {
                 if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
                     $fileTmp = $_FILES[$fileKey]['tmp_name'];
                     $fileType = $_FILES[$fileKey]['type'];
-                    
+
                     if (in_array($fileType, $allowedTypes)) {
                         $ext = pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION);
                         $fileName = $fileKey . '_' . time() . '.' . $ext;
-                        
+
                         if (move_uploaded_file($fileTmp, $uploadDir . $fileName)) {
                             // Save path relative to project root (accessible via browser)
                             // Updated: No 'public/' prefix needed
@@ -261,9 +280,10 @@ class Admin extends Controller {
             echo json_encode(['status' => 'success', 'message' => 'บันทึกการตั้งค่าเรียบร้อยแล้ว']);
         }
     }
-    public function logs() {
+    public function logs()
+    {
         $logModel = $this->model('Log_model');
-        
+
         // Capture filters
         $filters = [
             'role' => isset($_GET['role']) ? $_GET['role'] : '',
@@ -272,43 +292,46 @@ class Admin extends Controller {
         ];
 
         // Pass filters to model
-        $data['logs'] = $logModel->getLogs(100, $filters); 
+        $data['logs'] = $logModel->getLogs(100, $filters);
         $data['filters'] = $filters; // Send back to view to maintain state
-        
+
         $this->view('admin/logs', $data);
     }
 
-    public function progress() {
+    public function progress()
+    {
         $adminModel = $this->model('Admin_model');
         $yearModel = $this->model('Year_model');
-        
+
         $currentYearObj = $yearModel->getCurrentYear();
         $defaultYear = $currentYearObj['year'];
 
         $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
         if (isset($_GET['year'])) {
-             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
+            $year = $_GET['year'] !== '' ? $_GET['year'] : null;
         } else {
-             $year = $defaultYear;
+            $year = $defaultYear;
         }
-        
+
         $data = $adminModel->getProgressMatrix($room, $year);
         $data['selected_room'] = $room;
         $data['selected_year'] = $year;
         $data['years'] = $yearModel->getAll(); // Load years
-        
+
         $this->view('admin/progress', $data);
     }
 
 
     // --- Academic Year Management ---
-    public function years() {
+    public function years()
+    {
         $yearModel = $this->model('Year_model');
         $data['years'] = $yearModel->getAll();
         $this->view('admin/years', $data);
     }
 
-    public function year_store() {
+    public function year_store()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $yearModel = $this->model('Year_model');
@@ -320,7 +343,8 @@ class Admin extends Controller {
         }
     }
 
-    public function year_update() {
+    public function year_update()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $yearModel = $this->model('Year_model');
@@ -332,7 +356,8 @@ class Admin extends Controller {
         }
     }
 
-    public function year_set_current() {
+    public function year_set_current()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $yearModel = $this->model('Year_model');
@@ -342,12 +367,69 @@ class Admin extends Controller {
         }
     }
 
-    public function year_delete($id) {
+    public function year_delete($id)
+    {
         $yearModel = $this->model('Year_model');
         if ($yearModel->delete($id)) {
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'ไม่สามารถลบปีปัจจุบันได้']);
+        }
+    }
+
+    // --- Room & Assignment Management ---
+    public function rooms()
+    {
+        $roomModel = $this->model('Room_model');
+        $adminModel = $this->model('Admin_model'); // Need users list
+
+        $data['rooms'] = $roomModel->getAvailableRooms(); // 6.1 - 6.15
+        $data['assignments'] = $roomModel->getAssignments();
+
+        // Get all Teachers
+        $data['teachers'] = $adminModel->getUsersByRole('TEACHER');
+
+        $this->view('admin/rooms', $data);
+    }
+
+    public function assign_teacher()
+    {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $roomModel = $this->model('Room_model');
+            $teacherId = $_POST['teacher_id'];
+            $rooms = $_POST['rooms'] ?? [];
+
+            if (empty($rooms)) {
+                echo json_encode(['status' => 'error', 'message' => 'กรุณาเลือกอย่างน้อย 1 ห้อง']);
+                return;
+            }
+
+            $count = 0;
+            if (!is_array($rooms)) $rooms = [$rooms];
+
+            foreach ($rooms as $room) {
+                if ($roomModel->assign($teacherId, $room)) {
+                    $count++;
+                }
+            }
+
+            if ($count > 0) {
+                echo json_encode(['status' => 'success', 'message' => "มอบหมายสำเร็จ $count ห้อง"]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'ไม่มีการเปลี่ยนแปลง (อาจมอบหมายไปแล้ว)']);
+            }
+        }
+    }
+
+    public function unassign_teacher()
+    {
+        $this->verifyCsrfToken();
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $roomModel = $this->model('Room_model');
+            if ($roomModel->remove($_POST['teacher_id'], $_POST['room'])) {
+                echo json_encode(['status' => 'success']);
+            }
         }
     }
 }

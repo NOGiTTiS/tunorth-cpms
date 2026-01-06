@@ -1,26 +1,29 @@
 <?php
-class Admin_model {
+class Admin_model
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = (new Database())->getConnection();
     }
 
-    public function getAllUsers($limit = null, $offset = 0, $search = '') {
+    public function getAllUsers($limit = null, $offset = 0, $search = '')
+    {
         $sql = "SELECT * FROM users WHERE 1=1";
-        
+
         if (!empty($search)) {
             $sql .= " AND (full_name LIKE :search OR student_id LIKE :search OR email LIKE :search)";
         }
-        
+
         $sql .= " ORDER BY role ASC, full_name ASC";
 
         if ($limit !== null) {
             $sql .= " LIMIT :limit OFFSET :offset";
         }
-        
+
         $stmt = $this->db->prepare($sql);
-        
+
         if (!empty($search)) {
             $stmt->bindValue(':search', "%$search%");
         }
@@ -29,33 +32,36 @@ class Admin_model {
             $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
             $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         }
-        
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function countAllUsers($search = '') {
+    public function countAllUsers($search = '')
+    {
         $sql = "SELECT COUNT(*) FROM users WHERE 1=1";
         if (!empty($search)) {
             $sql .= " AND (full_name LIKE :search OR student_id LIKE :search OR email LIKE :search)";
         }
         $stmt = $this->db->prepare($sql);
-        
+
         if (!empty($search)) {
             $stmt->bindValue(':search', "%$search%");
         }
-        
+
         $stmt->execute();
         return $stmt->fetchColumn();
     }
 
-    public function getUserById($id) {
+    public function getUserById($id)
+    {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createUser($data) {
+    public function createUser($data)
+    {
         $query = "INSERT INTO users (full_name, email, password, role, student_id, room) 
                   VALUES (:name, :email, :pass, :role, :sid, :room)";
         $stmt = $this->db->prepare($query);
@@ -69,10 +75,11 @@ class Admin_model {
         ]);
     }
 
-    public function updateUser($data) {
+    public function updateUser($data)
+    {
         $sql = "UPDATE users SET full_name = :name, email = :email, role = :role, 
                 student_id = :sid, room = :room";
-        
+
         $params = [
             ':name'  => $data['full_name'],
             ':email' => $data['email'],
@@ -92,16 +99,18 @@ class Admin_model {
         return $stmt->execute($params);
     }
 
-    public function deleteUser($id) {
+    public function deleteUser($id)
+    {
         if ($id == $_SESSION['user_id']) return false;
         $stmt = $this->db->prepare("DELETE FROM users WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
 
     // ฟังก์ชันดึงสถิติ (ใช้ใน Dashboard)
-    public function getSummaryStats($room = null, $year = null) {
+    public function getSummaryStats($room = null, $year = null)
+    {
         $stats = [];
-        
+
         // 1. นับจำนวนกลุ่มโครงงาน (กรองตามห้องของสมาชิกในกลุ่ม)
         $sqlGroups = "SELECT COUNT(DISTINCT g.id) as total FROM project_groups g";
         if ($room || $year) {
@@ -137,12 +146,12 @@ class Admin_model {
                      LEFT JOIN group_members gm ON s.group_id = gm.group_id
                      LEFT JOIN users u ON gm.user_id = u.id
                      WHERE 1=1";
-                     
+
         if ($room) $sqlSteps .= " AND u.room = :room";
         if ($year) $sqlSteps .= " AND g.academic_year = :year";
 
         $sqlSteps .= " GROUP BY ps.id ORDER BY ps.step_order";
-        
+
         $stmt = $this->db->prepare($sqlSteps);
         if ($room) $stmt->bindValue(':room', $room);
         if ($year) $stmt->bindValue(':year', $year);
@@ -161,7 +170,7 @@ class Admin_model {
             $sqlLoad .= " WHERE u_adv.role = 'TEACHER'";
         }
         $sqlLoad .= " GROUP BY u_adv.id";
-        
+
         $stmt = $this->db->prepare($sqlLoad);
         if ($room) $stmt->bindParam(':room', $room);
         $stmt->execute();
@@ -171,17 +180,20 @@ class Admin_model {
     }
 
     // --- Steps Management ---
-    public function getAllSteps() {
+    public function getAllSteps()
+    {
         $stmt = $this->db->query("SELECT * FROM project_steps ORDER BY step_order ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function updateStepOrder($id, $new_order) {
+    public function updateStepOrder($id, $new_order)
+    {
         $stmt = $this->db->prepare("UPDATE project_steps SET step_order = :ord WHERE id = :id");
         return $stmt->execute([':ord' => $new_order, ':id' => $id]);
     }
 
-    public function createStep($data) {
+    public function createStep($data)
+    {
         // หาค่าลำดับสูงสุดปัจจุบันเพื่อตั้งค่าลำดับถัดไป (Auto-increment order)
         $stmt_max = $this->db->query("SELECT MAX(step_order) as max_order FROM project_steps");
         $max = $stmt_max->fetch(PDO::FETCH_ASSOC);
@@ -195,7 +207,8 @@ class Admin_model {
         ]);
     }
 
-    public function updateStep($data) {
+    public function updateStep($data)
+    {
         $query = "UPDATE project_steps SET step_name = :name, step_order = :ord WHERE id = :id";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
@@ -205,7 +218,8 @@ class Admin_model {
         ]);
     }
 
-    public function deleteStep($id) {
+    public function deleteStep($id)
+    {
         // ตรวจสอบก่อนว่ามีนักเรียนส่งงานในขั้นตอนนี้หรือยัง (Data Integrity)
         $check = $this->db->prepare("SELECT COUNT(*) FROM submissions WHERE step_id = :id");
         $check->execute([':id' => $id]);
@@ -218,14 +232,16 @@ class Admin_model {
     }
 
     // ตรวจสอบว่ามี Email นี้ในระบบหรือยัง
-    public function checkEmailExists($email) {
+    public function checkEmailExists($email)
+    {
         $stmt = $this->db->prepare("SELECT id FROM users WHERE email = :email");
         $stmt->execute([':email' => $email]);
         return $stmt->fetch() ? true : false;
     }
 
     // ฟังก์ชันนำเข้าข้อมูล (ใช้ใน Loop ของ Controller)
-    public function importUser($data) {
+    public function importUser($data)
+    {
         $query = "INSERT INTO users (full_name, email, password, role, student_id, room) 
                 VALUES (:name, :email, :pass, :role, :sid, :room)";
         $stmt = $this->db->prepare($query);
@@ -239,12 +255,14 @@ class Admin_model {
         ]);
     }
 
-    public function getAllAnnouncements() {
+    public function getAllAnnouncements()
+    {
         $stmt = $this->db->query("SELECT * FROM announcements ORDER BY created_at DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function createAnnouncement($data) {
+    public function createAnnouncement($data)
+    {
         $query = "INSERT INTO announcements (title, content, type) VALUES (:title, :content, :type)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
@@ -254,24 +272,27 @@ class Admin_model {
         ]);
     }
 
-    public function deleteAnnouncement($id) {
+    public function deleteAnnouncement($id)
+    {
         $stmt = $this->db->prepare("DELETE FROM announcements WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
 
-    public function resetUserPassword($id, $new_password) {
+    public function resetUserPassword($id, $new_password)
+    {
         $query = "UPDATE users SET password = :pass WHERE id = :id";
         $stmt = $this->db->prepare($query);
-        
+
         // เข้ารหัสผ่านใหม่ก่อนบันทึกเสมอ
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        
+
         return $stmt->execute([
             ':pass' => $hashed_password,
             ':id'   => $id
         ]);
     }
-    public function getProgressMatrix($room = null, $year = null) {
+    public function getProgressMatrix($room = null, $year = null)
+    {
         // 1. Get Groups (and filtering)
         // Group by project to avoid duplicates, use MIN(room) as representative room
         $sql = "SELECT g.id, g.project_name_th, g.advisor_name, g.academic_year, MIN(u.room) as room
@@ -279,16 +300,16 @@ class Admin_model {
                 JOIN group_members gm ON g.id = gm.group_id
                 JOIN users u ON gm.user_id = u.id
                 WHERE u.role = 'STUDENT'";
-        
+
         if ($room) {
             $sql .= " AND u.room = :room";
         }
         if ($year) {
             $sql .= " AND g.academic_year = :year";
         }
-        
+
         $sql .= " GROUP BY g.id ORDER BY room ASC, g.id ASC";
-        
+
         $stmt = $this->db->prepare($sql);
         if ($room) $stmt->bindValue(':room', $room);
         if ($year) $stmt->bindValue(':year', $year);
@@ -300,20 +321,26 @@ class Admin_model {
         $steps = $stmtSteps->fetchAll(PDO::FETCH_ASSOC);
 
         // 3. Get Submission Statuses
-        $sqlSub = "SELECT group_id, step_id, status FROM submissions"; 
+        $sqlSub = "SELECT group_id, step_id, status FROM submissions";
         $stmtSub = $this->db->query($sqlSub);
         $rawSubs = $stmtSub->fetchAll(PDO::FETCH_ASSOC);
 
         // Map submissions: [group_id][step_id] = status
         $matrix = [];
-        foreach($rawSubs as $s) {
+        foreach ($rawSubs as $s) {
             $matrix[$s['group_id']][$s['step_id']] = $s['status'];
         }
 
         return [
-            'groups' => $groups, 
-            'steps' => $steps, 
+            'groups' => $groups,
+            'steps' => $steps,
             'matrix' => $matrix
         ];
+    }
+    public function getUsersByRole($role)
+    {
+        $stmt = $this->db->prepare("SELECT id, full_name, email FROM users WHERE role = :role ORDER BY full_name ASC");
+        $stmt->execute([':role' => $role]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
