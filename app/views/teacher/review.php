@@ -156,6 +156,21 @@
                                                 $targetUrl = $isLink ? $path : BASE_URL . '/' . $path;
                                                 $icon = $isLink ? '🔗' : '👁️';
                                                 $tooltip = $isLink ? 'เปิดลิงก์งาน' : 'เปิดดูเอกสาร PDF';
+
+                                                // Check for Office files
+                                                if (!$isLink) {
+                                                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                                    if (in_array($ext, ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'])) {
+                                                        // Construct Full URL for Google Viewer (Must be public internet URL)
+                                                        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+                                                        $host = $_SERVER['HTTP_HOST'];
+                                                        $publicUrl = $protocol . "://" . $host . $targetUrl;
+
+                                                        $targetUrl = 'https://docs.google.com/viewer?url=' . urlencode($publicUrl);
+                                                        $tooltip = 'เปิดดูเอกสาร (Google Docs)';
+                                                        $icon = '📄';
+                                                    }
+                                                }
                                                 ?>
                                                 <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank"
                                                     class="flex-1 md:flex-none w-10 h-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm font-bold text-xs" title="<?php echo $tooltip; ?>">
