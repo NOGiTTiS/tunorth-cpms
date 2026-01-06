@@ -178,7 +178,8 @@ class Teacher extends Controller
         $currentYearObj = $yearModel->getCurrentYear();
         $defaultYear = $currentYearObj['year'];
 
-        $room = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        $roomModel = $this->model('Room_model');
+        $assignedRooms = $roomModel->getAssignedRoomsByTeacher($_SESSION['user_id']);
 
         if (isset($_GET['year'])) {
             $year = $_GET['year'] !== '' ? $_GET['year'] : null;
@@ -186,9 +187,44 @@ class Teacher extends Controller
             $year = $defaultYear;
         }
 
-        $data = $adminModel->getProgressMatrix($room, $year);
-        $data['selected_room'] = $room;
+        // Base Room Logic
+        // If user selects a room, check if they are allowed to see it
+        // If no room selected, show ONLY their assigned rooms (pass array to model)
+
+        $requestedRoom = isset($_GET['room']) && $_GET['room'] !== '' ? $_GET['room'] : null;
+        $filterRoom = null;
+
+        if (!empty($assignedRooms)) {
+            if ($requestedRoom) {
+                // If specific room requested, check if allowed
+                if (in_array($requestedRoom, $assignedRooms)) {
+                    $filterRoom = $requestedRoom;
+                } else {
+                    $filterRoom = $assignedRooms; // Fallback to all assigned if unauthorized
+                }
+            } else {
+                // No specific room -> Show all assigned
+                $filterRoom = $assignedRooms;
+            }
+        } else {
+            // No assignments -> Check if they should see nothing or everything?
+            // Current policy: If no assignments, maybe default to everything (like Admin) OR nothing?
+            // Let's assume strict: If no assignments, they see nothing? Or everything?
+            // "Teacher" role without assignments usually implies generic teacher or old system behavior.
+            // Let's keep existing behavior (allow all) if empty, or we can restrict.
+            // Based on user request "only assigned", let's assume they might not have any.
+            // Let's default to $requestedRoom (allow all) if assignments are empty.
+            // BUT usually we want to restrict. Let's Pass $requestedRoom as is if no assignments found.
+            $filterRoom = $requestedRoom;
+        }
+
+        // Pass filterRoom (string|array|null) to model
+        $data = $adminModel->getProgressMatrix($filterRoom, $year);
+
+        // Update selection state for view
+        $data['selected_room'] = $requestedRoom; // Keep the requested one for UI state if valid
         $data['selected_year'] = $year;
+        $data['assigned_rooms'] = $assignedRooms; // Pass to view for dropdown logic
 
         $data['years'] = $yearModel->getAll();
 

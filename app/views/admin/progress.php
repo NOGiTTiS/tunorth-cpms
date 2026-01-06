@@ -4,7 +4,7 @@
     <?php include __DIR__ . '/../templates/sidebar.php'; ?>
 
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
+
         <!-- Mobile Header -->
         <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-30 shadow-md">
             <span class="font-bold text-pink-500 tracking-tight">Progress Matrix</span>
@@ -30,9 +30,9 @@
                             <span class="text-xs font-bold text-gray-500 mr-2 whitespace-nowrap">ปี:</span>
                             <select onchange="updateFilter('year', this.value)" class="bg-transparent text-sm font-bold text-blue-600 outline-none cursor-pointer w-full md:w-auto">
                                 <option value="">ทั้งหมด</option>
-                                <?php foreach($data['years'] as $yr): ?>
+                                <?php foreach ($data['years'] as $yr): ?>
                                     <option value="<?php echo $yr['year']; ?>" <?php echo ($data['selected_year'] == $yr['year']) ? 'selected' : ''; ?>>
-                                        <?php echo $yr['year']; ?> <?php echo $yr['is_current']?'(ปัจจุบัน)':''; ?>
+                                        <?php echo $yr['year']; ?> <?php echo $yr['is_current'] ? '(ปัจจุบัน)' : ''; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -42,12 +42,21 @@
                         <div class="flex items-center bg-slate-50 border border-gray-200 rounded-2xl p-2 px-4 shadow-inner w-full md:w-auto">
                             <span class="text-xs font-bold text-gray-500 mr-3 whitespace-nowrap">ห้อง:</span>
                             <select onchange="updateFilter('room', this.value)" class="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer w-full md:w-auto min-w-[50px]">
-                                <option value="">ทั้งหมด</option>
-                                <?php for($i=1; $i<=15; $i++): $r = "6.$i"; ?>
-                                    <option value="<?php echo $r; ?>" <?php echo ($data['selected_room'] === $r) ? 'selected' : ''; ?>>
-                                        6.<?php echo $i; ?>
-                                    </option>
-                                <?php endfor; ?>
+                                <?php if (isset($data['assigned_rooms']) && !empty($data['assigned_rooms'])): ?>
+                                    <option value="">ทั้งหมด (ที่ดูแล)</option>
+                                    <?php foreach ($data['assigned_rooms'] as $room): ?>
+                                        <option value="<?php echo $room; ?>" <?php echo ($data['selected_room'] === $room) ? 'selected' : ''; ?>>
+                                            6.<?php echo str_replace('6.', '', $room); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="">ทั้งหมด</option>
+                                    <?php for ($i = 1; $i <= 15; $i++): $r = "6.$i"; ?>
+                                        <option value="<?php echo $r; ?>" <?php echo ($data['selected_room'] === $r) ? 'selected' : ''; ?>>
+                                            6.<?php echo $i; ?>
+                                        </option>
+                                    <?php endfor; ?>
+                                <?php endif; ?>
                             </select>
                         </div>
                     </div>
@@ -63,7 +72,7 @@
                                     <th class="sticky left-0 bg-slate-50 z-30 px-6 py-4 border-b border-r border-gray-100 min-w-[300px] shadow-[4px_0_10px_-4px_rgba(0,0,0,0.05)] text-xs font-black uppercase tracking-widest text-gray-400">
                                         ข้อมูลโครงงาน
                                     </th>
-                                    <?php foreach($data['steps'] as $step): ?>
+                                    <?php foreach ($data['steps'] as $step): ?>
                                         <th class="px-4 py-4 border-b border-gray-100 text-center min-w-[140px]">
                                             <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block"><?php echo htmlspecialchars($step['step_name']); ?></span>
                                         </th>
@@ -71,39 +80,41 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-sm">
-                                <?php if(empty($data['groups'])): ?>
-                                    <tr><td colspan="100%" class="px-6 py-20 text-center text-gray-400 italic">ไม่พบข้อมูลกลุ่มโครงงานในห้องที่เลือก</td></tr>
+                                <?php if (empty($data['groups'])): ?>
+                                    <tr>
+                                        <td colspan="100%" class="px-6 py-20 text-center text-gray-400 italic">ไม่พบข้อมูลกลุ่มโครงงานในห้องที่เลือก</td>
+                                    </tr>
                                 <?php endif; ?>
 
-                                <?php foreach($data['groups'] as $group): ?>
-                                <tr class="hover:bg-slate-50/50 transition-colors group">
-                                    <!-- Sticky Column Data -->
-                                    <td class="sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 px-6 py-4 border-r border-gray-100 shadow-[4px_0_10px_-4px_rgba(0,0,0,0.05)]">
-                                        <div class="flex items-start gap-4">
-                                            <div class="flex-shrink-0 w-10 h-10 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center font-black text-xs">
-                                                <?php echo htmlspecialchars($group['room'] ?? '-'); ?>
-                                            </div>
-                                            <div>
-                                                <a href="<?php echo BASE_URL . '/project/details/' . $group['id']; ?>" class="block group/link">
-                                                    <p class="font-bold text-slate-800 line-clamp-2 leading-tight group-hover/link:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4">
-                                                        <?php echo htmlspecialchars($group['project_name_th']); ?>
+                                <?php foreach ($data['groups'] as $group): ?>
+                                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                                        <!-- Sticky Column Data -->
+                                        <td class="sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 px-6 py-4 border-r border-gray-100 shadow-[4px_0_10px_-4px_rgba(0,0,0,0.05)]">
+                                            <div class="flex items-start gap-4">
+                                                <div class="flex-shrink-0 w-10 h-10 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center font-black text-xs">
+                                                    <?php echo htmlspecialchars($group['room'] ?? '-'); ?>
+                                                </div>
+                                                <div>
+                                                    <a href="<?php echo BASE_URL . '/project/details/' . $group['id']; ?>" class="block group/link">
+                                                        <p class="font-bold text-slate-800 line-clamp-2 leading-tight group-hover/link:text-pink-600 transition-colors underline decoration-dotted decoration-gray-300 underline-offset-4">
+                                                            <?php echo htmlspecialchars($group['project_name_th']); ?>
+                                                        </p>
+                                                    </a>
+                                                    <p class="text-[10px] text-gray-400 mt-1">
+                                                        ที่ปรึกษา: <?php echo htmlspecialchars($group['advisor_name'] ?: '-'); ?>
+                                                        <span class="text-blue-400 bg-blue-50 px-1 rounded ml-1"><?php echo htmlspecialchars($group['academic_year'] ?? ''); ?></span>
                                                     </p>
-                                                </a>
-                                                <p class="text-[10px] text-gray-400 mt-1">
-                                                    ที่ปรึกษา: <?php echo htmlspecialchars($group['advisor_name'] ?: '-'); ?> 
-                                                    <span class="text-blue-400 bg-blue-50 px-1 rounded ml-1"><?php echo htmlspecialchars($group['academic_year'] ?? ''); ?></span>
-                                                </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    <!-- Status Columns -->
-                                    <?php foreach($data['steps'] as $step): 
-                                        $status = $data['matrix'][$group['id']][$step['id']] ?? null;
-                                    ?>
-                                        <td class="px-4 py-4 text-center border-gray-50">
-                                            <div class="flex justify-center">
-                                                <?php 
+                                        <!-- Status Columns -->
+                                        <?php foreach ($data['steps'] as $step):
+                                            $status = $data['matrix'][$group['id']][$step['id']] ?? null;
+                                        ?>
+                                            <td class="px-4 py-4 text-center border-gray-50">
+                                                <div class="flex justify-center">
+                                                    <?php
                                                     // Determine Link target if submission exists
                                                     $linkUrl = null;
                                                     // Allow click only if role is TEACHER
@@ -111,50 +122,56 @@
                                                         // ใช้ mode=all เพื่อให้มั่นใจว่าเห็นงานแน่นอน แม้ไม่ใช่ที่ปรึกษา
                                                         $linkUrl = BASE_URL . "/teacher/review?mode=all&group_id=" . $group['id'] . "&year=" . ($data['selected_year'] ?? '');
                                                     }
-                                                ?>
-                                                
-                                                <?php if($status === 'APPROVED'): ?>
-                                                    <?php if($linkUrl): ?>
-                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                    ?>
+
+                                                    <?php if ($status === 'APPROVED'): ?>
+                                                        <?php if ($linkUrl): ?>
+                                                            <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                            <?php endif; ?>
+                                                            <div class="w-8 h-8 rounded-lg bg-green-500 shadow-lg shadow-green-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ผ่านเรียบร้อย - คลิกเพื่อดูงาน' : 'ผ่านเรียบร้อย'; ?>">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <?php if ($linkUrl): ?>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    <?php elseif ($status === 'PENDING'): ?>
+                                                        <?php if ($linkUrl): ?>
+                                                            <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                            <?php endif; ?>
+                                                            <div class="w-8 h-8 rounded-lg bg-amber-400 shadow-lg shadow-amber-100 flex items-center justify-center text-white animate-pulse" title="<?php echo $linkUrl ? 'รอตรวจ - คลิกเพื่อตรวจงาน' : 'รอตรวจ'; ?>">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <?php if ($linkUrl): ?>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    <?php elseif ($status === 'REJECTED'): ?>
+                                                        <?php if ($linkUrl): ?>
+                                                            <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
+                                                            <?php endif; ?>
+                                                            <div class="w-8 h-8 rounded-lg bg-rose-500 shadow-lg shadow-rose-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ต้องแก้ไข - คลิกเพื่อดูงาน' : 'ต้องแก้ไข'; ?>">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <?php if ($linkUrl): ?>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    <?php else: ?>
+                                                        <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 cursor-default" title="ยังไม่ส่ง"></div>
                                                     <?php endif; ?>
-                                                        <div class="w-8 h-8 rounded-lg bg-green-500 shadow-lg shadow-green-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ผ่านเรียบร้อย - คลิกเพื่อดูงาน' : 'ผ่านเรียบร้อย'; ?>">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                        </div>
-                                                    <?php if($linkUrl): ?>
-                                                    </a>
-                                                    <?php endif; ?>
-                                                <?php elseif($status === 'PENDING'): ?>
-                                                    <?php if($linkUrl): ?>
-                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
-                                                    <?php endif; ?>
-                                                        <div class="w-8 h-8 rounded-lg bg-amber-400 shadow-lg shadow-amber-100 flex items-center justify-center text-white animate-pulse" title="<?php echo $linkUrl ? 'รอตรวจ - คลิกเพื่อตรวจงาน' : 'รอตรวจ'; ?>">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                        </div>
-                                                    <?php if($linkUrl): ?>
-                                                    </a>
-                                                    <?php endif; ?>
-                                                <?php elseif($status === 'REJECTED'): ?>
-                                                    <?php if($linkUrl): ?>
-                                                    <a href="<?php echo $linkUrl; ?>" class="hover:scale-110 transition-transform block">
-                                                    <?php endif; ?>
-                                                        <div class="w-8 h-8 rounded-lg bg-rose-500 shadow-lg shadow-rose-200 flex items-center justify-center text-white" title="<?php echo $linkUrl ? 'ต้องแก้ไข - คลิกเพื่อดูงาน' : 'ต้องแก้ไข'; ?>">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                        </div>
-                                                    <?php if($linkUrl): ?>
-                                                    </a>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 cursor-default" title="ยังไม่ส่ง"></div>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    <?php endforeach; ?>
-                                </tr>
+                                                </div>
+                                            </td>
+                                        <?php endforeach; ?>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Legend Footer -->
                     <div class="px-6 py-4 bg-white border-t border-gray-100 flex flex-wrap gap-6 text-xs text-gray-500 justify-center md:justify-start sticky bottom-0 z-30 shadow-[0_-4px_10px_-4px_rgba(0,0,0,0.05)]">
                         <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-green-500 shadow-sm"></span> ผ่านอนุมัติ</div>
@@ -170,20 +187,33 @@
 </div>
 
 <style>
-/* Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
 </style>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
 <script>
-function updateFilter(key, value) {
-    const url = new URL(window.location.href);
-    // Always set the parameter, specifically for 'year' where empty string means "All" 
-    // while missing parameter means "Current Year"
-    url.searchParams.set(key, value);
-    window.location.href = url.toString();
-}
+    function updateFilter(key, value) {
+        const url = new URL(window.location.href);
+        // Always set the parameter, specifically for 'year' where empty string means "All" 
+        // while missing parameter means "Current Year"
+        url.searchParams.set(key, value);
+        window.location.href = url.toString();
+    }
 </script>

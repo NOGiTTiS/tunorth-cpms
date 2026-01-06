@@ -302,7 +302,17 @@ class Admin_model
                 WHERE u.role = 'STUDENT'";
 
         if ($room) {
-            $sql .= " AND u.room = :room";
+            if (is_array($room)) {
+                // Handle multiple rooms (e.g. ['6.1', '6.2'])
+                // Create placeholders like :room0, :room1, etc.
+                $placeholders = [];
+                foreach ($room as $k => $v) {
+                    $placeholders[] = ":room$k";
+                }
+                $sql .= " AND u.room IN (" . implode(',', $placeholders) . ")";
+            } else {
+                $sql .= " AND u.room = :room";
+            }
         }
         if ($year) {
             $sql .= " AND g.academic_year = :year";
@@ -311,7 +321,16 @@ class Admin_model
         $sql .= " GROUP BY g.id ORDER BY room ASC, g.id ASC";
 
         $stmt = $this->db->prepare($sql);
-        if ($room) $stmt->bindValue(':room', $room);
+
+        if ($room) {
+            if (is_array($room)) {
+                foreach ($room as $k => $v) {
+                    $stmt->bindValue(":room$k", $v);
+                }
+            } else {
+                $stmt->bindValue(':room', $room);
+            }
+        }
         if ($year) $stmt->bindValue(':year', $year);
         $stmt->execute();
         $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
