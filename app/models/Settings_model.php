@@ -40,7 +40,8 @@ class Settings_model {
             'institute_name' => 'โรงเรียนเตรียมอุดมศึกษา ภาคเหนือ',
             'submission_mode' => 'open', // open, sequential
             'enable_submission_notify' => '1',
-            'enable_grading_notify' => '1'
+            'enable_grading_notify' => '1',
+            'show_scores_to_students' => '1'
         ];
 
         foreach ($defaults as $key => $value) {

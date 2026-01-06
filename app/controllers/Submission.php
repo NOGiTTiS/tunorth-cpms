@@ -1,15 +1,18 @@
 <?php
-class Submission extends Controller {
-    public function __construct() {
+class Submission extends Controller
+{
+    public function __construct()
+    {
         $this->middleware();
     }
 
-    public function index() {
+    public function index()
+    {
         $groupModel = $this->model('Group_model');
         $subModel = $this->model('Submission_model');
-        
+
         $myGroup = $groupModel->getGroupByUser($_SESSION['user_id']);
-        
+
         // หากยังไม่มีกลุ่ม ให้ไปที่หน้าแจ้งเตือน (แทนการใช้ die)
         if (!$myGroup) {
             $data['title'] = 'ยังไม่พบกลุ่ม';
@@ -19,17 +22,20 @@ class Submission extends Controller {
 
         $settingsModel = $this->model('Settings_model');
         $submissionMode = $settingsModel->get('submission_mode') ?? 'open';
+        $showScores = $settingsModel->get('show_scores_to_students') ?? '1';
 
         $data = [
             'steps' => $subModel->getStepsWithStatus($myGroup['id']),
             'group' => $myGroup,
-            'submission_mode' => $submissionMode
+            'submission_mode' => $submissionMode,
+            'show_scores_to_students' => $showScores
         ];
 
         $this->view('submission/index', $data);
     }
 
-    public function upload() {
+    public function upload()
+    {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $step_id = $_POST['step_id'];
@@ -42,7 +48,7 @@ class Submission extends Controller {
             if ($submission_type === 'link') {
                 // --- กรณีส่งเป็นลิงก์ ---
                 $link = trim($_POST['project_link']);
-                
+
                 // Validate URL
                 if (!filter_var($link, FILTER_VALIDATE_URL)) {
                     echo json_encode(['status' => 'error', 'message' => 'รูปแบบลิงก์ไม่ถูกต้อง (ต้องขึ้นต้นด้วย http:// หรือ https://)']);
@@ -50,12 +56,11 @@ class Submission extends Controller {
                 }
 
                 $dbPath = $link;
-
             } else {
                 // --- กรณีส่งเป็นไฟล์ (Logic เดิม) ---
                 if (!isset($_FILES['project_file']) || $_FILES['project_file']['error'] == UPLOAD_ERR_NO_FILE) {
-                     echo json_encode(['status' => 'error', 'message' => 'กรุณาเลือกไฟล์หรือระบุลิงก์งาน']);
-                     return;
+                    echo json_encode(['status' => 'error', 'message' => 'กรุณาเลือกไฟล์หรือระบุลิงก์งาน']);
+                    return;
                 }
 
                 $file = $_FILES['project_file'];
@@ -72,7 +77,7 @@ class Submission extends Controller {
                         UPLOAD_ERR_EXTENSION => 'การอัปโหลดถูกหยุดโดยส่วนขยาย PHP',
                     ];
                     $message = $errorMessages[$file['error']] ?? 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์ (Code: ' . $file['error'] . ')';
-                    
+
                     echo json_encode(['status' => 'error', 'message' => $message]);
                     return;
                 }
@@ -108,12 +113,12 @@ class Submission extends Controller {
                 // 4. ตั้งชื่อไฟล์ใหม่
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $safeFileName = "group_" . $group_id . "_step_" . $step_id . "_" . bin2hex(random_bytes(8)) . "." . $ext;
-                
+
                 // Updated: Uploads are now at root
                 $uploadDir = __DIR__ . '/../../uploads/';
                 if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
                 $targetPath = $uploadDir . $safeFileName;
-                
+
                 $dbPath = 'uploads/' . $safeFileName;
 
                 if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
@@ -125,22 +130,22 @@ class Submission extends Controller {
             // บันทึกลงฐานข้อมูล (ใช้ทั้ง File Path และ Link Path)
             $subModel = $this->model('Submission_model');
             $subModel->submitWork($group_id, $step_id, $dbPath, $user_id);
-            
+
             // Log & Notification
             $this->model('Log_model')->log($user_id, $_SESSION['user_role'], 'UPLOAD', "ส่งงาน ($submission_type) Step ID: $step_id");
-            
+
             // ดึงข้อมูลกลุ่มเพื่อระบุห้อง
             $groupData = $this->model('Group_model')->getGroupById($group_id);
             $room = $groupData['room'] ?? 'N/A';
 
             require_once __DIR__ . '/../core/Notification.php';
             $msg = "📁 <b>มีการส่งงานใหม่! (" . strtoupper($submission_type) . ")</b>\n" .
-                   "กลุ่ม: " . $_POST['group_name'] . "\n" .
-                   "ห้อง: ม." . $room . "\n" .
-                   "งาน: " . $_POST['step_name'];
-            
+                "กลุ่ม: " . $_POST['group_name'] . "\n" .
+                "ห้อง: ม." . $room . "\n" .
+                "งาน: " . $_POST['step_name'];
+
             Notification::sendTelegram($msg, 'submission');
-            
+
             echo json_encode(['status' => 'success']);
         }
     }

@@ -71,6 +71,65 @@
 
                         <hr class="border-gray-100">
 
+                        <!-- Logo / Favicon -->
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center">
+                                <span class="bg-blue-100 text-blue-600 rounded-lg p-2 mr-3 text-sm">🖼️</span> รูปภาพ
+                                (Images)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pl-0 md:pl-12">
+                                <!-- Logo -->
+                                <div
+                                    class="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 hover:border-pink-400 transition-colors">
+                                    <label
+                                        class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">Site
+                                        Logo</label>
+                                    <div class="flex items-center space-x-4 mb-4">
+                                        <div
+                                            class="w-20 h-20 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm border border-gray-100">
+                                            <?php if (!empty($data['settings']['site_logo'])): ?>
+                                                <img src="<?php echo BASE_URL . '/' . htmlspecialchars($data['settings']['site_logo']); ?>"
+                                                    class="max-w-full max-h-full object-contain">
+                                            <?php else: ?>
+                                                <span class="text-xs text-gray-300">No Logo</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-[10px] text-gray-400 mb-1">Recommended: PNG/SVG transparent
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <input type="file" name="site_logo" accept="image/*"
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-pink-600 transition-all cursor-pointer">
+                                </div>
+
+                                <!-- Favicon -->
+                                <div
+                                    class="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 hover:border-pink-400 transition-colors">
+                                    <label
+                                        class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">Favicon</label>
+                                    <div class="flex items-center space-x-4 mb-4">
+                                        <div
+                                            class="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1 shadow-sm border border-gray-100">
+                                            <?php if (!empty($data['settings']['site_favicon'])): ?>
+                                                <img src="<?php echo BASE_URL . '/' . htmlspecialchars($data['settings']['site_favicon']); ?>"
+                                                    class="max-w-full max-h-full object-contain">
+                                            <?php else: ?>
+                                                <span class="text-xs text-gray-300">No Icon</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-[10px] text-gray-400 mb-1">Recommended: .ico or 32x32 png</p>
+                                        </div>
+                                    </div>
+                                    <input type="file" name="site_favicon" accept="image/x-icon,image/png"
+                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-pink-600 transition-all cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="border-gray-100">
+
                         <!-- Academic Settings -->
                         <div>
                             <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center">
@@ -157,59 +216,25 @@
 
                         <hr class="border-gray-100">
 
-                        <!-- Logo / Favicon -->
+                        <!-- Grading Settings -->
                         <div>
                             <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center">
-                                <span class="bg-blue-100 text-blue-600 rounded-lg p-2 mr-3 text-sm">🖼️</span> รูปภาพ
-                                (Images)
+                                <span class="bg-green-100 text-green-600 rounded-lg p-2 mr-3 text-sm">📊</span>
+                                การให้คะแนน (Grading)
                             </h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pl-0 md:pl-12">
-                                <!-- Logo -->
-                                <div
-                                    class="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 hover:border-pink-400 transition-colors">
-                                    <label
-                                        class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">Site
-                                        Logo</label>
-                                    <div class="flex items-center space-x-4 mb-4">
-                                        <div
-                                            class="w-20 h-20 bg-white rounded-xl flex items-center justify-center p-2 shadow-sm border border-gray-100">
-                                            <?php if (!empty($data['settings']['site_logo'])): ?>
-                                                <img src="<?php echo BASE_URL . '/' . htmlspecialchars($data['settings']['site_logo']); ?>"
-                                                    class="max-w-full max-h-full object-contain">
-                                            <?php else: ?>
-                                                <span class="text-xs text-gray-300">No Logo</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-[10px] text-gray-400 mb-1">Recommended: PNG/SVG transparent
-                                            </p>
-                                        </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-0 md:pl-12">
+                                <!-- Show Scores Toggle -->
+                                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-gray-100">
+                                    <div>
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">แสดงคะแนนให้นักเรียนเห็น</label>
+                                        <p class="text-[10px] text-gray-400">อนุญาตให้นักเรียนดูคะแนนที่ได้</p>
                                     </div>
-                                    <input type="file" name="site_logo" accept="image/*"
-                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-pink-600 transition-all cursor-pointer">
-                                </div>
-
-                                <!-- Favicon -->
-                                <div
-                                    class="bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 hover:border-pink-400 transition-colors">
-                                    <label
-                                        class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">Favicon</label>
-                                    <div class="flex items-center space-x-4 mb-4">
-                                        <div
-                                            class="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1 shadow-sm border border-gray-100">
-                                            <?php if (!empty($data['settings']['site_favicon'])): ?>
-                                                <img src="<?php echo BASE_URL . '/' . htmlspecialchars($data['settings']['site_favicon']); ?>"
-                                                    class="max-w-full max-h-full object-contain">
-                                            <?php else: ?>
-                                                <span class="text-xs text-gray-300">No Icon</span>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-[10px] text-gray-400 mb-1">Recommended: .ico or 32x32 png</p>
-                                        </div>
-                                    </div>
-                                    <input type="file" name="site_favicon" accept="image/x-icon,image/png"
-                                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-white hover:file:bg-pink-600 transition-all cursor-pointer">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="hidden" name="show_scores_to_students" value="0">
+                                        <input type="checkbox" name="show_scores_to_students" value="1"
+                                            class="sr-only peer" <?php echo ($data['settings']['show_scores_to_students'] ?? '1') === '1' ? 'checked' : ''; ?>>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -319,6 +344,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <hr class="border-gray-100 my-6">
 
                         <div class="pt-6 border-t flex justify-end">
                             <button type="submit"

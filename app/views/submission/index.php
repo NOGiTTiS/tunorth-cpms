@@ -16,7 +16,7 @@
 
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
             <div class="max-w-5xl mx-auto">
-                
+
                 <div class="mb-8">
                     <h2 class="text-2xl md:text-3xl font-bold text-gray-800">ส่งเอกสารโครงงาน</h2>
                     <div class="mt-2 flex items-center text-pink-600">
@@ -38,7 +38,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 block md:table-row-group">
-                                <?php foreach($data['steps'] as $key => $step): ?>
+                                <?php foreach ($data['steps'] as $key => $step): ?>
                                     <tr class="hover:bg-slate-50/50 transition-colors block md:table-row border-b border-gray-100 md:border-none p-4 md:p-0 mb-4 md:mb-0 bg-white md:bg-transparent rounded-2xl md:rounded-none shadow-sm md:shadow-none">
                                         <td class="px-0 py-2 md:px-6 md:py-5 align-top block md:table-cell">
                                             <div class="flex items-start">
@@ -46,22 +46,22 @@
                                                 <div class="w-8 h-8 rounded-lg bg-pink-50 text-pink-500 flex items-center justify-center font-bold text-xs mr-4 shrink-0 mt-1">
                                                     <?php echo $step['step_order']; ?>
                                                 </div>
-                                                
+
                                                 <div class="min-w-0 flex-1">
                                                     <p class="font-bold text-gray-800 text-sm md:text-base"><?php echo htmlspecialchars($step['step_name']); ?></p>
-                                                    
-                                                    <?php if($step['submitted_at']): ?>
+
+                                                    <?php if ($step['submitted_at']): ?>
                                                         <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">ส่งเมื่อ: <?php echo date('d/m/Y H:i', strtotime($step['submitted_at'])); ?></p>
                                                     <?php endif; ?>
 
                                                     <!-- แสดงไฟล์ที่ส่ง -->
-                                                    <?php if(!empty($step['file_path'])): ?>
+                                                    <?php if (!empty($step['file_path'])): ?>
                                                         <div class="mt-2">
-                                                            <?php 
-                                                                $isLink = preg_match('/^https?:\/\//', $step['file_path']);
-                                                                $targetUrl = $isLink ? $step['file_path'] : BASE_URL . '/' . $step['file_path'];
-                                                                $btnText = $isLink ? 'เปิดลิงก์งาน' : 'ดูไฟล์แนบ';
-                                                                $btnIcon = $isLink ? '🔗' : '📄';
+                                                            <?php
+                                                            $isLink = preg_match('/^https?:\/\//', $step['file_path']);
+                                                            $targetUrl = $isLink ? $step['file_path'] : BASE_URL . '/' . $step['file_path'];
+                                                            $btnText = $isLink ? 'เปิดลิงก์งาน' : 'ดูไฟล์แนบ';
+                                                            $btnIcon = $isLink ? '🔗' : '📄';
                                                             ?>
                                                             <a href="<?php echo htmlspecialchars($targetUrl); ?>" target="_blank" class="inline-flex items-center px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors">
                                                                 <span class="mr-1"><?php echo $btnIcon; ?></span> <?php echo $btnText; ?>
@@ -70,7 +70,7 @@
                                                     <?php endif; ?>
 
                                                     <!-- แสดงคอมเม้นต์จากครูทันที (ถ้ามี) -->
-                                                    <?php if($step['comment']): ?>
+                                                    <?php if ($step['comment']): ?>
                                                         <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-400 rounded-r-xl">
                                                             <div class="flex items-center mb-1">
                                                                 <span class="text-[10px] font-bold text-amber-600 uppercase tracking-widest">📝 ความเห็นจากครู:</span>
@@ -83,48 +83,57 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        
+
                                         <td class="px-0 py-2 md:px-6 md:py-5 align-top block md:table-cell pl-[3.5rem] md:pl-6">
-                                            <?php 
-                                                $badgeClass = "bg-gray-100 text-gray-400";
-                                                $text = "ยังไม่ส่ง";
-                                                if($step['status'] == 'PENDING') { $badgeClass = "bg-amber-100 text-amber-600"; $text = "รอตรวจ"; }
-                                                if($step['status'] == 'APPROVED') { $badgeClass = "bg-green-100 text-green-600"; $text = "ผ่านแล้ว"; }
-                                                if($step['status'] == 'REJECTED') { $badgeClass = "bg-rose-100 text-rose-600"; $text = "แก้ไข"; }
+                                            <?php
+                                            $badgeClass = "bg-gray-100 text-gray-400";
+                                            $text = "ยังไม่ส่ง";
+                                            if ($step['status'] == 'PENDING') {
+                                                $badgeClass = "bg-amber-100 text-amber-600";
+                                                $text = "รอตรวจ";
+                                            }
+                                            if ($step['status'] == 'APPROVED') {
+                                                $badgeClass = "bg-green-100 text-green-600";
+                                                $text = "ผ่านแล้ว";
+                                            }
+                                            if ($step['status'] == 'REJECTED') {
+                                                $badgeClass = "bg-rose-100 text-rose-600";
+                                                $text = "แก้ไข";
+                                            }
                                             ?>
-                                                <div class="mt-1 flex items-center gap-2 flex-wrap">
-                                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badgeClass; ?>">
-                                                        <?php echo $text; ?>
+                                            <div class="mt-1 flex items-center gap-2 flex-wrap">
+                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <?php echo $badgeClass; ?>">
+                                                    <?php echo $text; ?>
+                                                </span>
+
+                                                <?php if (isset($step['score']) && $step['score'] !== null && ($data['show_scores_to_students'] ?? '1') === '1'): ?>
+                                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200">
+                                                        ⭐ คะแนน: <?php echo $step['score']; ?>
                                                     </span>
-                                                    
-                                                    <?php if(isset($step['score']) && $step['score'] !== null): ?>
-                                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-600 border border-purple-200">
-                                                            ⭐ คะแนน: <?php echo $step['score']; ?>
-                                                        </span>
-                                                    <?php endif; ?>
-                                                </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </td>
-                                        
+
                                         <td class="px-0 py-2 md:px-6 md:py-5 align-top text-center block md:table-cell pl-[3.5rem] md:pl-6 md:text-center text-left">
                                             <div class="flex items-center justify-start md:justify-center">
                                                 <!-- ปุ่มอัปโหลด -->
                                                 <?php
-                                                    $canSubmit = true;
-                                                    if ($data['submission_mode'] === 'sequential') {
-                                                        // เช็ค step ก่อนหน้า
-                                                        $prevIndex = $key - 1;
-                                                        if ($prevIndex >= 0) {
-                                                            $prevStep = $data['steps'][$prevIndex];
-                                                            // ถ้าก่อนหน้ายังไม่ APPROVED -> ห้ามส่ง
-                                                            if ($prevStep['status'] !== 'APPROVED') {
-                                                                $canSubmit = false;
-                                                            }
+                                                $canSubmit = true;
+                                                if ($data['submission_mode'] === 'sequential') {
+                                                    // เช็ค step ก่อนหน้า
+                                                    $prevIndex = $key - 1;
+                                                    if ($prevIndex >= 0) {
+                                                        $prevStep = $data['steps'][$prevIndex];
+                                                        // ถ้าก่อนหน้ายังไม่ APPROVED -> ห้ามส่ง
+                                                        if ($prevStep['status'] !== 'APPROVED') {
+                                                            $canSubmit = false;
                                                         }
                                                     }
+                                                }
                                                 ?>
-                                                
-                                                <?php if($canSubmit): ?>
-                                                    <button onclick="openUploadModal(<?php echo $step['id']; ?>, '<?php echo htmlspecialchars($step['step_name'], ENT_QUOTES); ?>')" 
+
+                                                <?php if ($canSubmit): ?>
+                                                    <button onclick="openUploadModal(<?php echo $step['id']; ?>, '<?php echo htmlspecialchars($step['step_name'], ENT_QUOTES); ?>')"
                                                         class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-pink-100 active:scale-95 whitespace-nowrap w-full md:w-auto text-center justify-center flex">
                                                         <?php echo ($step['status']) ? 'ส่งใหม่' : '🚀 อัปโหลดส่งงาน'; ?>
                                                     </button>
@@ -159,12 +168,14 @@
 </div>
 
 <script>
-// ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
-// ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
-async function openUploadModal(stepId, stepName) {
-    const { value: formValues } = await Swal.fire({
-        title: 'ส่งงาน: ' + stepName,
-        html: `
+    // ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
+    // ฟังก์ชันอัปโหลดไฟล์ (เรียกใช้ SweetAlert2)
+    async function openUploadModal(stepId, stepName) {
+        const {
+            value: formValues
+        } = await Swal.fire({
+            title: 'ส่งงาน: ' + stepName,
+            html: `
             <div class="mb-4 text-left font-prompt">
                 <div class="flex justify-center space-x-6 mb-6">
                     <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50">
@@ -197,83 +208,101 @@ async function openUploadModal(stepId, stepName) {
                 </div>
             </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: '🚀 ส่งงานทันที',
-        confirmButtonColor: '#ec4899',
-        cancelButtonText: 'ยกเลิก',
-        focusConfirm: false,
-        customClass: { popup: 'rounded-3xl' },
-        preConfirm: () => {
-            const type = document.querySelector('input[name="sub_type"]:checked').value;
-            if (type === 'file' || type === 'image') {
-                const fileInput = document.getElementById('swal-input-file');
-                if (!fileInput.files.length) {
-                    Swal.showValidationMessage('กรุณาเลือกไฟล์ก่อนส่ง');
-                    return false;
+            showCancelButton: true,
+            confirmButtonText: '🚀 ส่งงานทันที',
+            confirmButtonColor: '#ec4899',
+            cancelButtonText: 'ยกเลิก',
+            focusConfirm: false,
+            customClass: {
+                popup: 'rounded-3xl'
+            },
+            preConfirm: () => {
+                const type = document.querySelector('input[name="sub_type"]:checked').value;
+                if (type === 'file' || type === 'image') {
+                    const fileInput = document.getElementById('swal-input-file');
+                    if (!fileInput.files.length) {
+                        Swal.showValidationMessage('กรุณาเลือกไฟล์ก่อนส่ง');
+                        return false;
+                    }
+                    return {
+                        type: type,
+                        file: fileInput.files[0]
+                    };
+                } else {
+                    const linkInput = document.getElementById('swal-input-link').value;
+                    if (!linkInput) {
+                        Swal.showValidationMessage('กรุณาระบุลิงก์งาน');
+                        return false;
+                    }
+                    if (!linkInput.startsWith('http')) {
+                        Swal.showValidationMessage('ลิงก์ต้องขึ้นต้นด้วย http:// หรือ https://');
+                        return false;
+                    }
+                    return {
+                        type: 'link',
+                        link: linkInput
+                    };
                 }
-                return { type: type, file: fileInput.files[0] };
-            } else {
-                const linkInput = document.getElementById('swal-input-link').value;
-                if (!linkInput) {
-                    Swal.showValidationMessage('กรุณาระบุลิงก์งาน');
-                    return false;
-                }
-                if (!linkInput.startsWith('http')) {
-                    Swal.showValidationMessage('ลิงก์ต้องขึ้นต้นด้วย http:// หรือ https://');
-                    return false;
-                }
-                return { type: 'link', link: linkInput };
             }
-        }
-    });
-
-    if (formValues) {
-        const formData = new FormData();
-        formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-        formData.append('step_id', stepId);
-        formData.append('step_name', stepName);
-        formData.append('group_id', '<?php echo $data['group']['id']; ?>');
-        formData.append('group_name', '<?php echo $data['group']['project_name_th']; ?>');
-        formData.append('submission_type', formValues.type);
-
-        if (formValues.type === 'file' || formValues.type === 'image') {
-            formData.append('project_file', formValues.file);
-        } else {
-            formData.append('project_link', formValues.link);
-        }
-
-        Swal.fire({
-            title: 'กำลังส่งงาน...',
-            html: 'กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูล',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
         });
 
-        try {
-            const res = await fetch(BASE_URL + '/submission/upload', { method: 'POST', body: formData });
-            
-            // Safe parse
-            const text = await res.text();
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch (e) {
-                console.error(text);
-                throw new Error('Invalid JSON Response');
+        if (formValues) {
+            const formData = new FormData();
+            formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            formData.append('step_id', stepId);
+            formData.append('step_name', stepName);
+            formData.append('group_id', '<?php echo $data['group']['id']; ?>');
+            formData.append('group_name', '<?php echo $data['group']['project_name_th']; ?>');
+            formData.append('submission_type', formValues.type);
+
+            if (formValues.type === 'file' || formValues.type === 'image') {
+                formData.append('project_file', formValues.file);
+            } else {
+                formData.append('project_link', formValues.link);
             }
 
-            if (result.status === 'success') {
-                Swal.fire({ icon: 'success', title: 'ส่งงานสำเร็จ!', showConfirmButton: false, timer: 1500 })
-                    .then(() => location.reload());
-            } else {
-                Swal.fire('เกิดข้อผิดพลาด', result.message, 'error');
+            Swal.fire({
+                title: 'กำลังส่งงาน...',
+                html: 'กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูล',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const res = await fetch(BASE_URL + '/submission/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Safe parse
+                const text = await res.text();
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error(text);
+                    throw new Error('Invalid JSON Response');
+                }
+
+                if (result.status === 'success') {
+                    Swal.fire({
+                            icon: 'success',
+                            title: 'ส่งงานสำเร็จ!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', result.message, 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                Swal.fire('เชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ โปรดลองใหม่', 'error');
             }
-        } catch (e) {
-            console.error(e);
-            Swal.fire('เชื่อมต่อล้มเหลว', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ โปรดลองใหม่', 'error');
         }
     }
-}
 </script>
 
 <?php require_once __DIR__ . '/../templates/footer.php'; ?>
