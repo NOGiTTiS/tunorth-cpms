@@ -44,6 +44,9 @@
             <a href="<?php echo BASE_URL; ?>/submission" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'submission') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📁</span> ส่งงานเอกสาร
             </a>
+            <a href="<?php echo BASE_URL; ?>/presentation" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'presentation') !== false && strpos($_SERVER['REQUEST_URI'], 'manage') === false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">📅</span> จองเวลานำเสนอ
+            </a>
         <?php endif; ?>
 
         <?php if ($_SESSION['user_role'] == 'TEACHER'): ?>
@@ -52,6 +55,9 @@
             </a>
             <a href="<?php echo BASE_URL; ?>/teacher/progress" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'teacher/progress') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📈</span> ตารางความก้าวหน้า
+            </a>
+            <a href="<?php echo BASE_URL; ?>/presentation/manage" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'presentation/manage') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">🗓️</span> จัดการรอบนำเสนอ
             </a>
         <?php endif; ?>
 
@@ -76,6 +82,9 @@
             </a>
             <a href="<?php echo BASE_URL; ?>/admin/announcements" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/announcements') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">📢</span> จัดการประกาศ
+            </a>
+            <a href="<?php echo BASE_URL; ?>/presentation/manage" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'presentation/manage') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
+                <span class="mr-3">🗓️</span> จัดการรอบนำเสนอ
             </a>
             <a href="<?php echo BASE_URL; ?>/admin/settings" class="flex items-center p-3 hover:bg-slate-800 rounded-lg transition-all <?php echo (strpos($_SERVER['REQUEST_URI'], 'admin/settings') !== false) ? 'bg-pink-600 text-white' : 'text-gray-300'; ?>">
                 <span class="mr-3">🔧</span> ตั้งค่าระบบ

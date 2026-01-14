@@ -328,6 +328,39 @@ ALTER TABLE `submissions`
   ADD CONSTRAINT `submissions_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `project_groups` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `submissions_ibfk_2` FOREIGN KEY (`step_id`) REFERENCES `project_steps` (`id`),
   ADD CONSTRAINT `submissions_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `presentation_slots`
+--
+
+CREATE TABLE `presentation_slots` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `academic_year` varchar(10) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `end_time` datetime NOT NULL,
+  `location` varchar(100) NOT NULL,
+  `max_groups` int(11) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `presentation_bookings`
+--
+
+CREATE TABLE `presentation_bookings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `slot_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
+  `booked_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`slot_id`) REFERENCES `presentation_slots` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`group_id`) REFERENCES `project_groups` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
