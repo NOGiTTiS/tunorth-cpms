@@ -173,12 +173,22 @@ function getDayName($dateStr)
 
                                                                     <!-- Slot Header -->
                                                                     <div class="flex justify-between items-start">
-                                                                        <span class="font-bold truncate" title="<?php echo htmlspecialchars($slot['location']); ?>">
-                                                                            📍 <?php echo htmlspecialchars($slot['location']); ?>
-                                                                        </span>
+                                                                        <div class="flex flex-col min-w-0">
+                                                                            <span class="font-bold truncate" title="<?php echo htmlspecialchars($slot['location']); ?>">
+                                                                                📍 <?php echo htmlspecialchars($slot['location']); ?>
+                                                                            </span>
+                                                                            <?php if (!empty($slot['bookings'])): ?>
+                                                                                <?php foreach ($slot['bookings'] as $booking): ?>
+                                                                                    <span class="text-[10px] truncate text-gray-600 pl-1 border-l-2 border-pink-300 mt-1" title="<?php echo htmlspecialchars($booking['room'] . ' - ' . $booking['project_name_th']); ?>">
+                                                                                        <span class="font-bold text-pink-600 mr-1">[<?php echo htmlspecialchars($booking['room']); ?>]</span>
+                                                                                        <?php echo htmlspecialchars($booking['project_name_th']); ?>
+                                                                                    </span>
+                                                                                <?php endforeach; ?>
+                                                                            <?php endif; ?>
+                                                                        </div>
 
                                                                         <!-- Tools -->
-                                                                        <div class="flex items-center space-x-1">
+                                                                        <div class="flex items-center space-x-1 flex-shrink-0 ml-1">
                                                                             <!-- Edit Btn -->
                                                                             <button onclick='openEditSlot(<?php echo $slotData; ?>)' class="text-xs text-blue-400 hover:text-blue-600">
                                                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

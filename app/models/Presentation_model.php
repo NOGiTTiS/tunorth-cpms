@@ -30,6 +30,26 @@ class Presentation_model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // ดึงข้อมูลการจองทั้งหมดในปีการศึกษา (สำหรับหน้า Manage)
+    public function getAllBookings($year = null)
+    {
+        $sql = "SELECT b.*, g.project_name_th, g.project_name_en, g.room 
+                FROM presentation_bookings b
+                JOIN presentation_slots s ON b.slot_id = s.id
+                JOIN project_groups g ON b.group_id = g.id
+                WHERE 1=1";
+
+        $params = [];
+        if ($year) {
+            $sql .= " AND s.academic_year = :year";
+            $params[':year'] = $year;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // ดึงรายชื่อกลุ่มที่จองในรอบนี้
     public function getBookingsBySlot($slot_id)
     {

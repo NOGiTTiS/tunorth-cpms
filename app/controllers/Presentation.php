@@ -76,8 +76,21 @@ class Presentation extends Controller
         $presentationModel = $this->model('Presentation_model');
         $yearModel = $this->model('Year_model');
 
+        $slots = $presentationModel->getAllSlots($yearModel->getCurrentYear()['year']);
+        $bookings = $presentationModel->getAllBookings($yearModel->getCurrentYear()['year']);
+
+        // Map bookings to slots
+        $bookingsBySlot = [];
+        foreach ($bookings as $booking) {
+            $bookingsBySlot[$booking['slot_id']][] = $booking;
+        }
+
+        foreach ($slots as &$slot) {
+            $slot['bookings'] = isset($bookingsBySlot[$slot['id']]) ? $bookingsBySlot[$slot['id']] : [];
+        }
+
         $data = [
-            'slots' => $presentationModel->getAllSlots($yearModel->getCurrentYear()['year']),
+            'slots' => $slots,
             'years' => $yearModel->getAll(),
             'current_year' => $yearModel->getCurrentYear()
         ];
