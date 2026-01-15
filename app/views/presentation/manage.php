@@ -316,8 +316,8 @@ function getDayName($dateStr)
         } = await Swal.fire({
             title: 'สร้างรอบแบบ Batch',
             html: '<div class="text-left font-prompt">' +
-                '<label class="block text-xs font-bold text-gray-400 uppercase mb-1">เลือกวันที่</label>' +
-                '<input id="batch-date" type="date" min="<?php echo date('Y-m-d'); ?>" class="w-full p-3 border border-gray-200 rounded-xl mb-4 focus:ring-2 focus:ring-pink-500 outline-none">' +
+                '<label class="block text-xs font-bold text-gray-400 uppercase mb-1">เลือกวันที่ (ได้หลายวัน)</label>' +
+                '<input id="batch-dates" type="text" class="w-full p-3 border border-gray-200 rounded-xl mb-4 focus:ring-2 focus:ring-pink-500 outline-none" placeholder="เลือกวันที่...">' +
 
                 '<label class="block text-xs font-bold text-gray-400 uppercase mb-1">เลือกคาบที่ต้องการสร้าง</label>' +
                 '<div class="grid grid-cols-4 gap-2 mb-4 max-h-40 overflow-y-auto">' +
@@ -340,13 +340,23 @@ function getDayName($dateStr)
             customClass: {
                 popup: 'rounded-3xl p-8 max-w-2xl'
             },
+            didOpen: () => {
+                flatpickr("#batch-dates", {
+                    mode: "multiple",
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    locale: {
+                        firstDayOfWeek: 1
+                    }
+                });
+            },
             preConfirm: () => {
-                const date = document.getElementById('batch-date').value;
+                const datesStr = document.getElementById('batch-dates').value;
                 const location = document.getElementById('batch-location').value;
                 const max = document.getElementById('batch-max').value;
                 const checkboxes = document.querySelectorAll('.batch-period:checked');
 
-                if (!date || checkboxes.length === 0) {
+                if (!datesStr || checkboxes.length === 0) {
                     Swal.showValidationMessage('กรุณาเลือกวันที่และอย่างน้อย 1 คาบ');
                     return false;
                 }
@@ -359,7 +369,7 @@ function getDayName($dateStr)
                 });
 
                 return {
-                    date,
+                    dates: datesStr.split(', '),
                     location,
                     max,
                     periods
@@ -374,21 +384,23 @@ function getDayName($dateStr)
             });
 
             let successCount = 0;
-            for (let p of formValues.periods) {
-                const [start, end] = p.time.split(' - ');
-                await $.ajax({
-                    url: '<?php echo BASE_URL; ?>/presentation/add_slot',
-                    type: 'POST',
-                    data: {
-                        csrf_token: '<?php echo $_SESSION['csrf_token']; ?>',
-                        academic_year: '<?php echo $current_year['year']; ?>',
-                        start_time: formValues.date + ' ' + start,
-                        end_time: formValues.date + ' ' + end,
-                        location: formValues.location,
-                        max_groups: formValues.max
-                    }
-                });
-                successCount++;
+            for (let date of formValues.dates) {
+                for (let p of formValues.periods) {
+                    const [start, end] = p.time.split(' - ');
+                    await $.ajax({
+                        url: '<?php echo BASE_URL; ?>/presentation/add_slot',
+                        type: 'POST',
+                        data: {
+                            csrf_token: '<?php echo $_SESSION['csrf_token']; ?>',
+                            academic_year: '<?php echo $current_year['year']; ?>',
+                            start_time: date + ' ' + start,
+                            end_time: date + ' ' + end,
+                            location: formValues.location,
+                            max_groups: formValues.max
+                        }
+                    });
+                    successCount++;
+                }
             }
             Swal.fire('สำเร็จ', `สร้าง ${successCount} รอบเรียบร้อย`, 'success').then(() => location.reload());
         }
