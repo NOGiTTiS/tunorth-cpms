@@ -79,6 +79,18 @@ function getDayName($dateStr)
                             </svg>
                             สร้างหลายรอบ (Batch)
                         </button>
+                        <a href="<?php echo BASE_URL; ?>/presentation/criteria_manage" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 transition-all">
+                            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            เกณฑ์การประเมิน
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>/presentation/export_scores" target="_blank" class="inline-flex items-center px-4 py-2 border border-green-300 rounded-xl shadow-sm text-sm font-bold text-green-700 bg-green-50 hover:bg-green-100 transition-all">
+                            <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Export Scores
+                        </a>
                     </div>
                 </div>
 
@@ -179,10 +191,20 @@ function getDayName($dateStr)
                                                                             </span>
                                                                             <?php if (!empty($slot['bookings'])): ?>
                                                                                 <?php foreach ($slot['bookings'] as $booking): ?>
-                                                                                    <span class="text-[10px] truncate text-gray-600 pl-1 border-l-2 border-pink-300 mt-1" title="<?php echo htmlspecialchars($booking['room'] . ' - ' . $booking['project_name_th']); ?>">
-                                                                                        <span class="font-bold text-pink-600 mr-1">[<?php echo htmlspecialchars($booking['room']); ?>]</span>
-                                                                                        <?php echo htmlspecialchars($booking['project_name_th']); ?>
-                                                                                    </span>
+                                                                                    <div class="mt-1 pl-1 border-l-2 border-pink-300 group/booking">
+                                                                                        <div class="text-[10px] truncate text-gray-600 font-medium" title="<?php echo htmlspecialchars($booking['project_name_th']); ?>">
+                                                                                            <span class="font-bold text-pink-600 mr-1">[<?php echo htmlspecialchars($booking['room']); ?>]</span>
+                                                                                            <?php echo htmlspecialchars($booking['project_name_th']); ?>
+                                                                                        </div>
+                                                                                        <div class="flex flex-wrap gap-1 mt-0.5 opacity-80 group-hover/booking:opacity-100 transition-opacity">
+                                                                                            <a href="<?php echo BASE_URL; ?>/presentation/grading/<?php echo $booking['id']; ?>" class="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200 flex items-center" title="ให้คะแนน">
+                                                                                                <i class="fas fa-star mr-1"></i> ให้คะแนน
+                                                                                            </a>
+                                                                                            <a href="<?php echo BASE_URL; ?>/presentation/scores/<?php echo $booking['id']; ?>" class="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-200 flex items-center" title="ดูคะแนน">
+                                                                                                <i class="fas fa-chart-bar mr-1"></i> สรุป
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 <?php endforeach; ?>
                                                                             <?php endif; ?>
                                                                         </div>

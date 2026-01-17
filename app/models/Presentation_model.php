@@ -33,10 +33,11 @@ class Presentation_model
     // ดึงข้อมูลการจองทั้งหมดในปีการศึกษา (สำหรับหน้า Manage)
     public function getAllBookings($year = null)
     {
-        $sql = "SELECT b.*, g.project_name_th, g.project_name_en, g.room 
+        $sql = "SELECT b.*, g.project_name_th, g.project_name_en, g.room, u.full_name as advisor_name
                 FROM presentation_bookings b
                 JOIN presentation_slots s ON b.slot_id = s.id
                 JOIN project_groups g ON b.group_id = g.id
+                LEFT JOIN users u ON g.advisor_id = u.id
                 WHERE 1=1";
 
         $params = [];
@@ -168,5 +169,114 @@ class Presentation_model
         $sql = "DELETE FROM presentation_bookings WHERE id = :bid";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':bid' => $booking_id]);
+    }
+
+    // --- ส่วนของการให้คะแนน (Grading) ---
+
+    // บันทึกคะแนน
+    public function saveScore($data)
+    {
+        // เช็คว่าเคยให้คะแนนไปหรือยัง ถ้าเคยแล้วให้ Update
+        $existing = $this->getScoreByScorer($data['booking_id'], $data['scorer_id']);
+
+        if ($existing) {
+            $sql = "UPDATE presentation_scores 
+                    SET criteria_data = :criteria, total_score = :total, comments = :comments 
+                    WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':id' => $existing['id'],
+                ':criteria' => $data['criteria_data'], // JSON string
+                ':total' => $data['total_score'],
+                ':comments' => $data['comments']
+            ]);
+        } else {
+            $sql = "INSERT INTO presentation_scores (booking_id, scorer_id, criteria_data, total_score, comments) 
+                    VALUES (:bid, :sid, :criteria, :total, :comments)";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':bid' => $data['booking_id'],
+                ':sid' => $data['scorer_id'],
+                ':criteria' => $data['criteria_data'],
+                ':total' => $data['total_score'],
+                ':comments' => $data['comments']
+            ]);
+        }
+    }
+
+    // ดึงคะแนนทั้งหมดของการจองนี้
+    public function getScoresByBooking($booking_id)
+    {
+        $sql = "SELECT ps.*, u.full_name as scorer_name 
+                FROM presentation_scores ps
+                JOIN users u ON ps.scorer_id = u.id
+                WHERE ps.booking_id = :bid";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':bid' => $booking_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ดึงคะแนนของกรรมการคนนี้ สำหรับการจองนี้
+    public function getScoreByScorer($booking_id, $scorer_id)
+    {
+        $sql = "SELECT * FROM presentation_scores WHERE booking_id = :bid AND scorer_id = :sid";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':bid' => $booking_id, ':sid' => $scorer_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // ดึงข้อมูลการจองรายรายการ (สำหรับหน้า Grading)
+    public function getBookingById($booking_id)
+    {
+        $sql = "SELECT b.*, g.project_name_th, g.project_name_en, g.room, u.full_name as advisor_name
+                FROM presentation_bookings b
+                JOIN project_groups g ON b.group_id = g.id
+                LEFT JOIN users u ON g.advisor_id = u.id
+                WHERE b.id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $booking_id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // --- Criteria Management (CRUD) ---
+
+    public function fetchCriteria()
+    {
+        $sql = "SELECT * FROM presentation_criteria WHERE is_active = 1 ORDER BY criteria_order ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addCriterion($data)
+    {
+        $sql = "INSERT INTO presentation_criteria (label, max_score, criteria_order) VALUES (:label, :max, :order)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':label' => $data['label'],
+            ':max' => $data['max_score'] ?? 10,
+            ':order' => $data['criteria_order'] ?? 0
+        ]);
+    }
+
+    public function updateCriterion($data)
+    {
+        $sql = "UPDATE presentation_criteria SET label = :label, max_score = :max, criteria_order = :order WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id' => $data['id'],
+            ':label' => $data['label'],
+            ':max' => $data['max_score'],
+            ':order' => $data['criteria_order']
+        ]);
+    }
+
+    public function deleteCriterion($id)
+    {
+        // Check if used? Maybe soft delete? For now hard delete.
+        // Or better, set is_active = 0 to preserve history.
+        $sql = "UPDATE presentation_criteria SET is_active = 0 WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
     }
 }

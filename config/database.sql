@@ -361,6 +361,60 @@ CREATE TABLE `presentation_bookings` (
   FOREIGN KEY (`group_id`) REFERENCES `project_groups` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `presentation_criteria`
+--
+
+CREATE TABLE `presentation_criteria` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `label` varchar(255) NOT NULL,
+  `max_score` int(11) NOT NULL DEFAULT 10,
+  `criteria_order` int(11) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `presentation_criteria`
+--
+
+INSERT INTO `presentation_criteria` (`label`, `criteria_order`) VALUES
+('เนื้อหาของโครงงานมีความน่าสนใจ และเป็นประโยชน์', 1),
+('มีกระบวนการพัฒนาโครงงานอย่างเป็นระบบ', 2),
+('มีการเลือกใช้เครื่องมือ โปรแกรม ได้อย่างเหมาะสม', 3),
+('ความคิดสร้างสรรค์ และความน่าสนใจของผลงาน', 4),
+('การประสานงานและสืบเสาะข้อมูลจากแหล่งเรียนรู้ในชุมชน', 5),
+('ความสมบูรณ์ของผลงาน (เนื้อหา,ภาพประกอบ หรือ อื่นๆ)', 6),
+('เทคนิคในการนำเสนอโครงงาน', 7),
+('การนำเสนอเสียงดังฟังชัด และออกเสียงอักขระถูกต้อง', 8),
+('การนำเสนอโครงงานทันตามเวลาที่กำหนด', 9),
+('การแต่งกายของผู้นำเสนอโครงงานถูกต้องตามระเบียบ', 10);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `presentation_scores`
+--
+
+CREATE TABLE `presentation_scores` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL,
+  `scorer_id` int(11) NOT NULL,
+  `criteria_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`criteria_data`)),
+  `total_score` int(11) NOT NULL,
+  `comments` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `booking_id` (`booking_id`),
+  KEY `scorer_id` (`scorer_id`),
+  CONSTRAINT `presentation_scores_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `presentation_bookings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `presentation_scores_ibfk_2` FOREIGN KEY (`scorer_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
