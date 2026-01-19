@@ -111,7 +111,9 @@ CREATE TABLE `project_groups` (
 CREATE TABLE `project_steps` (
   `id` int(11) NOT NULL,
   `step_name` varchar(100) NOT NULL,
-  `step_order` int(11) NOT NULL
+  `step_order` int(11) NOT NULL,
+  `file_form_path` varchar(255) DEFAULT NULL,
+  `file_example_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

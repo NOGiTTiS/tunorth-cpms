@@ -54,6 +54,32 @@
                                                         <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">ส่งเมื่อ: <?php echo date('d/m/Y H:i', strtotime($step['submitted_at'])); ?></p>
                                                     <?php endif; ?>
 
+                                                    <!-- Attachments (Admin Provided) -->
+                                                    <?php if (!empty($step['file_form_path']) || !empty($step['file_example_path'])): ?>
+                                                        <div class="mt-2 flex flex-wrap gap-2">
+                                                            <?php if (!empty($step['file_form_path'])): ?>
+                                                                <?php
+                                                                $isUrl = preg_match('/^https?:\/\//', $step['file_form_path']);
+                                                                $url = $isUrl ? $step['file_form_path'] : BASE_URL . '/' . $step['file_form_path'];
+                                                                $icon = $isUrl ? '🔗' : '📄';
+                                                                ?>
+                                                                <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="inline-flex items-center px-2 py-1 bg-pink-50 text-pink-600 rounded-md text-[10px] font-bold border border-pink-100 hover:bg-pink-100 transition">
+                                                                    <span class="mr-1"><?php echo $icon; ?></span> แบบฟอร์ม
+                                                                </a>
+                                                            <?php endif; ?>
+                                                            <?php if (!empty($step['file_example_path'])): ?>
+                                                                <?php
+                                                                $isUrl = preg_match('/^https?:\/\//', $step['file_example_path']);
+                                                                $url = $isUrl ? $step['file_example_path'] : BASE_URL . '/' . $step['file_example_path'];
+                                                                $icon = $isUrl ? '🔗' : '💡';
+                                                                ?>
+                                                                <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="inline-flex items-center px-2 py-1 bg-amber-50 text-amber-600 rounded-md text-[10px] font-bold border border-amber-100 hover:bg-amber-100 transition">
+                                                                    <span class="mr-1"><?php echo $icon; ?></span> ตัวอย่าง
+                                                                </a>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    <?php endif; ?>
+
                                                     <!-- แสดงไฟล์ที่ส่ง -->
                                                     <?php if (!empty($step['file_path'])): ?>
                                                         <div class="mt-2">

@@ -199,23 +199,42 @@ class Admin_model
         $max = $stmt_max->fetch(PDO::FETCH_ASSOC);
         $next_order = ($max['max_order'] ?? 0) + 1;
 
-        $query = "INSERT INTO project_steps (step_name, step_order) VALUES (:name, :ord)";
+        $query = "INSERT INTO project_steps (step_name, step_order, file_form_path, file_example_path) 
+                  VALUES (:name, :ord, :form, :example)";
         $stmt = $this->db->prepare($query);
         return $stmt->execute([
             ':name' => $data['step_name'],
-            ':ord' => $next_order
+            ':ord' => $next_order,
+            ':form' => $data['file_form_path'] ?? null,
+            ':example' => $data['file_example_path'] ?? null
         ]);
     }
 
     public function updateStep($data)
     {
-        $query = "UPDATE project_steps SET step_name = :name, step_order = :ord WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        return $stmt->execute([
+        $query = "UPDATE project_steps SET step_name = :name, step_order = :ord";
+
+        $params = [
             ':name' => $data['step_name'],
             ':ord' => $data['step_order'],
             ':id' => $data['id']
-        ]);
+        ];
+
+        // อัปเดตไฟล์เฉพาะเมื่อมีการส่งค่ามา (ถ้าเป็น null คือไม่ได้เปลี่ยน)
+        if (array_key_exists('file_form_path', $data)) {
+            $query .= ", file_form_path = :form";
+            $params[':form'] = $data['file_form_path'];
+        }
+
+        if (array_key_exists('file_example_path', $data)) {
+            $query .= ", file_example_path = :example";
+            $params[':example'] = $data['file_example_path'];
+        }
+
+        $query .= " WHERE id = :id";
+
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute($params);
     }
 
     public function deleteStep($id)

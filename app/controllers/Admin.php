@@ -105,13 +105,55 @@ class Admin extends Controller
         $this->view('admin/steps', $data);
     }
 
+    private function uploadStepFile($fileKey)
+    {
+        if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $uploadDir = __DIR__ . '/../../uploads/steps/';
+        if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $file = $_FILES[$fileKey];
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $fileName = $fileKey . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+
+        if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
+            return 'uploads/steps/' . $fileName;
+        }
+        return null;
+    }
+
     public function step_store()
     {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $adminModel = $this->model('Admin_model');
-            if ($adminModel->createStep($_POST)) {
-                echo json_encode(['status' => 'success', 'message' => 'เพิ่มขั้นตอนงานเรียบร้อย']);
+            try {
+                $adminModel = $this->model('Admin_model');
+
+                $data = $_POST;
+
+                // Handle Form (File or Link)
+                if (isset($_POST['type_form']) && $_POST['type_form'] === 'link') {
+                    $data['file_form_path'] = trim($_POST['link_form']);
+                } else {
+                    $data['file_form_path'] = $this->uploadStepFile('file_form');
+                }
+
+                // Handle Example (File or Link)
+                if (isset($_POST['type_example']) && $_POST['type_example'] === 'link') {
+                    $data['file_example_path'] = trim($_POST['link_example']);
+                } else {
+                    $data['file_example_path'] = $this->uploadStepFile('file_example');
+                }
+
+                if ($adminModel->createStep($data)) {
+                    echo json_encode(['status' => 'success', 'message' => 'เพิ่มขั้นตอนงานเรียบร้อย']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาด']);
+                }
+            } catch (Exception $e) {
+                echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
             }
         }
     }
@@ -120,9 +162,40 @@ class Admin extends Controller
     {
         $this->verifyCsrfToken();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $adminModel = $this->model('Admin_model');
-            if ($adminModel->updateStep($_POST)) {
-                echo json_encode(['status' => 'success', 'message' => 'อัปเดตขั้นตอนงานเรียบร้อย']);
+            try {
+                $adminModel = $this->model('Admin_model');
+
+                $data = $_POST;
+
+                // Handle Form Logic
+                if (isset($_POST['type_form']) && $_POST['type_form'] === 'link') {
+                    // If link provided, use it
+                    if (!empty($_POST['link_form'])) {
+                        $data['file_form_path'] = trim($_POST['link_form']);
+                    }
+                } else {
+                    // If file uploaded, use it
+                    $newForm = $this->uploadStepFile('file_form');
+                    if ($newForm) $data['file_form_path'] = $newForm;
+                }
+
+                // Handle Example Logic
+                if (isset($_POST['type_example']) && $_POST['type_example'] === 'link') {
+                    if (!empty($_POST['link_example'])) {
+                        $data['file_example_path'] = trim($_POST['link_example']);
+                    }
+                } else {
+                    $newExample = $this->uploadStepFile('file_example');
+                    if ($newExample) $data['file_example_path'] = $newExample;
+                }
+
+                if ($adminModel->updateStep($data)) {
+                    echo json_encode(['status' => 'success', 'message' => 'อัปเดตขั้นตอนงานเรียบร้อย']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'เกิดข้อผิดพลาด']);
+                }
+            } catch (Exception $e) {
+                echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
             }
         }
     }
