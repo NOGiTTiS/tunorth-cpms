@@ -405,7 +405,7 @@ class Presentation extends Controller
                 $booking['project_name_th'],
                 $booking['project_name_en'],
                 $booking['advisor_name'] ?? '-',
-                $booking['room'],
+                (strpos($booking['room'], 'ม.') === false && $booking['room'] !== '-' && !empty($booking['room']) ? 'ม.' . $booking['room'] : $booking['room']),
                 implode(', ', $scoreDetails),
                 number_format($average, 2),
                 number_format($finalScore, 2)

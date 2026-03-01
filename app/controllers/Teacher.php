@@ -146,7 +146,7 @@ class Teacher extends Controller
             $row = [
                 $student['student_id'],
                 $student['full_name'],
-                $student['room'],
+                (strpos($student['room'], 'ม.') === false && $student['room'] !== '-' && !empty($student['room']) ? 'ม.' . $student['room'] : $student['room']),
                 $student['project_name']
             ];
             foreach ($steps as $step) {
